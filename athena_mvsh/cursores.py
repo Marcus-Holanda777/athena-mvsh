@@ -13,9 +13,10 @@ from datetime import (
 )
 import uuid
 import textwrap
+from error import ProgrammingError
 
 
-class CursorInterator(ABC):
+class CursorIterator(ABC):
     @abstractmethod
     def fetchone(self):
         ...
@@ -81,11 +82,11 @@ class CursorParquet(DBAthena):
         return quey, location
     
     def get_manifest_local(self):
-        return (
-            self.get_query_execution['QueryExecution']
-            ['Statistics']
-            ['DataManifestLocation']
-        )
+        match self.get_query_execution:
+            case {"QueryExecution": {"Statistics": {"DataManifestLocation": msg}}}:
+                return msg
+            case __:
+                raise ProgrammingError
     
     def get_bucket_s3(self):
         cliente_s3 = boto3.client(
@@ -112,7 +113,7 @@ class CursorParquet(DBAthena):
         _unload_location = "/".join(manifest[0].split("/")[:-1]) + "/"
         bucket, key = parse_output_location(_unload_location)
 
-        return bucket, key
+        return bucket, key, manifest
 
     
     def get_filesystem_fs(self):
@@ -123,9 +124,8 @@ class CursorParquet(DBAthena):
         )
 
     def __read_parquet(self) -> pa.Table:
-
         bucket_s3 = self.get_bucket_s3()
-        bucket, key = self.unload_location(bucket_s3)
+        bucket, key, __ = self.unload_location(bucket_s3)
 
         fs_s3 = self.get_filesystem_fs()
 
@@ -136,6 +136,34 @@ class CursorParquet(DBAthena):
 
         return dataset.read(use_threads=True)
     
+    def __read_duckdb(
+        self, 
+        name_table = 'teste'
+    ):
+        """Experimental
+        """
+
+        import duckdb
+
+        bucket_s3 = self.get_bucket_s3()
+        *__, manifest = self.unload_location(bucket_s3)
+
+        with duckdb.connect('db.duckdb') as con:
+            con.install_extension('httpfs')
+            con.load_extension('httpfs')
+
+            con.sql(f"""
+            CREATE SECRET IF NOT EXISTS(
+              TYPE s3,
+              KEY_ID '{self.config['aws_access_key_id']}',
+              SECRET '{self.config['aws_secret_access_key']}',
+              REGION '{self.config['region_name']}'
+            )
+            """)
+
+            view = con.read_parquet(manifest)
+            view.create(name_table)
+
     def execute(
         self, 
         query: str, 

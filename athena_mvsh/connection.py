@@ -1,12 +1,15 @@
 from dbathena import DBAthena
 from cursores import (
-    CursorInterator,
+    CursorIterator,
     CursorParquet
 )
 import pyarrow.parquet as pq
+import pyarrow as pa
+from error import ProgrammingError
+import pandas as pd
 
 
-class Athena(CursorInterator):
+class Athena(CursorIterator):
     def __init__(self, cursor: DBAthena) -> None:
         self.cursor = cursor
         self.row_cursor = None
@@ -32,14 +35,24 @@ class Athena(CursorInterator):
         else:
             return row
     
-    def fetchall(self) -> list:
+    def fetchall(self) -> list | pa.Table:
         if isinstance(self.cursor, CursorParquet):
             return self.fetchone()
         return list(self.row_cursor)
     
-    def to_parquet(self, filename: str):
+    def to_parquet(self, filename: str) -> None:
+        if not isinstance(self.cursor, CursorParquet):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
         tbl = self.fetchall()
         pq.write_table(tbl, filename)
+
+    def to_pandas(self) -> pd.DataFrame:
+        if not isinstance(self.cursor, CursorParquet):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
+        tbl = self.fetchall()  
+        return tbl.to_pandas(types_mapper=pd.ArrowDtype)
     
     def close(self):
         if self.row_cursor:

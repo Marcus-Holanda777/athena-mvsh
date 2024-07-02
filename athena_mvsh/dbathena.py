@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import boto3
 from enum import Enum
 from time import sleep
+from error import DatabaseError
 
 
 class AthenaStatus(str, Enum):
@@ -85,6 +86,11 @@ class DBAthena(ABC):
                         AthenaStatus.STATE_FAILED, 
                         AthenaStatus.STATE_CANCELLED
                     ]:
+                        if status in [
+                            AthenaStatus.STATE_FAILED,
+                            AthenaStatus.STATE_CANCELLED
+                        ]:
+                            raise DatabaseError(response)
                         break
             
 

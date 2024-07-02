@@ -2,7 +2,7 @@ import binascii
 import json
 from datetime import date, datetime, time
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any
 
 
 def strtobool(val):
@@ -15,61 +15,61 @@ def strtobool(val):
         raise ValueError(f"invalid truth value {val!r}")
 
 
-def _to_date(varchar_value: Optional[str]) -> Optional[date]:
+def _to_date(varchar_value: str | None) -> date | None:
     if varchar_value is None:
         return None
     return datetime.strptime(varchar_value, "%Y-%m-%d").date()
 
 
-def _to_datetime(varchar_value: Optional[str]) -> Optional[datetime]:
+def _to_datetime(varchar_value: str | None) -> datetime | None:
     if varchar_value is None:
         return None
     return datetime.strptime(varchar_value, "%Y-%m-%d %H:%M:%S.%f")
 
 
-def _to_time(varchar_value: Optional[str]) -> Optional[time]:
+def _to_time(varchar_value: str | None) -> time | None:
     if varchar_value is None:
         return None
     return datetime.strptime(varchar_value, "%H:%M:%S.%f").time()
 
 
-def _to_float(varchar_value: Optional[str]) -> Optional[float]:
+def _to_float(varchar_value: str | None) -> float | None:
     if varchar_value is None:
         return None
     return float(varchar_value)
 
 
-def _to_int(varchar_value: Optional[str]) -> Optional[int]:
+def _to_int(varchar_value: str | None) -> int | None:
     if varchar_value is None:
         return None
     return int(varchar_value)
 
 
-def _to_decimal(varchar_value: Optional[str]) -> Optional[Decimal]:
+def _to_decimal(varchar_value: str | None) -> Decimal | None:
     if not varchar_value:
         return None
     return Decimal(varchar_value)
 
 
-def _to_boolean(varchar_value: Optional[str]) -> Optional[bool]:
+def _to_boolean(varchar_value: str | None) -> bool | None:
     if not varchar_value:
         return None
     return bool(strtobool(varchar_value))
 
 
-def _to_binary(varchar_value: Optional[str]) -> Optional[bytes]:
+def _to_binary(varchar_value: str | None) -> bytes | None:
     if varchar_value is None:
         return None
     return binascii.a2b_hex("".join(varchar_value.split(" ")))
 
 
-def _to_json(varchar_value: Optional[str]) -> Optional[Any]:
+def _to_json(varchar_value: str | None) -> Any | None:
     if varchar_value is None:
         return None
     return json.loads(varchar_value)
 
 
-def _to_default(varchar_value: Optional[str]) -> Optional[str]:
+def _to_default(varchar_value: str | None) -> str | None:
     return varchar_value
 
 

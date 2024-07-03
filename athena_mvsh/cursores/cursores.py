@@ -81,7 +81,7 @@ class CursorBaseParquet(DBAthena):
             case {"QueryExecution": {"Statistics": {"DataManifestLocation": location}}}:
                 return location
             case __:
-                raise ProgrammingError
+                raise ProgrammingError("Data location does not exist")
     
     def get_bucket_s3(self):
         cliente_s3 = boto3.client(

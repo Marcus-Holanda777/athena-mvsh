@@ -98,8 +98,8 @@ class DBAthena(ABC):
         
         # NOTE: RETORNA A RESPOSTA DA CONEXAO
         # PARA CONFIGURACOES FUTURAS
-        if self.get_query_execution is None:
-            self.get_query_execution = response
+        # SEMPRE ATUALIZAR
+        self.get_query_execution = response
 
         return id_executation
     
@@ -157,5 +157,21 @@ class DBAthena(ABC):
         self, 
         query: str,
         result_reuse_enable: bool = False
+    ):
+        ...
+
+    @abstractmethod
+    def to_parquet(
+        self, 
+        *args,
+        **kwargs
+    ):
+        ...
+    
+    @abstractmethod
+    def to_create_table_db(
+        self,
+        *args,
+        **kwargs
     ):
         ...

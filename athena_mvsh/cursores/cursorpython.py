@@ -1,6 +1,7 @@
 from dbathena import DBAthena
 from typing import Generator, Any
 from converter import MAP_CONVERT
+from error import ProgrammingError
 
 
 class CursorPython(DBAthena):
@@ -83,3 +84,9 @@ class CursorPython(DBAthena):
             else:
                 data_response |= {'NextToken': self.token_next}
                 offset = 0
+    
+    def to_parquet(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')
+    
+    def to_create_table_db(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')

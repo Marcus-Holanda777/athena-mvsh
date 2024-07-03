@@ -2,6 +2,7 @@ from cursores.cursores import CursorBaseParquet
 import pyarrow.fs as fs
 import pyarrow as pa
 import pyarrow.parquet as pq
+from error import ProgrammingError
 
 
 class CursorParquet(CursorBaseParquet):
@@ -61,3 +62,13 @@ class CursorParquet(CursorBaseParquet):
         __ = self.pool(id_exec)
 
         yield self.__read_parquet()
+    
+    def to_parquet(
+        self,
+        *args,
+        **kwargs
+    ):
+        pq.write_table(*args, **kwargs)
+
+    def to_create_table_db(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')

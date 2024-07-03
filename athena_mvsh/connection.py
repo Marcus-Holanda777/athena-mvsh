@@ -1,5 +1,5 @@
-from dbathena import DBAthena
-from cursores import (
+from athena_mvsh.dbathena import DBAthena
+from athena_mvsh.cursores import (
     CursorIterator,
     CursorBaseParquet,
     CursorParquetDuckdb

@@ -181,7 +181,7 @@ class CursorParquet(DBAthena):
         yield self.__read_parquet()
         
 
-class CusorPython(DBAthena):
+class CursorPython(DBAthena):
     def __init__(
         self, 
         s3_staging_dir: str, 

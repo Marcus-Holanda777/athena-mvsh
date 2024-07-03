@@ -1,5 +1,5 @@
-from connection import Athena
-from cursores import (
+from athena_mvsh.connection import Athena
+from athena_mvsh.cursores import (
     CursorParquet,
     CursorParquetDuckdb,
     CursorPython

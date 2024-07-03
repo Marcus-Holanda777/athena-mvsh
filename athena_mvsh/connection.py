@@ -1,7 +1,7 @@
 from dbathena import DBAthena
 from cursores import (
     CursorIterator,
-    CursorParquet
+    CursorBaseParquet
 )
 import pyarrow.parquet as pq
 import pyarrow as pa
@@ -36,19 +36,19 @@ class Athena(CursorIterator):
             return row
     
     def fetchall(self) -> list | pa.Table:
-        if isinstance(self.cursor, CursorParquet):
+        if isinstance(self.cursor, CursorBaseParquet):
             return self.fetchone()
         return list(self.row_cursor)
     
     def to_parquet(self, filename: str) -> None:
-        if not isinstance(self.cursor, CursorParquet):
+        if not isinstance(self.cursor, CursorBaseParquet):
             raise ProgrammingError('Function not implemented for cursor !')
         
         tbl = self.fetchall()
-        pq.write_table(tbl, filename)
+        pq.write_table(tbl, filename, row_group_size=100_000)
 
     def to_pandas(self) -> pd.DataFrame:
-        if not isinstance(self.cursor, CursorParquet):
+        if not isinstance(self.cursor, CursorBaseParquet):
             raise ProgrammingError('Function not implemented for cursor !')
         
         tbl = self.fetchall()  

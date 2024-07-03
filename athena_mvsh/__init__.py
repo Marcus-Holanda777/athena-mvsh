@@ -1,10 +1,15 @@
-from .connection import Athena
-from .cursores import CursorParquet, CusorPython
+from connection import Athena
+from cursores import (
+    CursorParquet,
+    CursorParquetDuckdb,
+    CursorPython
+)
 
 __version__ = '0.0.01'
 
 __all__ = [
     'Athena',
-    'CursorParquet',
-    'CusorPython'
+    'CursorParquetDuckdb',
+    'CursorPython',
+    'CursorParquet'
 ]

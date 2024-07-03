@@ -5,7 +5,7 @@ from athena_mvsh.cursores import (
     CursorParquetDuckdb
 )
 import pyarrow as pa
-from error import ProgrammingError
+from athena_mvsh.error import ProgrammingError
 import pandas as pd
 
 

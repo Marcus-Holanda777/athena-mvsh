@@ -1,7 +1,7 @@
-from dbathena import DBAthena
+from athena_mvsh.dbathena import DBAthena
 from typing import Generator, Any
-from converter import MAP_CONVERT
-from error import ProgrammingError
+from athena_mvsh.converter import MAP_CONVERT
+from athena_mvsh.error import ProgrammingError
 
 
 class CursorPython(DBAthena):

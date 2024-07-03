@@ -1,8 +1,8 @@
-from cursores.cursores import CursorBaseParquet
+from athena_mvsh.cursores.cursores import CursorBaseParquet
 import pyarrow.fs as fs
 import pyarrow as pa
 import pyarrow.parquet as pq
-from error import ProgrammingError
+from athena_mvsh.error import ProgrammingError
 
 
 class CursorParquet(CursorBaseParquet):

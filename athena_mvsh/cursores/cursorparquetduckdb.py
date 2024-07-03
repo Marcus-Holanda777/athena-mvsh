@@ -1,4 +1,4 @@
-from cursores.cursores import CursorBaseParquet
+from athena_mvsh.cursores.cursores import CursorBaseParquet
 import duckdb
 import pyarrow as pa
 from contextlib import contextmanager

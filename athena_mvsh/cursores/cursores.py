@@ -1,4 +1,4 @@
-from dbathena import DBAthena
+from athena_mvsh.dbathena import DBAthena
 from abc import ABC, abstractmethod
 import boto3
 from utils import parse_output_location

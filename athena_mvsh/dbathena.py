@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import boto3
 from enum import Enum
 from time import sleep
-from error import DatabaseError
+from athena_mvsh.error import DatabaseError
 
 
 class AthenaStatus(str, Enum):

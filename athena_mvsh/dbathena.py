@@ -169,6 +169,14 @@ class DBAthena(ABC):
         ...
     
     @abstractmethod
+    def to_pandas(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...
+    
+    @abstractmethod
     def to_create_table_db(
         self,
         *args,

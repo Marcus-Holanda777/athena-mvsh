@@ -3,6 +3,8 @@ import pyarrow.fs as fs
 import pyarrow as pa
 import pyarrow.parquet as pq
 from athena_mvsh.error import ProgrammingError
+from itertools import filterfalse
+import pandas as pd
 
 
 class CursorParquet(CursorBaseParquet):
@@ -60,8 +62,11 @@ class CursorParquet(CursorBaseParquet):
         )
 
         __ = self.pool(id_exec)
-
-        yield self.__read_parquet()
+        
+        try:
+            yield self.__read_parquet()
+        except Exception as e:
+            yield pa.Table.from_pydict(dict())
     
     def to_parquet(
         self,
@@ -69,6 +74,18 @@ class CursorParquet(CursorBaseParquet):
         **kwargs
     ):
         pq.write_table(*args, **kwargs)
+    
+    def to_pandas(
+        self,
+        *args,
+        **kwargs
+    ) -> pd.DataFrame:
+        
+        conds = lambda x: isinstance(x, pa.Table)
+        [tbl] = [*filter(conds, args)]
+        args = tuple(filterfalse(conds, args))
+
+        return tbl.to_pandas(*args, **kwargs)
 
     def to_create_table_db(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')

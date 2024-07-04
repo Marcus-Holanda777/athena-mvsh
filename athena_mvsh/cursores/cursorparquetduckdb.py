@@ -3,7 +3,10 @@ import duckdb
 import pyarrow as pa
 from contextlib import contextmanager
 import os
+import pandas as pd
 
+"""Experimental
+"""
 
 class CursorParquetDuckdb(CursorBaseParquet):
     def __init__(
@@ -32,7 +35,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         try:
             config = {
                 'preserve_insertion_order': False,
-                'threads': os.cpu_count() * 5
+                'threads': (os.cpu_count() or 1) * 5
             }
             con = duckdb.connect('db.duckdb', config=config)
             con.install_extension('httpfs')
@@ -51,12 +54,8 @@ class CursorParquetDuckdb(CursorBaseParquet):
             raise
         finally:
             con.close()
-
+    
     def __read_duckdb(self) -> pa.Table:
-
-        """Experimental
-        """
-
         bucket_s3 = self.get_bucket_s3()
         *__, manifest = self.unload_location(bucket_s3)
 
@@ -90,8 +89,11 @@ class CursorParquetDuckdb(CursorBaseParquet):
         )
 
         __ = self.pool(id_exec)
-
-        yield self.__read_duckdb()
+        
+        try:
+            yield self.__read_duckdb()
+        except Exception as e:
+            yield pa.Table.from_pydict(dict())
 
     def to_parquet(
         self,
@@ -106,13 +108,41 @@ class CursorParquetDuckdb(CursorBaseParquet):
         )
 
         __ = self.pool(id_exec)
+        
+        try:
+            bucket_s3 = self.get_bucket_s3()
+            *__, manifest = self.unload_location(bucket_s3)
 
-        bucket_s3 = self.get_bucket_s3()
-        *__, manifest = self.unload_location(bucket_s3)
+            with self.__connect_duckdb() as con:
+                view = con.read_parquet(manifest)
+                view.write_parquet(*args, **kwargs)
 
-        with self.__connect_duckdb() as con:
-            view = con.read_parquet(manifest)
-            view.write_parquet(*args, **kwargs)
+        except Exception as e:
+            ...
+
+    def to_pandas(
+        self,
+        query: str, 
+        result_reuse_enable: bool = False, 
+        *args,
+        **kwargs
+    ) -> pd.DataFrame:
+        id_exec = self.__pre_execute(
+            query,
+            result_reuse_enable
+        )
+
+        __ = self.pool(id_exec)
+        
+        try:
+            bucket_s3 = self.get_bucket_s3()
+            *__, manifest = self.unload_location(bucket_s3)
+
+            with self.__connect_duckdb() as con:
+                view = con.read_parquet(manifest)
+                return view.df(*args, **kwargs)
+        except Exception as e:
+            return pd.DataFrame()
 
     def to_create_table_db(
         self,
@@ -127,12 +157,15 @@ class CursorParquetDuckdb(CursorBaseParquet):
         )
 
         __ = self.pool(id_exec)
+        
+        try:
+            bucket_s3 = self.get_bucket_s3()
+            *__, manifest = self.unload_location(bucket_s3)
 
-        bucket_s3 = self.get_bucket_s3()
-        *__, manifest = self.unload_location(bucket_s3)
+            with self.__connect_duckdb() as con:
+                view = con.read_parquet(manifest)
+                con.sql(f"DROP TABLE IF EXISTS {kwargs['table_name']}")
+                view.create(*args, **kwargs)
 
-        with self.__connect_duckdb() as con:
-            view = con.read_parquet(manifest)
-            con.sql(f"DROP TABLE IF EXISTS {kwargs['table_name']}")
-            view.create(*args, **kwargs)
-            con.sql("DROP VIEW IF EXISTS view")
+        except Exception as e:
+            ...

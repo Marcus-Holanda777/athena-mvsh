@@ -2,7 +2,8 @@ from athena_mvsh.dbathena import DBAthena
 from athena_mvsh.cursores import (
     CursorIterator,
     CursorBaseParquet,
-    CursorParquetDuckdb
+    CursorParquetDuckdb,
+    CursorPython
 )
 import pyarrow as pa
 from athena_mvsh.error import ProgrammingError
@@ -22,16 +23,26 @@ class Athena(CursorIterator):
         
         if not isinstance(self.cursor, CursorParquetDuckdb):
             self.row_cursor = self.cursor.execute(
-                query, 
+                query,
                 result_reuse_enable
             )
         else:
+            # NOTE: Usado pelo duckdb
             self.query = query
             self.result_reuse_enable = result_reuse_enable
 
         return self
     
+    def description(self):
+        return self.cursor.description()
+    
     def fetchone(self):
+        if isinstance(self.cursor, CursorParquetDuckdb):
+            self.row_cursor = self.cursor.execute(
+               self. query,
+               self.result_reuse_enable
+            )
+
         try:
             row = next(self.row_cursor)
         except StopIteration:
@@ -46,7 +57,7 @@ class Athena(CursorIterator):
             return self.fetchone()
         return list(self.row_cursor)
     
-    def to_parquet(self, filename: str) -> None:
+    def to_parquet(self, *args, **kwargs) -> None:
         if not isinstance(self.cursor, CursorBaseParquet):
             raise ProgrammingError('Function not implemented for cursor !')
         
@@ -54,13 +65,14 @@ class Athena(CursorIterator):
             self.cursor.to_parquet(
                 self.query,
                 self.result_reuse_enable,
-                file_name=filename,
-                row_group_size=100_000
+                *args,
+                **kwargs
             )
             return
         
         tbl = self.fetchall()
-        self.cursor.to_parquet(tbl, filename)
+        args = (tbl, ) + args
+        self.cursor.to_parquet(*args, **kwargs)
 
     def to_create_table_db(self, table_name: str) -> None:
         if not isinstance(self.cursor, CursorParquetDuckdb):
@@ -72,12 +84,29 @@ class Athena(CursorIterator):
             table_name=table_name
         )
 
-    def to_pandas(self) -> pd.DataFrame:
-        if not isinstance(self.cursor, CursorBaseParquet):
-            raise ProgrammingError('Function not implemented for cursor !')
+    def to_pandas(self, *args, **kwargs) -> pd.DataFrame:
+        if isinstance(self.cursor, CursorParquetDuckdb):
+            return self.cursor.to_pandas(
+                self.query,
+                self.result_reuse_enable,
+                *args,
+                **kwargs
+            )
         
-        tbl = self.fetchall()  
-        return tbl.to_pandas(types_mapper=pd.ArrowDtype)
+        # NOTE: Utiliza a mesma estrutura
+        tbl = self.fetchall()
+        if isinstance(self.cursor, CursorPython):
+            kwargs |= {
+                'columns': [c[0] for c in self.description()],
+                'data': tbl,
+                'coerce_float': True
+            }
+            return self.cursor.to_pandas(*args, **kwargs)
+        
+        if isinstance(self.cursor, CursorBaseParquet):
+           args = args + (tbl,)
+           kwargs |= {'types_mapper': pd.ArrowDtype}
+           return self.cursor.to_pandas(*args, **kwargs)
     
     def close(self):
         if self.row_cursor:

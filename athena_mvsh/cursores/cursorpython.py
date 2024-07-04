@@ -2,6 +2,7 @@ from athena_mvsh.dbathena import DBAthena
 from typing import Generator, Any
 from athena_mvsh.converter import MAP_CONVERT
 from athena_mvsh.error import ProgrammingError
+import pandas as pd
 
 
 class CursorPython(DBAthena):
@@ -46,6 +47,23 @@ class CursorPython(DBAthena):
             for i in range(offset, len(rows))
         ]
     
+    def description(self):
+        if self.metadata is None:
+            return None 
+        else:
+            return [
+                (
+                    c["Name"],
+                    c["Type"],
+                    None,
+                    None,
+                    c["Precision"],
+                    c["Scale"],
+                    c["Nullable"],
+                )
+                for c in self.metadata
+            ]
+    
     def execute(
         self, 
         query: str,
@@ -88,5 +106,8 @@ class CursorPython(DBAthena):
     def to_parquet(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')
     
+    def to_pandas(self, *args, **kwargs) -> pd.DataFrame:
+        return pd.DataFrame.from_records(*args, **kwargs)
+
     def to_create_table_db(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')

@@ -36,3 +36,13 @@ with Athena(cursor=cursor) as cliente:
 ```
 
 ## Como usar ?
+
+Esta biblioteca Python facilita a consulta ao Amazon Athena, oferecendo suporte para três tipos de cursores: Python, Parquet e DuckDB. Com esta biblioteca, você pode executar consultas SQL no Amazon Athena e obter os resultados no formato desejado de maneira fácil e eficiente.
+
+Funcionalidades
+Consulta ao Amazon Athena: Execute consultas SQL no Amazon Athena.
+
+Cursores Diversos:
+- `CursorPython`: Retorna os resultados da consulta como objetos Python.
+- `CursorParquet`: Retorna os resultados da consulta no formato Parquet.
+- `CursorParquetDuckdb`: Retorna os resultados da consulta integrados ao DuckDB.

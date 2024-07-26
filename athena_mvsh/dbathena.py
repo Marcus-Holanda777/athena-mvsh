@@ -15,6 +15,7 @@ class AthenaStatus(str, Enum):
 
 class DBAthena(ABC):
     MAX_RESULTS = 1_000
+    MAX_RESULTS_TABLES = 50
     RESULT_SET_REUSE = 60
 
     KWARGS_CLIENT = set(
@@ -151,7 +152,53 @@ class DBAthena(ABC):
         
         return id_exec
     
+    def get_table_metadata(
+        self,
+        catalog_name: str,
+        database_name: str,
+        table_name: str,
+        work_group: str = None
+    ) -> dict:
         
+        data_response = dict(
+            CatalogName=catalog_name,
+            DatabaseName=database_name,
+            TableName=table_name,
+        )
+
+        if work_group:
+            data_response['WorkGroup'] = work_group
+
+        response = self.cliente.get_table_metadata(
+            **data_response
+        )
+
+        return response['TableMetadata']
+    
+    def list_table_metadata(
+        self,
+        catalog_name: str,
+        database_name: str
+    ):
+        data_response = dict(
+            CatalogName=catalog_name, 
+            DatabaseName=database_name, 
+            MaxResults=self.MAX_RESULTS_TABLES
+        )
+
+        while True:
+            response = self.cliente.list_table_metadata(
+                **data_response
+            )
+
+            yield from response['TableMetadataList']
+
+            token = response.get('NextToken', None)
+            if token is None:
+                break
+            else:
+                data_response |= {'NextToken': token}
+
     @abstractmethod
     def execute(
         self, 

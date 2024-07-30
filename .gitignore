@@ -5,3 +5,5 @@ __pycache__
 main.py
 *.db
 *.duckdb
+*.xlsx
+*$.xlsx

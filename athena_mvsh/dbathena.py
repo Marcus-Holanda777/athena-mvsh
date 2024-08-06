@@ -64,7 +64,7 @@ class DBAthena(ABC):
         
         if 'region_name' not in data.keys():
             config = self.cliente._client_config
-            config['region_name'] = config.region_name
+            data['region_name'] = config.region_name
         
         return data
     
@@ -209,7 +209,7 @@ class DBAthena(ABC):
 
     @abstractmethod
     def to_parquet(
-        self, 
+        self,
         *args,
         **kwargs
     ):

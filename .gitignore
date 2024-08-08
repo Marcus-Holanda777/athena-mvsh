@@ -7,3 +7,4 @@ main.py
 *.duckdb
 *.xlsx
 *$.xlsx
+*.sql

@@ -8,6 +8,10 @@ from athena_mvsh.cursores import (
 import pyarrow as pa
 from athena_mvsh.error import ProgrammingError
 import pandas as pd
+import os
+
+
+WORKERS = min([4, os.cpu_count()])
 
 
 class Athena(CursorIterator):
@@ -74,12 +78,37 @@ class Athena(CursorIterator):
         args = (tbl, ) + args
         self.cursor.to_parquet(*args, **kwargs)
 
-    def to_create_table_db(self, table_name: str) -> None:
+    def to_create_table_db(
+        self, 
+        table_name: str,
+        *,
+        database: str = 'db.duckdb'
+    ) -> None:
+        
         if not isinstance(self.cursor, CursorParquetDuckdb):
             raise ProgrammingError('Function not implemented for cursor !')
         
         self.cursor.to_create_table_db(
+            database,
             self.query,
+            self.result_reuse_enable,
+            table_name=table_name
+        )
+    
+    def to_partition_create_table_db(
+        self, 
+        table_name: str,
+        *,
+        database: str = 'db.duckdb',
+        workers: int = WORKERS
+    ) -> None:
+        if not isinstance(self.cursor, CursorParquetDuckdb):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
+        self.cursor.to_partition_create_table_db(
+            database,
+            self.query,
+            workers,
             self.result_reuse_enable,
             table_name=table_name
         )

@@ -230,3 +230,11 @@ class DBAthena(ABC):
         **kwargs
     ):
         ...
+    
+    @abstractmethod
+    def to_partition_create_table_db(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...

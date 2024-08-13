@@ -9,6 +9,7 @@ import pyarrow as pa
 from athena_mvsh.error import ProgrammingError
 import pandas as pd
 import os
+from itertools import islice
 
 
 WORKERS = min([4, os.cpu_count()])
@@ -60,6 +61,12 @@ class Athena(CursorIterator):
         if isinstance(self.cursor, CursorBaseParquet):
             return self.fetchone()
         return list(self.row_cursor)
+    
+    def fetchmany(self, size: int = 1):
+        if not isinstance(self.cursor, CursorPython):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
+        return list(islice(self.row_cursor, size))
     
     def to_parquet(self, *args, **kwargs) -> None:
         if not isinstance(self.cursor, CursorBaseParquet):

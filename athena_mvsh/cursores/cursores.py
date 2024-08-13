@@ -20,6 +20,10 @@ class CursorIterator(ABC):
     def fetchall(self):
         ...
     
+    @abstractmethod
+    def fetchmany(self, size):
+        ...
+    
     def __next__(self):
         row = self.fetchone()
         if row is None:

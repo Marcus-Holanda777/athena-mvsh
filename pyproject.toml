@@ -1,18 +1,27 @@
 [tool.poetry]
 name = "athena-mvsh"
 version = "0.0.01"
-description = ""
+description = "Athena-mvsh é um biblioteca python, que interage com o serviço Amazon Athena"
 authors = ["Marcus Holanda <mvsh777@hotmail.com>"]
 readme = "README.md"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Natural Language :: Portuguese (Brazilian)",
+    "Programming Language :: PL/SQL",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Database :: Front-Ends"
+]
+
+[tool.poetry.urls]
+"Codigo" = "https://github.com/Marcus-Holanda777/athena-mvsh"
 
 [tool.poetry.dependencies]
 python = "^3.11"
 boto3 = "^1.34.136"
-pyarrow = "^16.1.0"
+pyarrow = ">=16, <20"
 duckdb = "^1.0.0"
 pandas = "^2.2.2"
 openpyxl = "^3.1.5"
-
 
 [build-system]
 requires = ["poetry-core"]

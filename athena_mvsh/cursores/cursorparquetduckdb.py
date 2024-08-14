@@ -6,10 +6,11 @@ import os
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
+from athena_mvsh.error import DatabaseError
+
 
 """Experimental
 """
-
 
 class CursorParquetDuckdb(CursorBaseParquet):
     def __init__(
@@ -219,6 +220,51 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 rest_file = list(manifest[1:])
                 with ThreadPoolExecutor(max_workers=workers) as executor:
                     ___ = executor.map(partial(insert_part, con), rest_file)
+
+        except Exception as e:
+            ...
+        
+    def to_insert_table_db(
+        self,
+        database: str,
+        query: str,
+        result_reuse_enable: bool = False,
+        **kwargs
+    ):
+        # NOTE: Verifica se banco existe
+        if not os.path.isfile(database):
+            raise DatabaseError(f"Database {database} not exists !")
+        
+        # NOTE: Verifica se tabela existe
+        with self.__connect_duckdb(database) as con:
+            rst = con.execute(f"""
+            select 1 from information_schema.tables
+            where table_name = '{kwargs['table_name']}'
+            """)
+            
+            ok = rst.fetchone()
+
+            if not ok:
+                raise DatabaseError(
+                    f"Table {kwargs['table_name']} not exists !"
+                )
+
+        id_exec = self.__pre_execute(
+            query,
+            result_reuse_enable
+        )
+
+        __ = self.pool(id_exec)
+        
+        try:
+            bucket_s3 = self.get_bucket_s3()
+            *__, manifest = self.unload_location(bucket_s3)
+
+            with self.__connect_duckdb(database) as con:
+                con.sql(f"""
+                    INSERT INTO {kwargs['table_name']}
+                    FROM read_parquet({manifest})
+                """)
 
         except Exception as e:
             ...

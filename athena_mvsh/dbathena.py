@@ -238,3 +238,11 @@ class DBAthena(ABC):
         **kwargs
     ):
         ...
+    
+    @abstractmethod
+    def to_insert_table_db(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...

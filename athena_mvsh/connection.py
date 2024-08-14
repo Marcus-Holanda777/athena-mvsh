@@ -119,6 +119,22 @@ class Athena(CursorIterator):
             self.result_reuse_enable,
             table_name=table_name
         )
+    
+    def to_insert_table_db(
+        self, 
+        table_name: str,
+        *,
+        database: str = 'db.duckdb'
+    ) -> None:
+        if not isinstance(self.cursor, CursorParquetDuckdb):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
+        self.cursor.to_insert_table_db(
+            database,
+            self.query,
+            self.result_reuse_enable,
+            table_name=table_name
+        )
 
     def to_pandas(self, *args, **kwargs) -> pd.DataFrame:
         if isinstance(self.cursor, CursorParquetDuckdb):

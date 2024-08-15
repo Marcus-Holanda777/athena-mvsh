@@ -1,4 +1,5 @@
 # Athena-mvsh
+[![PyPI](https://img.shields.io/pypi/v/athena-mvsh.svg)](https://pypi.org/project/athena-mvsh/)
 
 ## O que é o Athena-mvsh ?
 
@@ -9,7 +10,7 @@ Algumas regras da [DB API 2.0 (PEP 249)](https://www.python.org/dev/peps/pep-024
 ## Instalação
 
 ```bash
-pip install "git+https://github.com/Marcus-Holanda777/athena-mvsh.git"
+pip install athena-mvsh"
 ```
 
 ## Credenciais

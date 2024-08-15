@@ -10,6 +10,7 @@ from athena_mvsh.error import ProgrammingError
 import pandas as pd
 import os
 from itertools import islice
+from athena_mvsh.formatador import cast_format
 
 
 WORKERS = min([4, os.cpu_count()])
@@ -23,8 +24,15 @@ class Athena(CursorIterator):
     def execute(
         self, 
         query: str,
+        parameters: tuple | dict = None,
+        *,
         result_reuse_enable: bool = False
     ):
+        # NOTE: Recebendo parametros
+        if parameters:
+            args = parameters if isinstance(parameters, tuple) else tuple()
+            kwargs = parameters if isinstance(parameters, dict) else dict()
+            query = cast_format(query, *args, **kwargs)
         
         if not isinstance(self.cursor, CursorParquetDuckdb):
             self.row_cursor = self.cursor.execute(

@@ -9,7 +9,7 @@ from functools import partial
 from athena_mvsh.error import DatabaseError
 
 
-"""Experimental
+"""@Experimental
 """
 
 class CursorParquetDuckdb(CursorBaseParquet):

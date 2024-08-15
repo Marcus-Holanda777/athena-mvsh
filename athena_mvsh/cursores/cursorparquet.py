@@ -92,3 +92,6 @@ class CursorParquet(CursorBaseParquet):
     
     def to_partition_create_table_db(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')
+    
+    def to_insert_table_db(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')

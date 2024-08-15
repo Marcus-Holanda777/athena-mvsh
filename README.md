@@ -10,7 +10,7 @@ Algumas regras da [DB API 2.0 (PEP 249)](https://www.python.org/dev/peps/pep-024
 ## Instalação
 
 ```bash
-pip install athena-mvsh"
+pip install athena-mvsh
 ```
 
 ## Credenciais

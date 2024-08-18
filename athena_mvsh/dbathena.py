@@ -216,6 +216,14 @@ class DBAthena(ABC):
         result_reuse_enable: bool = False
     ):
         ...
+    
+    @abstractmethod
+    def to_arrow(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...
 
     @abstractmethod
     def to_parquet(
@@ -251,6 +259,14 @@ class DBAthena(ABC):
     
     @abstractmethod
     def to_insert_table_db(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...
+    
+    @abstractmethod
+    def write_dataframe(
         self,
         *args,
         **kwargs

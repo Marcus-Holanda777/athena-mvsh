@@ -5,6 +5,7 @@ import pyarrow.parquet as pq
 from athena_mvsh.error import ProgrammingError
 from itertools import filterfalse
 import pandas as pd
+from athena_mvsh.utils import query_is_ddl
 
 
 class CursorParquet(CursorBaseParquet):
@@ -54,7 +55,8 @@ class CursorParquet(CursorBaseParquet):
         query: str, 
         result_reuse_enable: bool = False
     ):
-        query, __ = self.format_unload(query)
+        if not query_is_ddl(query):
+            query, __ = self.format_unload(query)
 
         id_exec = self.start_query_execution(
             query,
@@ -64,9 +66,34 @@ class CursorParquet(CursorBaseParquet):
         __ = self.pool(id_exec)
         
         try:
-            yield self.__read_parquet()
-        except Exception as e:
-            yield pa.Table.from_pydict(dict())
+            tbl = self.__read_parquet()
+            iter_tbl = iter(tbl.to_batches(1))
+                
+            for rows in iter_tbl:
+                [row] = rows.to_pylist()
+                yield tuple(row.values())
+
+        except Exception:
+            return
+    
+    def to_arrow(
+        self, 
+        query: str, 
+        result_reuse_enable: bool = False
+    ) -> pa.Table:
+        
+        query, __ = self.format_unload(query)
+        id_exec = self.start_query_execution(
+            query,
+            result_reuse_enable
+        )
+
+        __ = self.pool(id_exec)
+        
+        try:
+            return self.__read_parquet()
+        except Exception:
+            return pa.Table.from_dict(dict())
     
     def to_parquet(
         self,
@@ -94,4 +121,7 @@ class CursorParquet(CursorBaseParquet):
         raise ProgrammingError('Function not implemented for cursor !')
     
     def to_insert_table_db(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')
+    
+    def write_dataframe(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')

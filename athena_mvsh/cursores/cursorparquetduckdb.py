@@ -6,8 +6,14 @@ import os
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
-from athena_mvsh.error import DatabaseError
-from athena_mvsh.utils import parse_output_location
+from athena_mvsh.error import (
+    DatabaseError, 
+    ProgrammingError
+)
+from athena_mvsh.utils import (
+    parse_output_location,
+    query_is_ddl
+)
 import uuid
 from athena_mvsh.converter import map_convert_df_athena
 
@@ -74,6 +80,14 @@ class CursorParquetDuckdb(CursorBaseParquet):
             view = con.read_parquet(manifest)
             while row := view.fetchone():
                 yield row
+    
+    def __read_arrow(self):
+        bucket_s3 = self.get_bucket_s3()
+        *__, manifest = self.unload_location(bucket_s3)
+
+        with self.__connect_duckdb() as con:
+            view = con.read_parquet(manifest)
+            return view.arrow()
         
     def __pre_execute(
         self, 
@@ -96,19 +110,42 @@ class CursorParquetDuckdb(CursorBaseParquet):
         query: str, 
         result_reuse_enable: bool = False
     ):
+        unload = True
+        if query_is_ddl(query):
+            unload = False
 
         id_exec = self.__pre_execute(
             query,
-            result_reuse_enable
+            result_reuse_enable,
+            unload=unload
         )
 
         __ = self.pool(id_exec)
         
-        yield from self.__read_duckdb()
+        try:
+            yield from self.__read_duckdb()
+        except Exception:
+            return
+        
+    def to_arrow(
+        self,
+        query: str, 
+        result_reuse_enable: bool = False
+    ):
+        id_exec = self.__pre_execute(
+            query,
+            result_reuse_enable
+        )
+        __ = self.pool(id_exec)
+        
+        try:
+            return self.__read_arrow()
+        except Exception:
+            return pa.Table.from_dict(dict())
 
     def to_parquet(
         self,
-        query: str, 
+        query: str,
         result_reuse_enable: bool = False,
         *args, 
         **kwargs
@@ -281,6 +318,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
         compression: str = 'GZIP'
     ) -> None:
         
+        if not isinstance(df, pd.DataFrame):
+            raise ProgrammingError("Parameter 'df' is not a dataframe |")
+        
+        if df.empty:
+            raise ProgrammingError("Dataframe is empty |")
+
         if location:
             location = (
                 location if location.endswith('/')
@@ -351,6 +394,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 TBLPROPERTIES ('parquet.compress'='{compression}')
             """
 
-            # TODO: Deletar a tabela
+            # TODO: Criar a tabela
             id_exec = self.__pre_execute(stmt, unload=False)
             ___ = self.pool(id_exec)

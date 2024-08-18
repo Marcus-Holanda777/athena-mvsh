@@ -103,6 +103,9 @@ class CursorPython(DBAthena):
                 data_response |= {'NextToken': self.token_next}
                 offset = 0
     
+    def to_arrow(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')
+    
     def to_parquet(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')
     
@@ -116,4 +119,7 @@ class CursorPython(DBAthena):
         raise ProgrammingError('Function not implemented for cursor !')
     
     def to_insert_table_db(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')
+    
+    def write_dataframe(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')

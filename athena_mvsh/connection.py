@@ -12,6 +12,7 @@ import pandas as pd
 import os
 from itertools import islice
 from athena_mvsh.formatador import cast_format
+from athena_mvsh.utils import query_is_ddl
 
 
 WORKERS = min([4, os.cpu_count()])
@@ -44,6 +45,9 @@ class Athena(CursorIterator):
         self.query = query
         self.result_reuse_enable = result_reuse_enable
 
+        if query_is_ddl(query):
+            return self.fetchone()
+
         return self
     
     def description(self):
@@ -58,17 +62,13 @@ class Athena(CursorIterator):
             return row
     
     def fetchall(self) -> list | pa.Table:
-        """Retorna uma `Table` ou lista de tuplas
-        """
-        if isinstance(self.cursor, CursorParquet):
-            return self.fetchone()
         return list(self.row_cursor)
     
     def fetchmany(self, size: int = 1):
-        if isinstance(self.cursor, CursorParquet):
-            raise ProgrammingError('Function not implemented for cursor !')
-        
         return list(islice(self.row_cursor, size))
+    
+    def to_arrow(self) -> pa.Table:
+        return self.cursor.to_arrow(self.query, self.result_reuse_enable)
     
     def to_parquet(self, *args, **kwargs) -> None:
         if not isinstance(self.cursor, CursorBaseParquet):
@@ -83,7 +83,7 @@ class Athena(CursorIterator):
             )
             return
         
-        tbl = self.fetchall()
+        tbl = self.to_arrow()
         args = (tbl, ) + args
         self.cursor.to_parquet(*args, **kwargs)
 
@@ -170,8 +170,8 @@ class Athena(CursorIterator):
             )
         
         # NOTE: Utiliza a mesma estrutura
-        tbl = self.fetchall()
         if isinstance(self.cursor, CursorPython):
+            tbl = self.fetchall()
             kwargs |= {
                 'columns': [c[0] for c in self.description()],
                 'data': tbl,
@@ -179,7 +179,8 @@ class Athena(CursorIterator):
             }
             return self.cursor.to_pandas(*args, **kwargs)
         
-        if isinstance(self.cursor, CursorBaseParquet):
+        if isinstance(self.cursor, CursorParquet):
+           tbl = self.to_arrow()
            args = args + (tbl,)
            kwargs |= {'types_mapper': pd.ArrowDtype}
            return self.cursor.to_pandas(*args, **kwargs)

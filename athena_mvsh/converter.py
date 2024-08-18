@@ -3,6 +3,59 @@ import json
 from datetime import date, datetime, time
 from decimal import Decimal
 from typing import Any
+import pandas as pd
+
+def convert_df_athena(col: pd.Series) -> str:
+
+    col_type = (
+        pd.api.types
+        .infer_dtype(
+            col, 
+            skipna=True
+        )
+    )
+
+    if col_type == "datetime64" or col_type == "datetime":
+        return "TIMESTAMP"
+    
+    elif col_type == "timedelta":
+        return "INT"
+    
+    elif col_type == "timedelta64":
+        return "BIGINT"
+    
+    elif col_type == "floating":
+        if col.dtype == "float32":
+            return "FLOAT"
+        else:
+            return "DOUBLE"
+    
+    elif col_type == "integer":
+        if col.dtype == "int32":
+            return "INT"
+        else:
+            return "BIGINT"
+    
+    elif col_type == "boolean":
+        return "BOOLEAN"
+    
+    elif col_type == "date":
+        return "DATE"
+    
+    elif col_type == "bytes":
+        return "BINARY"
+    
+    elif col_type in ["complex", "time"]:
+        raise ValueError(f"Data type `{col_type}` is not supported")
+    
+    return "STRING"
+
+
+def map_convert_df_athena(df: pd.DataFrame):
+    return [
+        (c, convert_df_athena(df[c])) 
+        for c in df.columns
+    ]
 
 
 def strtobool(val):

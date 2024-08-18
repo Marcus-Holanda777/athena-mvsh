@@ -9,15 +9,21 @@ def get_value_format(v):
     if isinstance(v, bool):
         return str(v)
 
-    if isinstance(v, date):
-        return f"""DATE '{v:%Y-%m-%d}'"""
-
     if isinstance(v, datetime):
-        return f"""TIMESTAMP '{v:%Y-%m-%d %H:%M:%S.%f}'"""
+        return f"TIMESTAMP '{v:%Y-%m-%d %H:%M:%S.%f}'"
+    
+    if isinstance(v, date):
+        return f"DATE '{v:%Y-%m-%d}'"
 
     if isinstance(v, str):
         value = v.replace("'", "''")
         return f"'{value}'"
+    
+    # @experimental
+    if isinstance(v, (list, set, tuple)):
+        return (
+            ','.join(f'{val!r}' for val in v)
+        )
 
     if isinstance(v, Decimal):
         value = f"{v:f}"
@@ -30,7 +36,7 @@ def get_value_format(v):
 
 def cast_format(
     consulta: str, 
-    *args, 
+    *args,
     **kwargs
 ) -> str:
     

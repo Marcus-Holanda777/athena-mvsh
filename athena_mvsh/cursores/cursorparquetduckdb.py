@@ -7,6 +7,9 @@ import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from athena_mvsh.error import DatabaseError
+from athena_mvsh.utils import parse_output_location
+import uuid
+from athena_mvsh.converter import map_convert_df_athena
 
 
 """@Experimental
@@ -62,21 +65,24 @@ class CursorParquetDuckdb(CursorBaseParquet):
         finally:
             con.close()
     
-    def __read_duckdb(self) -> pa.Table:
+    def __read_duckdb(self):
         
         bucket_s3 = self.get_bucket_s3()
         *__, manifest = self.unload_location(bucket_s3)
 
         with self.__connect_duckdb() as con:
             view = con.read_parquet(manifest)
-            return view.arrow()
+            while row := view.fetchone():
+                yield row
         
     def __pre_execute(
         self, 
         query: str, 
-        result_reuse_enable: bool = False
+        result_reuse_enable: bool = False,
+        unload: bool = True
     ):
-        query, __ = self.format_unload(query)
+        if unload:
+            query, __ = self.format_unload(query)
 
         id_exec = self.start_query_execution(
             query,
@@ -98,10 +104,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         __ = self.pool(id_exec)
         
-        try:
-            yield self.__read_duckdb()
-        except Exception as e:
-            yield pa.Table.from_pydict(dict())
+        yield from self.__read_duckdb()
 
     def to_parquet(
         self,
@@ -114,7 +117,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
             query,
             result_reuse_enable
         )
-
         __ = self.pool(id_exec)
         
         try:
@@ -135,11 +137,11 @@ class CursorParquetDuckdb(CursorBaseParquet):
         *args,
         **kwargs
     ) -> pd.DataFrame:
+        
         id_exec = self.__pre_execute(
             query,
             result_reuse_enable
         )
-
         __ = self.pool(id_exec)
         
         try:
@@ -164,7 +166,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
             query,
             result_reuse_enable
         )
-
         __ = self.pool(id_exec)
         
         try:
@@ -204,7 +205,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
             query,
             result_reuse_enable
         )
-
         __ = self.pool(id_exec)
         
         try:
@@ -217,6 +217,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 con.sql(f"DROP TABLE IF EXISTS {kwargs['table_name']}")
                 view.create(*args, **kwargs)
                 
+                # NOTE: Considerar arquivos apartir da segunda posicao
                 rest_file = list(manifest[1:])
                 with ThreadPoolExecutor(max_workers=workers) as executor:
                     ___ = executor.map(partial(insert_part, con), rest_file)
@@ -268,3 +269,88 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         except Exception as e:
             ...
+    
+
+    def write_dataframe(
+        self,
+        df: pd.DataFrame,
+        table_name: str,
+        schema: str,
+        location: str = None,
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'GZIP'
+    ) -> None:
+        
+        if location:
+            location = (
+                location if location.endswith('/')
+                else 
+                location + '/'
+            )
+        else:
+            location = self.s3_staging_dir
+        
+        # TODO: Verificar se tabela existe
+        response_meta = self.get_table_metadata(
+            catalog_name=catalog_name,
+            database_name=schema,
+            table_name=table_name
+        )
+
+        if response_meta:
+            # TODO: Deletar a tabela
+            id_exec = self.__pre_execute(
+                f"""
+                DROP TABLE `{schema}`.`{table_name}`
+                """,
+                unload=False
+            )
+            ___ = self.pool(id_exec)
+            
+            # TODO: Retornar bucket name
+            location_table = response_meta['Parameters']['location']
+            bucket_name, keys = parse_output_location(location_table) 
+
+            # TODO: Localizar e deletar o bucket associado a tabela
+            bucket = self.get_bucket_resource(bucket_name)
+            objects = bucket.objects.filter(Prefix=keys)
+
+            if list(objects.limit(1)):
+                objects.delete()
+
+        # NOTE: LER DATAFRAME COM DUCKDB
+        with self.__connect_duckdb() as db:
+            view = db.from_df(df)
+            s3_dir = f"{location}{uuid.uuid4()}/"
+            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet'
+
+            db.sql("""
+                CREATE OR REPLACE TABLE temp_tbl
+                AS from view
+            """
+            )
+
+            db.sql(f"""
+              COPY temp_tbl 
+              TO '{s3_dir_file}' (FORMAT PARQUET)   
+            """)
+            
+            cols = ',\n'.join(
+                [
+                    f"`{col}` {tipo}" 
+                    for col, tipo in map_convert_df_athena(df)
+                ]
+            )
+
+            stmt = f"""
+                CREATE EXTERNAL TABLE `{schema}`.`{table_name}` (
+                {cols}
+                )
+                STORED AS PARQUET
+                LOCATION '{s3_dir}'
+                TBLPROPERTIES ('parquet.compress'='{compression}')
+            """
+
+            # TODO: Deletar a tabela
+            id_exec = self.__pre_execute(stmt, unload=False)
+            ___ = self.pool(id_exec)

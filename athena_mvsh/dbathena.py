@@ -46,6 +46,8 @@ class DBAthena(ABC):
         self.token_next = None
         self.metadata = None
         self.get_query_execution = None
+        self.statement_type = None
+        self.substatement_type = None
         self.__kwargs = {**kwargs}
         self.cliente = boto3.client('athena', *args, **kwargs)
         self.config = self.__create_config()
@@ -101,6 +103,11 @@ class DBAthena(ABC):
         # PARA CONFIGURACOES FUTURAS
         # SEMPRE ATUALIZAR
         self.get_query_execution = response
+
+        # NOTE: STATEMENT and KIND da consulta
+        query_temp = response['QueryExecution']
+        self.statement_type = query_temp.get('StatementType', None)
+        self.substatement_type = query_temp.get('SubstatementType', None)
 
         return id_executation
     
@@ -160,20 +167,23 @@ class DBAthena(ABC):
         work_group: str = None
     ) -> dict:
         
-        data_response = dict(
-            CatalogName=catalog_name,
-            DatabaseName=database_name,
-            TableName=table_name,
-        )
+        try:
+            data_response = dict(
+                CatalogName=catalog_name,
+                DatabaseName=database_name,
+                TableName=table_name,
+            )
 
-        if work_group:
-            data_response['WorkGroup'] = work_group
+            if work_group:
+                data_response['WorkGroup'] = work_group
 
-        response = self.cliente.get_table_metadata(
-            **data_response
-        )
-
-        return response['TableMetadata']
+            response = self.cliente.get_table_metadata(
+                **data_response
+            )
+        except Exception:
+            return dict()
+        else:
+            return response['TableMetadata']
     
     def list_table_metadata(
         self,

@@ -105,6 +105,18 @@ class CursorBaseParquet(DBAthena):
 
         return bucket_s3
     
+    def get_bucket_resource(
+        self,
+        bucket_name: str
+    ):
+        bucket = boto3.resource('s3',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key'],
+            region_name=self.config['region_name'] 
+        )
+        
+        return bucket.Bucket(bucket_name)
+    
     def unload_location(self, bucket_s3):
         manifest = bucket_s3["Body"].read().decode("utf-8").strip()
         manifest = manifest.split("\n") if manifest else []

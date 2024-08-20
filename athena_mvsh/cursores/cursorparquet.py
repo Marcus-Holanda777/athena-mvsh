@@ -2,6 +2,7 @@ from athena_mvsh.cursores.cursores import CursorBaseParquet
 import pyarrow.fs as fs
 import pyarrow as pa
 import pyarrow.parquet as pq
+import pyarrow.csv as csv_arrow
 from athena_mvsh.error import ProgrammingError
 from itertools import filterfalse
 import pandas as pd
@@ -58,12 +59,10 @@ class CursorParquet(CursorBaseParquet):
         if not query_is_ddl(query):
             query, __ = self.format_unload(query)
 
-        id_exec = self.start_query_execution(
+        __ = self.start_query_execution(
             query,
             result_reuse_enable
         )
-
-        __ = self.pool(id_exec)
         
         try:
             tbl = self.__read_parquet()
@@ -83,12 +82,10 @@ class CursorParquet(CursorBaseParquet):
     ) -> pa.Table:
         
         query, __ = self.format_unload(query)
-        id_exec = self.start_query_execution(
+        __ = self.start_query_execution(
             query,
             result_reuse_enable
         )
-
-        __ = self.pool(id_exec)
         
         try:
             return self.__read_parquet()
@@ -101,6 +98,13 @@ class CursorParquet(CursorBaseParquet):
         **kwargs
     ):
         pq.write_table(*args, **kwargs)
+    
+    def to_csv(
+        self,
+        *args,
+        **kwargs
+    ):
+        csv_arrow.write_csv(*args, **kwargs)
     
     def to_pandas(
         self,

@@ -4,7 +4,11 @@ import pyarrow as pa
 from contextlib import contextmanager
 import os
 import pandas as pd
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import (
+    ThreadPoolExecutor, 
+    as_completed,
+    Future
+)
 from functools import partial
 from athena_mvsh.error import (
     DatabaseError, 
@@ -16,7 +20,10 @@ from athena_mvsh.utils import (
 )
 import uuid
 from athena_mvsh.converter import map_convert_df_athena
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 """@Experimental
 """
@@ -114,14 +121,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
         if query_is_ddl(query):
             unload = False
 
-        id_exec = self.__pre_execute(
+        __ = self.__pre_execute(
             query,
             result_reuse_enable,
             unload=unload
         )
 
-        __ = self.pool(id_exec)
-        
         try:
             yield from self.__read_duckdb()
         except Exception:
@@ -132,11 +137,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
         query: str, 
         result_reuse_enable: bool = False
     ):
-        id_exec = self.__pre_execute(
+        __ = self.__pre_execute(
             query,
             result_reuse_enable
         )
-        __ = self.pool(id_exec)
         
         try:
             return self.__read_arrow()
@@ -150,11 +154,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
         *args, 
         **kwargs
     ):
-        id_exec = self.__pre_execute(
+        __ = self.__pre_execute(
             query,
             result_reuse_enable
         )
-        __ = self.pool(id_exec)
         
         try:
             bucket_s3 = self.get_bucket_s3()
@@ -163,6 +166,29 @@ class CursorParquetDuckdb(CursorBaseParquet):
             with self.__connect_duckdb() as con:
                 view = con.read_parquet(manifest)
                 view.write_parquet(*args, **kwargs)
+
+        except Exception as e:
+            ...
+    
+    def to_csv(
+        self,
+        query: str,
+        result_reuse_enable: bool = False,
+        *args, 
+        **kwargs
+    ):
+        __ = self.__pre_execute(
+            query,
+            result_reuse_enable
+        )
+        
+        try:
+            bucket_s3 = self.get_bucket_s3()
+            *__, manifest = self.unload_location(bucket_s3)
+
+            with self.__connect_duckdb() as con:
+                view = con.read_parquet(manifest)
+                view.write_csv(*args, **kwargs)
 
         except Exception as e:
             ...
@@ -175,11 +201,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
         **kwargs
     ) -> pd.DataFrame:
         
-        id_exec = self.__pre_execute(
+        __ = self.__pre_execute(
             query,
             result_reuse_enable
         )
-        __ = self.pool(id_exec)
         
         try:
             bucket_s3 = self.get_bucket_s3()
@@ -199,11 +224,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
         *args, 
         **kwargs
     ):
-        id_exec = self.__pre_execute(
+        __ = self.__pre_execute(
             query,
             result_reuse_enable
         )
-        __ = self.pool(id_exec)
         
         try:
             bucket_s3 = self.get_bucket_s3()
@@ -236,13 +260,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 FROM read_parquet('{file}')
             """
             )
-            return 1
+            return f'File read_insert: {os.path.basename(file)}'
 
-        id_exec = self.__pre_execute(
+        __ = self.__pre_execute(
             query,
             result_reuse_enable
         )
-        __ = self.pool(id_exec)
         
         try:
             bucket_s3 = self.get_bucket_s3()
@@ -253,11 +276,25 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 view = con.read_parquet(start_file)
                 con.sql(f"DROP TABLE IF EXISTS {kwargs['table_name']}")
                 view.create(*args, **kwargs)
+
+                logger.info(f"Start create table: {kwargs['table_name']}")
                 
                 # NOTE: Considerar arquivos apartir da segunda posicao
                 rest_file = list(manifest[1:])
+                
+                logger.info(f"Length files: {len(rest_file)}")
+
                 with ThreadPoolExecutor(max_workers=workers) as executor:
-                    ___ = executor.map(partial(insert_part, con), rest_file)
+                    futures: list[Future] = []
+                    fun_part = partial(insert_part, con)
+
+                    for rst in rest_file:
+                        futures.append(executor.submit(fun_part, rst))
+                    
+                    for fut in as_completed(futures):
+                        result = fut.result()
+                        
+                        logger.info(result)
 
         except Exception as e:
             ...
@@ -287,12 +324,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
                     f"Table {kwargs['table_name']} not exists !"
                 )
 
-        id_exec = self.__pre_execute(
+        __ = self.__pre_execute(
             query,
             result_reuse_enable
         )
-
-        __ = self.pool(id_exec)
         
         try:
             bucket_s3 = self.get_bucket_s3()
@@ -342,13 +377,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         if response_meta:
             # TODO: Deletar a tabela
-            id_exec = self.__pre_execute(
+            __ = self.__pre_execute(
                 f"""
                 DROP TABLE `{schema}`.`{table_name}`
                 """,
                 unload=False
             )
-            ___ = self.pool(id_exec)
             
             # TODO: Retornar bucket name
             location_table = response_meta['Parameters']['location']
@@ -363,13 +397,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         # NOTE: LER DATAFRAME COM DUCKDB
         with self.__connect_duckdb() as db:
-            view = db.from_df(df)
             s3_dir = f"{location}{uuid.uuid4()}/"
             s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet'
 
             db.sql("""
                 CREATE OR REPLACE TABLE temp_tbl
-                AS from view
+                AS from df
             """
             )
 
@@ -395,5 +428,4 @@ class CursorParquetDuckdb(CursorBaseParquet):
             """
 
             # TODO: Criar a tabela
-            id_exec = self.__pre_execute(stmt, unload=False)
-            ___ = self.pool(id_exec)
+            __ = self.__pre_execute(stmt, unload=False)

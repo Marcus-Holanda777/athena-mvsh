@@ -7,6 +7,7 @@ from athena_mvsh.cursores import (
     CursorParquet
 )
 import pyarrow as pa
+import pyarrow.csv as csv_arrow
 from athena_mvsh.error import ProgrammingError
 import pandas as pd
 import os
@@ -86,6 +87,45 @@ class Athena(CursorIterator):
         tbl = self.to_arrow()
         args = (tbl, ) + args
         self.cursor.to_parquet(*args, **kwargs)
+    
+    def to_csv(
+        self, 
+        output_file: str,
+        delimiter: str = ';',
+        include_header: bool = True,
+
+    ) -> None:
+        
+        if not isinstance(self.cursor, CursorBaseParquet):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
+        kwargs = {}
+        if isinstance(self.cursor, CursorParquetDuckdb):
+            kwargs |= {
+                'header': include_header,
+                'sep': delimiter
+            }
+            args = (output_file, )
+
+            self.cursor.to_csv(
+                self.query,
+                self.result_reuse_enable,
+                *args,
+                **kwargs
+            )
+            return
+        
+        options = csv_arrow.WriteOptions(
+            delimiter = delimiter,
+            include_header = include_header,
+            quoting_style = 'all_valid'
+        )
+
+        kwargs['write_options'] = options
+        tbl = self.to_arrow()
+        args = (tbl, output_file)
+        
+        self.cursor.to_csv(*args, **kwargs)
 
     def to_create_table_db(
         self, 

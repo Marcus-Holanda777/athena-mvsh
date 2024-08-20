@@ -109,6 +109,9 @@ class CursorPython(DBAthena):
     def to_parquet(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')
     
+    def to_csv(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')
+    
     def to_pandas(self, *args, **kwargs) -> pd.DataFrame:
         return pd.DataFrame.from_records(*args, **kwargs)
 

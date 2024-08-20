@@ -3,6 +3,11 @@ import boto3
 from enum import Enum
 from time import sleep
 from athena_mvsh.error import DatabaseError
+import logging
+from itertools import chain
+
+
+logger = logging.getLogger(__name__)
 
 
 class AthenaStatus(str, Enum):
@@ -106,8 +111,25 @@ class DBAthena(ABC):
 
         # NOTE: STATEMENT and KIND da consulta
         query_temp = response['QueryExecution']
-        self.statement_type = query_temp.get('StatementType', None)
-        self.substatement_type = query_temp.get('SubstatementType', None)
+        self.statement_type = query_temp.get('StatementType')
+        self.substatement_type = query_temp.get('SubstatementType')
+        
+        # NOTE: Print LOGS
+        
+        def print_dict(dict_type: dict):
+            for k, v in dict_type.items():
+                if isinstance(v, dict):
+                    logger.info(f"[**{k}**]")
+                    print_dict(v)
+                else:
+                    logger.info(f'{k} - {v}')
+
+        for k, v in query_temp.items():
+            if isinstance(v, dict):
+                logger.info(f"[*{k}*]")
+                print_dict(v)
+            else:
+                logger.info(f'{k} - {v}')
 
         return id_executation
     
@@ -227,6 +249,14 @@ class DBAthena(ABC):
 
     @abstractmethod
     def to_parquet(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...
+    
+    @abstractmethod
+    def to_csv(
         self,
         *args,
         **kwargs

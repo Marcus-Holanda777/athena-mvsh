@@ -1,9 +1,29 @@
 import re
 import textwrap
 
+
 PATTERN_OUTPUT_LOCATION = re.compile(
     r"^s3://(?P<bucket>[a-zA-Z0-9.\-_]+)/(?P<key>.+)$"
 )
+
+
+def logs_print(response: dict, logger):
+    
+    def print_dict(dict_type: dict):
+        for k, v in dict_type.items():
+            if isinstance(v, dict):
+                logger.info(f"[**{k}**]")
+                print_dict(v)
+            else:
+                logger.info(f'{k} - {v}')
+
+    for k, v in response.items():
+        if isinstance(v, dict):
+            logger.info(f"[*{k}*]")
+            print_dict(v)
+        else:
+            logger.info(f'{k} - {v}')
+
 
 def parse_output_location(output_location: str) -> tuple:
     match = PATTERN_OUTPUT_LOCATION.search(output_location)

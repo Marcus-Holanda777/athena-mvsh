@@ -92,8 +92,7 @@ class Athena(CursorIterator):
         self, 
         output_file: str,
         delimiter: str = ';',
-        include_header: bool = True,
-
+        include_header: bool = True
     ) -> None:
         
         if not isinstance(self.cursor, CursorBaseParquet):

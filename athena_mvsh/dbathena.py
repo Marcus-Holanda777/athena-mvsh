@@ -4,7 +4,7 @@ from enum import Enum
 from time import sleep
 from athena_mvsh.error import DatabaseError
 import logging
-from itertools import chain
+from athena_mvsh.utils import logs_print
 
 
 logger = logging.getLogger(__name__)
@@ -115,21 +115,7 @@ class DBAthena(ABC):
         self.substatement_type = query_temp.get('SubstatementType')
         
         # NOTE: Print LOGS
-        
-        def print_dict(dict_type: dict):
-            for k, v in dict_type.items():
-                if isinstance(v, dict):
-                    logger.info(f"[**{k}**]")
-                    print_dict(v)
-                else:
-                    logger.info(f'{k} - {v}')
-
-        for k, v in query_temp.items():
-            if isinstance(v, dict):
-                logger.info(f"[*{k}*]")
-                print_dict(v)
-            else:
-                logger.info(f'{k} - {v}')
+        logs_print(query_temp, logger)
 
         return id_executation
     

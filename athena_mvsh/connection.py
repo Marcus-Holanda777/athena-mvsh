@@ -183,6 +183,7 @@ class Athena(CursorIterator):
         table_name: str,
         schema: str,
         location: str = None,
+        partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
         compression: str = 'GZIP'
     ) -> None:
@@ -195,6 +196,7 @@ class Athena(CursorIterator):
             table_name,
             schema,
             location,
+            partitions,
             catalog_name,
             compression
         )

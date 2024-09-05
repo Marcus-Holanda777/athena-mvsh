@@ -349,6 +349,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         table_name: str,
         schema: str,
         location: str = None,
+        partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
         compression: str = 'GZIP'
     ) -> None:
@@ -398,23 +399,42 @@ class CursorParquetDuckdb(CursorBaseParquet):
         # NOTE: LER DATAFRAME COM DUCKDB
         with self.__connect_duckdb() as db:
             s3_dir = f"{location}{uuid.uuid4()}/"
-            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet'
+            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet.gzip'
 
             db.sql("""
                 CREATE OR REPLACE TABLE temp_tbl
                 AS from df
             """
             )
+            
+            cols_map = map_convert_df_athena(df)
+            parts_duck = parts_athena = ''
+
+            if partitions:
+                parts_duck = f"""
+                , PARTITION_BY ({','.join(partitions)}), FILE_EXTENSION 'parquet.gz'
+                """
+
+                parts_athena = f"""
+                PARTITIONED BY (
+                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
+                )
+                """
 
             db.sql(f"""
               COPY temp_tbl 
-              TO '{s3_dir_file}' (FORMAT PARQUET)   
+              TO '{s3_dir if partitions else s3_dir_file}'
+              (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
             """)
             
+            if partitions is None:
+                partitions = list()
+
             cols = ',\n'.join(
                 [
                     f"`{col}` {tipo}" 
-                    for col, tipo in map_convert_df_athena(df)
+                    for col, tipo in cols_map
+                    if col not in partitions
                 ]
             )
 
@@ -422,6 +442,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 CREATE EXTERNAL TABLE `{schema}`.`{table_name}` (
                 {cols}
                 )
+                {parts_athena}
                 STORED AS PARQUET
                 LOCATION '{s3_dir}'
                 TBLPROPERTIES ('parquet.compress'='{compression}')
@@ -429,3 +450,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             # TODO: Criar a tabela
             __ = self.__pre_execute(stmt, unload=False)
+            
+            # NOTE: O duckdb só particiona os dados no
+            # estilo HIVE, como as particoes ja existem antes de criar a tabela
+            # é preciso realizar um reparo
+            if partitions:
+                hive_parts = f"""MSCK REPAIR TABLE `{schema}`.`{table_name}`"""
+                __ = self.__pre_execute(hive_parts, unload=False)

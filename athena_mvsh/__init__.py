@@ -5,7 +5,7 @@ from athena_mvsh.cursores import (
     CursorPython
 )
 
-__version__ = '0.0.07'
+__version__ = '0.0.08'
 
 __all__ = [
     'Athena',

@@ -14,6 +14,7 @@ import os
 from itertools import islice
 from athena_mvsh.formatador import cast_format
 from athena_mvsh.utils import query_is_ddl
+from pathlib import Path
 
 
 WORKERS = min([4, os.cpu_count()])
@@ -193,6 +194,30 @@ class Athena(CursorIterator):
         
         self.cursor.write_dataframe(
             df,
+            table_name,
+            schema,
+            location,
+            partitions,
+            catalog_name,
+            compression
+        )
+    
+    def write_parquet(
+        self,
+        file: str | Path,
+        table_name: str,
+        schema: str,
+        location: str = None,
+        partitions: list[str] = None,
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'GZIP'
+    ) -> None:
+        
+        if not isinstance(self.cursor, CursorParquetDuckdb):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
+        self.cursor.write_parquet(
+            file,
             table_name,
             schema,
             location,

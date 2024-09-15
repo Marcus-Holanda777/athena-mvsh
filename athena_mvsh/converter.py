@@ -4,6 +4,9 @@ from datetime import date, datetime, time
 from decimal import Decimal
 from typing import Any
 import pandas as pd
+from duckdb import DuckDBPyConnection
+from pathlib import Path
+
 
 def convert_df_athena(col: pd.Series) -> str:
 
@@ -55,6 +58,64 @@ def map_convert_df_athena(df: pd.DataFrame):
     return [
         (c, convert_df_athena(df[c])) 
         for c in df.columns
+    ]
+
+
+def convert_tp_duckdb(col_type: str) -> str:
+    col_type = col_type.upper()
+
+    if col_type in('BIT', 'BLOB'):
+        return "BINARY"
+    
+    if col_type.startswith("TIMESTAMP"):
+        return "TIMESTAMP"
+    
+    if col_type.startswith('TIME'):
+        return "TIME"
+    
+    if col_type in("UBIGINT", "", "UHUGEINT", "HUGEINT"):
+        return "BIGINT"
+    
+    if col_type == 'USMALLINT':
+        return 'SMALLINT'
+    
+    if col_type == "UTINYINT":
+        return "TINYINT"
+    
+    if col_type == "UINTEGER":
+        return "INTEGER"
+    
+    if col_type in("UUID", "VARCHAR", "ENUM", "UNION"):
+        return "STRING"
+    
+    if col_type == "LIST":
+        return "ARRAY"
+    
+    return col_type
+
+
+def map_convert_duckdb_athena(
+    con: DuckDBPyConnection, 
+    file: str | Path
+):
+    
+    temp_tbl = f"""
+        CREATE OR REPLACE TEMP TABLE validade_type 
+        AS FROM read_parquet('{str(file)}') LIMIT 1;
+    """
+    con.sql(temp_tbl)
+
+    stmt = """SELECT column_name, data_type 
+      FROM information_schema.columns
+      where table_name = 'validade_type'
+	  ORDER BY ordinal_position;
+    """
+	 
+    rst = con.sql(stmt).fetchall()
+
+    return [
+        (col, convert_tp_duckdb(tep)) 
+        for col, tep in rst
     ]
 
 

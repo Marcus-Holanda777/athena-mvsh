@@ -288,3 +288,11 @@ class DBAthena(ABC):
         **kwargs
     ):
         ...
+
+    @abstractmethod
+    def write_parquet(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...

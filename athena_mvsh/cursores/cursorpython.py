@@ -126,3 +126,12 @@ class CursorPython(DBAthena):
     
     def write_dataframe(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')
+    
+    def write_dataframe(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')
+    
+    def write_parquet(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')
+    
+    def write_table_iceberg(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')

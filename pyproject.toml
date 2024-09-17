@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "athena-mvsh"
-version = "0.0.09"
+version = "0.0.10"
 description = "Athena-mvsh é um biblioteca python, que interage com o serviço Amazon Athena"
 authors = ["Marcus Holanda <mvsh777@hotmail.com>"]
 readme = "README.md"

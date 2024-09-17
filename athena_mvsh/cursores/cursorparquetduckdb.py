@@ -25,6 +25,7 @@ from athena_mvsh.converter import (
 )
 import logging
 from pathlib import Path
+from typing import Literal
 
 
 logger = logging.getLogger(__name__)
@@ -345,7 +346,221 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         except Exception as e:
             ...
+
+    def __get_table_exists(
+        self,
+        catalog_name: str,
+        schema: str,
+        table_name: str
+    ):
+        
+        response_meta = self.get_table_metadata(
+            catalog_name=catalog_name,
+            database_name=schema,
+            table_name=table_name
+        )
+
+        return response_meta
+
     
+    def __delete_table(
+        self, 
+        catalog_name: str,
+        schema: str, 
+        table_name: str
+    ) -> None:
+        
+        response_meta = self.__get_table_exists(
+            catalog_name,
+            schema,
+            table_name
+        )
+
+        if response_meta:
+            # TODO: Deletar a tabela
+            __ = self.__pre_execute(
+                f"""
+                DROP TABLE `{schema}`.`{table_name}`
+                """,
+                unload=False
+            )
+                
+            # TODO: Retornar bucket name
+            location_table = response_meta['Parameters']['location']
+            bucket_name, keys = parse_output_location(location_table) 
+
+            # TODO: Localizar e deletar o bucket associado a tabela
+            bucket = self.get_bucket_resource(bucket_name)
+            objects = bucket.objects.filter(Prefix=keys)
+
+            if list(objects.limit(1)):
+                objects.delete()
+
+    def __create_table_external(
+        self,
+        schema: str,
+        table_name: str,
+        location: str,
+        output: pd.DataFrame | str | Path,
+        partitions: list[str] = None,
+        compression: str = 'GZIP'
+    ):
+
+        # NOTE: LER DATAFRAME DUCKDB ou PARQUET
+        with self.__connect_duckdb() as db:
+            s3_dir = f"{location}{uuid.uuid4()}/"
+            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet.gzip'
+            
+            if isinstance(output, pd.DataFrame):
+               cols_map = map_convert_df_athena(output)
+            else:
+                cols_map = map_convert_duckdb_athena(db, output)
+
+            parts_duck = parts_athena = ''
+
+            if partitions:
+                parts_duck = f"""
+                , PARTITION_BY ({','.join(partitions)}), FILE_EXTENSION 'parquet.gz'
+                """
+
+                parts_athena = f"""
+                PARTITIONED BY (
+                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
+                )
+                """
+            
+            if isinstance(output, pd.DataFrame):
+                db.sql(f"""
+                COPY output 
+                TO '{s3_dir if partitions else s3_dir_file}'
+                (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
+                """)
+            else:
+                db.sql(f"""
+                COPY (from read_parquet('{str(output)}')) 
+                TO '{s3_dir if partitions else s3_dir_file}'
+                (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
+                """)
+            
+            if partitions is None:
+                partitions = list()
+
+            cols = ',\n'.join(
+                [
+                    f"`{col}` {tipo}" 
+                    for col, tipo in cols_map
+                    if col not in partitions
+                ]
+            )
+
+            stmt = f"""
+                CREATE EXTERNAL TABLE `{schema}`.`{table_name}` (
+                {cols}
+                )
+                {parts_athena}
+                STORED AS PARQUET
+                LOCATION '{s3_dir}'
+                TBLPROPERTIES ('parquet.compress'='{compression}')
+            """
+
+            # TODO: Criar a tabela
+            __ = self.__pre_execute(stmt, unload=False)
+            
+            # NOTE: O duckdb só particiona os dados no
+            # estilo HIVE, como as particoes ja existem antes de criar a tabela
+            # é preciso realizar um reparo
+            if partitions:
+                hive_parts = f"""MSCK REPAIR TABLE `{schema}`.`{table_name}`"""
+                __ = self.__pre_execute(hive_parts, unload=False)
+        
+        return cols_map
+    
+
+    def __create_table_iceberg(
+        self,
+        schema: str,
+        table_name: str,
+        location: str,
+        cols_map,
+        partitions: list[str] = None,
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'snappy',
+        if_exists: Literal['replace', 'append'] = 'replace'
+    ) -> None:
+        
+        if if_exists == 'replace':
+            # NOTE: DELETAR SE EXISTIR
+            self.__delete_table(
+                catalog_name,
+                schema,
+                table_name
+            )
+
+            s3_dir = f"{location}{uuid.uuid4()}/"
+            parts_athena = ''
+
+            if partitions:
+                parts_athena = f"""
+                PARTITIONED BY (
+                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
+                )
+                """
+                
+            if partitions is None:
+                partitions = list()
+
+            # TODO: aterar tipos do athena -> iceberg
+            for p, (col, tipo) in enumerate(cols_map):
+                if tipo in ('INTEGER', 'TINYINT', 'SMALLINT'):
+                    cols_map[p] = (col, 'INT')
+
+                elif tipo == 'BIGINT':
+                    cols_map[p] = (col, 'LONG')
+                
+                elif tipo == 'ARRAY':
+                    cols_map[p] = (col, 'LIST')
+
+                else:
+                    cols_map[p] = (col, tipo)
+                
+            cols = ',\n'.join(
+                [
+                    f"`{col}` {tipo}"
+                    for col, tipo in cols_map
+                    if col not in partitions
+                ]
+            )
+
+            stmt = f"""
+                CREATE TABLE `{schema}`.`{table_name}` (
+                {cols}
+                )
+                {parts_athena}
+                LOCATION '{s3_dir}'
+                TBLPROPERTIES (
+                    'table_type'='ICEBERG',
+                    'format'='parquet',
+                    'write_compression'='{compression}',
+                    'optimize_rewrite_delete_file_threshold'='10'
+                )
+            """
+
+            # TODO: Criar a tabela
+            __ = self.__pre_execute(stmt, unload=False)
+        
+        stmt_insert = f"""
+        INSERT INTO "{schema}"."{table_name}"
+        SELECT * FROM "{schema}"."temp_{table_name}"
+        """
+
+        __ = self.__pre_execute(stmt_insert, unload=False)
+
+        # TODO: Deletar tabela temporaria
+        self.__delete_table(
+            catalog_name,
+            schema,
+            f'temp_{table_name}'
+        )
 
     def write_dataframe(
         self,
@@ -373,89 +588,22 @@ class CursorParquetDuckdb(CursorBaseParquet):
         else:
             location = self.s3_staging_dir
         
-        # TODO: Verificar se tabela existe
-        response_meta = self.get_table_metadata(
-            catalog_name=catalog_name,
-            database_name=schema,
-            table_name=table_name
+        
+        self.__delete_table(
+            catalog_name,
+            schema, 
+            table_name
         )
-
-        if response_meta:
-            # TODO: Deletar a tabela
-            __ = self.__pre_execute(
-                f"""
-                DROP TABLE `{schema}`.`{table_name}`
-                """,
-                unload=False
-            )
-            
-            # TODO: Retornar bucket name
-            location_table = response_meta['Parameters']['location']
-            bucket_name, keys = parse_output_location(location_table) 
-
-            # TODO: Localizar e deletar o bucket associado a tabela
-            bucket = self.get_bucket_resource(bucket_name)
-            objects = bucket.objects.filter(Prefix=keys)
-
-            if list(objects.limit(1)):
-                objects.delete()
-
-        # NOTE: LER DATAFRAME COM DUCKDB
-        with self.__connect_duckdb() as db:
-            s3_dir = f"{location}{uuid.uuid4()}/"
-            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet.gzip'
-            
-            cols_map = map_convert_df_athena(df)
-            parts_duck = parts_athena = ''
-
-            if partitions:
-                parts_duck = f"""
-                , PARTITION_BY ({','.join(partitions)}), FILE_EXTENSION 'parquet.gz'
-                """
-
-                parts_athena = f"""
-                PARTITIONED BY (
-                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
-                )
-                """
-
-            db.sql(f"""
-              COPY df 
-              TO '{s3_dir if partitions else s3_dir_file}'
-              (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
-            """)
-            
-            if partitions is None:
-                partitions = list()
-
-            cols = ',\n'.join(
-                [
-                    f"`{col}` {tipo}" 
-                    for col, tipo in cols_map
-                    if col not in partitions
-                ]
-            )
-
-            stmt = f"""
-                CREATE EXTERNAL TABLE `{schema}`.`{table_name}` (
-                {cols}
-                )
-                {parts_athena}
-                STORED AS PARQUET
-                LOCATION '{s3_dir}'
-                TBLPROPERTIES ('parquet.compress'='{compression}')
-            """
-
-            # TODO: Criar a tabela
-            __ = self.__pre_execute(stmt, unload=False)
-            
-            # NOTE: O duckdb só particiona os dados no
-            # estilo HIVE, como as particoes ja existem antes de criar a tabela
-            # é preciso realizar um reparo
-            if partitions:
-                hive_parts = f"""MSCK REPAIR TABLE `{schema}`.`{table_name}`"""
-                __ = self.__pre_execute(hive_parts, unload=False)
-
+        
+        # TODO: Criar tabela com o tipo correto
+        self.__create_table_external(
+            schema, 
+            table_name, 
+            location,
+            df,
+            partitions,
+            compression
+        )
 
     def write_parquet(
         self,
@@ -478,84 +626,75 @@ class CursorParquetDuckdb(CursorBaseParquet):
             location = self.s3_staging_dir
         
         # TODO: Verificar se tabela existe
-        response_meta = self.get_table_metadata(
-            catalog_name=catalog_name,
-            database_name=schema,
-            table_name=table_name
+        self.__delete_table(
+            catalog_name,
+            schema,
+            table_name
         )
 
-        if response_meta:
-            # TODO: Deletar a tabela
-            __ = self.__pre_execute(
-                f"""
-                DROP TABLE `{schema}`.`{table_name}`
-                """,
-                unload=False
+        # TODO: Criar tabela com o tipo correto
+        self.__create_table_external(
+            schema,
+            table_name,
+            location,
+            file,
+            partitions,
+            compression
+        )
+    
+
+    def write_table_iceberg(
+        self,
+        file: str | Path,
+        table_name: str,
+        schema: str,
+        location: str = None,
+        partitions: list[str] = None,
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'snappy',
+        if_exists: Literal['replace', 'append'] = 'replace'
+    ) -> None:
+        
+        """
+        Criar uma tabela externa temporaria, que vai armazenar os dados do parquet
+        Criar TABELA ICEBERG DO MESMO TIPO
+        """
+        
+        # TODO: TABELA EXTERNA
+        if location:
+            location = (
+                location if location.endswith('/')
+                else 
+                location + '/'
             )
-            
-            # TODO: Retornar bucket name
-            location_table = response_meta['Parameters']['location']
-            bucket_name, keys = parse_output_location(location_table) 
+        else:
+            location = self.s3_staging_dir
+        
+        temp_table_name = f'temp_{table_name}'
 
-            # TODO: Localizar e deletar o bucket associado a tabela
-            bucket = self.get_bucket_resource(bucket_name)
-            objects = bucket.objects.filter(Prefix=keys)
+        self.__delete_table(
+            catalog_name,
+            schema,
+            temp_table_name
+        )
+        
+        cols_map = self.__create_table_external(
+            schema,
+            temp_table_name,
+            location,
+            file,
+            partitions,
+            compression
+        )
 
-            if list(objects.limit(1)):
-                objects.delete()
-
-        # NOTE: LER DATAFRAME COM DUCKDB
-        with self.__connect_duckdb() as db:
-            s3_dir = f"{location}{uuid.uuid4()}/"
-            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet.gzip'
-            
-            cols_map = map_convert_duckdb_athena(db, file)
-            parts_duck = parts_athena = ''
-
-            if partitions:
-                parts_duck = f"""
-                , PARTITION_BY ({','.join(partitions)}), FILE_EXTENSION 'parquet.gz'
-                """
-
-                parts_athena = f"""
-                PARTITIONED BY (
-                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
-                )
-                """
-
-            db.sql(f"""
-              COPY (from read_parquet('{str(file)}')) 
-              TO '{s3_dir if partitions else s3_dir_file}'
-              (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
-            """)
-            
-            if partitions is None:
-                partitions = list()
-
-            cols = ',\n'.join(
-                [
-                    f"`{col}` {tipo}" 
-                    for col, tipo in cols_map
-                    if col not in partitions
-                ]
-            )
-
-            stmt = f"""
-                CREATE EXTERNAL TABLE `{schema}`.`{table_name}` (
-                {cols}
-                )
-                {parts_athena}
-                STORED AS PARQUET
-                LOCATION '{s3_dir}'
-                TBLPROPERTIES ('parquet.compress'='{compression}')
-            """
-
-            # TODO: Criar a tabela
-            __ = self.__pre_execute(stmt, unload=False)
-            
-            # NOTE: O duckdb só particiona os dados no
-            # estilo HIVE, como as particoes ja existem antes de criar a tabela
-            # é preciso realizar um reparo
-            if partitions:
-                hive_parts = f"""MSCK REPAIR TABLE `{schema}`.`{table_name}`"""
-                __ = self.__pre_execute(hive_parts, unload=False)
+        # TODO: Tabela ICEBERG
+        self.__create_table_iceberg(
+            schema,
+            table_name,
+            location,
+            cols_map,
+            partitions,
+            catalog_name,
+            compression,
+            if_exists
+        )

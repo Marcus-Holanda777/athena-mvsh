@@ -15,6 +15,7 @@ from itertools import islice
 from athena_mvsh.formatador import cast_format
 from athena_mvsh.utils import query_is_ddl
 from pathlib import Path
+from typing import Literal
 
 
 WORKERS = min([4, os.cpu_count()])
@@ -224,6 +225,32 @@ class Athena(CursorIterator):
             partitions,
             catalog_name,
             compression
+        )
+    
+    def write_table_iceberg(
+        self,
+        file: str | Path,
+        table_name: str,
+        schema: str,
+        location: str = None,
+        partitions: list[str] = None,
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'snappy',
+        if_exists: Literal['replace', 'append'] = 'replace'
+    ) -> None:
+        
+        if not isinstance(self.cursor, CursorParquetDuckdb):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
+        self.cursor.write_table_iceberg(
+            file,
+            table_name,
+            schema,
+            location,
+            partitions,
+            catalog_name,
+            compression,
+            if_exists
         )
         
     def to_pandas(self, *args, **kwargs) -> pd.DataFrame:

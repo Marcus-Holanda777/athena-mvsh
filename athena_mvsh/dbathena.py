@@ -296,3 +296,11 @@ class DBAthena(ABC):
         **kwargs
     ):
         ...
+    
+    @abstractmethod
+    def write_table_iceberg(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...

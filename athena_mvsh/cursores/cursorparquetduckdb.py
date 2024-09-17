@@ -447,7 +447,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             cols = ',\n'.join(
                 [
-                    f"`{col}` {tipo}" 
+                    f"`{col}` {tipo}"
                     for col, tipo in cols_map
                     if col not in partitions
                 ]
@@ -475,7 +475,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
         
         return cols_map
     
-
     def __create_table_iceberg(
         self,
         schema: str,
@@ -496,19 +495,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 table_name
             )
 
-            s3_dir = f"{location}{uuid.uuid4()}/"
-            parts_athena = ''
-
-            if partitions:
-                parts_athena = f"""
-                PARTITIONED BY (
-                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
-                )
-                """
-                
-            if partitions is None:
-                partitions = list()
-
             # TODO: aterar tipos do athena -> iceberg
             for p, (col, tipo) in enumerate(cols_map):
                 if tipo in ('INTEGER', 'TINYINT', 'SMALLINT'):
@@ -522,6 +508,19 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
                 else:
                     cols_map[p] = (col, tipo)
+
+            s3_dir = f"{location}{uuid.uuid4()}/"
+            parts_athena = ''
+
+            if partitions:
+                parts_athena = f"""
+                PARTITIONED BY (
+                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
+                )
+                """
+                
+            if partitions is None:
+                partitions = list()
                 
             cols = ',\n'.join(
                 [
@@ -587,7 +586,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
             )
         else:
             location = self.s3_staging_dir
-        
         
         self.__delete_table(
             catalog_name,

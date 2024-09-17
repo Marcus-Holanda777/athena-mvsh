@@ -658,6 +658,8 @@ class CursorParquetDuckdb(CursorBaseParquet):
         """
         Criar uma tabela externa temporaria, que vai armazenar os dados do parquet
         Criar TABELA ICEBERG DO MESMO TIPO
+        Inserir na tabela ICEBERG
+        Deletar tabela temporaria
         """
         
         # TODO: TABELA EXTERNA
@@ -683,8 +685,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
             temp_table_name,
             location,
             file,
-            partitions,
-            compression
+            partitions
         )
 
         # TODO: Tabela ICEBERG

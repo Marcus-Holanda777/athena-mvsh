@@ -6,6 +6,7 @@ from typing import Any
 import pandas as pd
 from duckdb import DuckDBPyConnection
 from pathlib import Path
+import os
 
 
 def convert_df_athena(col: pd.Series) -> str:
@@ -96,12 +97,12 @@ def convert_tp_duckdb(col_type: str) -> str:
 
 def map_convert_duckdb_athena(
     con: DuckDBPyConnection, 
-    file: str | Path
+    file: list[str] | str
 ):
     
     temp_tbl = f"""
         CREATE OR REPLACE TEMP TABLE validade_type 
-        AS FROM read_parquet('{str(file)}') LIMIT 1;
+        AS FROM read_parquet({file!r}) LIMIT 1;
     """
     con.sql(temp_tbl)
 

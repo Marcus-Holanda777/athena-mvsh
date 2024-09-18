@@ -205,7 +205,7 @@ class Athena(CursorIterator):
     
     def write_parquet(
         self,
-        file: str | Path,
+        file: list[str | Path] | str | Path,
         table_name: str,
         schema: str,
         location: str = None,
@@ -229,7 +229,7 @@ class Athena(CursorIterator):
     
     def write_table_iceberg(
         self,
-        file: str | Path,
+        file: list[str | Path] | str | Path,
         table_name: str,
         schema: str,
         location: str = None,

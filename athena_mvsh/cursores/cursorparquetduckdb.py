@@ -401,7 +401,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         table_name: str,
         location: str,
-        output: pd.DataFrame | str | Path,
+        output: pd.DataFrame | list[str | Path] | str | Path,
         partitions: list[str] = None,
         compression: str = 'GZIP'
     ):
@@ -414,6 +414,15 @@ class CursorParquetDuckdb(CursorBaseParquet):
             if isinstance(output, pd.DataFrame):
                cols_map = map_convert_df_athena(output)
             else:
+                
+                # NOTE: Normaliza o caminho para o duckdb
+                normaliza_path = lambda f: str(f).replace(os.sep, os.altsep)
+                if isinstance(output, list):
+                    output = list(map(normaliza_path, output))
+                
+                if isinstance(output, (str, Path)):
+                    output = normaliza_path(output)
+
                 cols_map = map_convert_duckdb_athena(db, output)
 
             parts_duck = parts_athena = ''
@@ -437,7 +446,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 """)
             else:
                 db.sql(f"""
-                COPY (from read_parquet('{str(output)}')) 
+                COPY (from read_parquet({output!r})) 
                 TO '{s3_dir if partitions else s3_dir_file}'
                 (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
                 """)
@@ -605,7 +614,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
     def write_parquet(
         self,
-        file: str | Path,
+        file: list[str | Path] | str | Path,
         table_name: str,
         schema: str,
         location: str = None,
@@ -643,7 +652,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
     def write_table_iceberg(
         self,
-        file: str | Path,
+        file: list[str | Path] | str | Path,
         table_name: str,
         schema: str,
         location: str = None,
@@ -652,13 +661,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
         compression: str = 'snappy',
         if_exists: Literal['replace', 'append'] = 'replace'
     ) -> None:
-        
-        """
-        Criar uma tabela externa temporaria, que vai armazenar os dados do parquet
-        Criar TABELA ICEBERG DO MESMO TIPO
-        Inserir na tabela ICEBERG
-        Deletar tabela temporaria
-        """
         
         # TODO: TABELA EXTERNA
         if location:

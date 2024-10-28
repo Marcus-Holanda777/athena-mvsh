@@ -652,7 +652,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
     def write_table_iceberg(
         self,
-        file: list[str | Path] | str | Path,
+        data: pd.DataFrame | list[str | Path] | str | Path,
         table_name: str,
         schema: str,
         location: str = None,
@@ -684,7 +684,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
             schema,
             temp_table_name,
             location,
-            file,
+            data,
             partitions
         )
 

@@ -229,7 +229,7 @@ class Athena(CursorIterator):
     
     def write_table_iceberg(
         self,
-        file: list[str | Path] | str | Path,
+        data: pd.DataFrame | list[str | Path] | str | Path,
         table_name: str,
         schema: str,
         location: str = None,
@@ -243,7 +243,7 @@ class Athena(CursorIterator):
             raise ProgrammingError('Function not implemented for cursor !')
         
         self.cursor.write_table_iceberg(
-            file,
+            data,
             table_name,
             schema,
             location,

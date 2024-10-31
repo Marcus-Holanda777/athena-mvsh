@@ -135,3 +135,6 @@ class CursorParquet(CursorBaseParquet):
     
     def write_table_iceberg(self, *args, **kwargs):
         raise ProgrammingError('Function not implemented for cursor !')
+    
+    def merge_table_iceberg(self, *args, **kwargs):
+        raise ProgrammingError('Function not implemented for cursor !')

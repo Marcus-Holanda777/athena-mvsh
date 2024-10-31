@@ -252,6 +252,30 @@ class Athena(CursorIterator):
             compression,
             if_exists
         )
+    
+    def merge_table_iceberg(
+        self,
+        target_table: str,
+        source_data: pd.DataFrame | list[str | Path] | str | Path,
+        schema: str,
+        predicate: str,
+        alias: tuple = ('t', 's'),
+        location: str = None,
+        catalog_name: str = 'awsdatacatalog',
+    ) -> None:
+        
+        if not isinstance(self.cursor, CursorParquetDuckdb):
+            raise ProgrammingError('Function not implemented for cursor !')
+        
+        self.cursor.merge_table_iceberg(
+            target_table,
+            source_data,
+            schema,
+            predicate,
+            alias,
+            location,
+            catalog_name
+        )
         
     def to_pandas(self, *args, **kwargs) -> pd.DataFrame:
         if isinstance(self.cursor, CursorParquetDuckdb):

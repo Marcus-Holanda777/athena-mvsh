@@ -687,3 +687,67 @@ class CursorParquetDuckdb(CursorBaseParquet):
             compression,
             if_exists
         )
+    
+    def merge_table_iceberg(
+        self,
+        target_table: str,
+        source_data: pd.DataFrame | list[str | Path] | str | Path,
+        schema: str,
+        predicate: str,
+        alias: tuple = ('t', 's'),
+        location: str = None,
+        catalog_name: str = 'awsdatacatalog',
+    ) -> None:
+        
+        # TODO: Criar a tabela temporaria para UPSERT
+        # verificar se tabela existe se existir deletar
+        if location:
+            location = (
+                location if location.endswith('/')
+                else 
+                location + '/'
+            )
+        else:
+            location = self.s3_staging_dir
+
+        temp_table_name = f'temp_{target_table}'
+
+        self.__delete_table(
+            catalog_name,
+            schema,
+            temp_table_name
+        )
+        
+        cols_map = self.__create_table_external(
+            schema,
+            temp_table_name,
+            location,
+            source_data
+        )
+
+        # TODO: Criar a consulta do tipo MERGE
+        cols = list(map(lambda col: f'"{col[0]}"', cols_map))
+        target, source = alias
+        update_cols = ', '.join(f'{col} = {source}.{col}' for col in cols)
+        insert_cols = ', '.join(cols)
+        values_cols = ', '.join(f'{source}.{col}' for col in cols)
+
+        stmt= f"""
+            MERGE INTO "{schema}"."{target_table}" AS {target}
+            USING "{schema}"."{temp_table_name}" AS {source}
+            ON ({predicate})
+            WHEN MATCHED THEN
+               UPDATE SET {update_cols}
+            WHEN NOT MATCHED THEN
+               INSERT ({insert_cols}) VALUES ({values_cols})
+        """
+        
+        # TODO: Executar consulta MERGE e deletar tabela temp
+        __ = self.__pre_execute(stmt, unload=False)
+
+        self.__delete_table(
+            catalog_name,
+            schema,
+            temp_table_name
+        )
+

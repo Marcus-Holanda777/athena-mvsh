@@ -304,3 +304,11 @@ class DBAthena(ABC):
         **kwargs
     ):
         ...
+    
+    @abstractmethod
+    def merge_table_iceberg(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...

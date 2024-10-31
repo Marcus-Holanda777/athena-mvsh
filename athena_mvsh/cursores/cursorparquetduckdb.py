@@ -504,20 +504,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 table_name
             )
 
-            # TODO: aterar tipos do athena -> iceberg
-            for p, (col, tipo) in enumerate(cols_map):
-                if tipo in ('INTEGER', 'TINYINT', 'SMALLINT'):
-                    cols_map[p] = (col, 'INT')
-
-                elif tipo == 'BIGINT':
-                    cols_map[p] = (col, 'LONG')
-                
-                elif tipo == 'ARRAY':
-                    cols_map[p] = (col, 'LIST')
-
-                else:
-                    cols_map[p] = (col, tipo)
-
             s3_dir = f"{location}{uuid.uuid4()}/"
             parts_athena = ''
 
@@ -552,6 +538,8 @@ class CursorParquetDuckdb(CursorBaseParquet):
                     'optimize_rewrite_delete_file_threshold'='10'
                 )
             """
+
+            print(stmt)
 
             # TODO: Criar a tabela
             __ = self.__pre_execute(stmt, unload=False)

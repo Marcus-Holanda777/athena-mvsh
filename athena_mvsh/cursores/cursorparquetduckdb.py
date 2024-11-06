@@ -539,8 +539,6 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 )
             """
 
-            print(stmt)
-
             # TODO: Criar a tabela
             __ = self.__pre_execute(stmt, unload=False)
         

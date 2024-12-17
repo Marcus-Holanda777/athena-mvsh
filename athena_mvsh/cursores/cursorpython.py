@@ -26,6 +26,12 @@ class CursorPython(DBAthena):
             *args,
             **kwargs
         )
+
+    def __get_rowcount(self, response) -> int:
+        updatecount = response.get('UpdateCount', -1)
+        if updatecount == 0:
+            return -1
+        return updatecount
     
     def __get_metadata(self, response) -> tuple:
         rst = response['ResultSet']
@@ -64,6 +70,9 @@ class CursorPython(DBAthena):
                 for c in self.metadata
             ]
     
+    def rowcount(self):
+        return self.getrowcount
+    
     def execute(
         self, 
         query: str,
@@ -93,8 +102,14 @@ class CursorPython(DBAthena):
             self.token_next = response.get("NextToken", None)
             if offset == 1:
                self.metadata = self.__get_metadata(response)
+               self.getrowcount = self.__get_rowcount(response)
             
             rows = self.__get_rows_set(response)
+            
+            # retornar total de registros do select
+            
+            self.getrowcount += len(rows)
+
             yield from self.__get_rows_tuple(rows, offset)
 
             if self.token_next is None:

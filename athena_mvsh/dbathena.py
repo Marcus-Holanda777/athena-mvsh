@@ -50,6 +50,7 @@ class DBAthena(ABC):
         self.result_reuse_enable = result_reuse_enable
         self.token_next = None
         self.metadata = None
+        self.getrowcount = -1
         self.get_query_execution = None
         self.statement_type = None
         self.substatement_type = None

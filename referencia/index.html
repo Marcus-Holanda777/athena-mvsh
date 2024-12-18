@@ -1,0 +1,1947 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>Referencia - Athena Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#athena_mvsh.connection" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Athena Docs" class="md-header__button md-logo" aria-label="Athena Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Athena Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Referencia
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Athena Docs" class="md-nav__button md-logo" aria-label="Athena Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Athena Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Athena Docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Referencia
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Referencia
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#athena_mvsh.connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      connection
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena" class="md-nav__link">
+    <span class="md-ellipsis">
+      Athena
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Athena">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.description" class="md-nav__link">
+    <span class="md-ellipsis">
+      description
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.execute" class="md-nav__link">
+    <span class="md-ellipsis">
+      execute
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.fetchall" class="md-nav__link">
+    <span class="md-ellipsis">
+      fetchall
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.fetchmany" class="md-nav__link">
+    <span class="md-ellipsis">
+      fetchmany
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.fetchone" class="md-nav__link">
+    <span class="md-ellipsis">
+      fetchone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_arrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_arrow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_create_table_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_create_table_db
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_csv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_parquet
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_partition_create_table_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_partition_create_table_db
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#athena_mvsh.connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      connection
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena" class="md-nav__link">
+    <span class="md-ellipsis">
+      Athena
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Athena">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.description" class="md-nav__link">
+    <span class="md-ellipsis">
+      description
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.execute" class="md-nav__link">
+    <span class="md-ellipsis">
+      execute
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.fetchall" class="md-nav__link">
+    <span class="md-ellipsis">
+      fetchall
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.fetchmany" class="md-nav__link">
+    <span class="md-ellipsis">
+      fetchmany
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.fetchone" class="md-nav__link">
+    <span class="md-ellipsis">
+      fetchone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_arrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_arrow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_create_table_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_create_table_db
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_csv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_parquet
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.to_partition_create_table_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_partition_create_table_db
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Referencia</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="athena_mvsh.connection"></a>
+    <div class="doc doc-contents first">
+
+        <p>A classe Athena estende a funcionalidade de CursorIterator para executar consultas 
+SQL no Athena, gerenciar os resultados e fornecer métodos para exportar os dados 
+para diversos formatos (CSV, Parquet, Iceberg, etc.).</p>
+<p>Ela permite a execução de consultas SQL, a obtenção dos resultados de forma iterativa 
+e a conversão desses resultados para estruturas de dados como Pandas DataFrame, 
+Parquet ou Arrow. A classe também oferece métodos para escrever dados de volta ao banco 
+de dados ou armazená-los em formatos como Parquet e Iceberg, com suporte para operações 
+de particionamento e compressão.</p>
+
+
+<details class="o-tipo-de-cursor-utilizado-pode-ser-um-dos-seguintes" open>
+  <summary>O tipo de cursor utilizado pode ser um dos seguintes</summary>
+  <ul>
+<li>CursorPython: Para operações com Python.</li>
+<li>CursorParquet: Para operações com dados no formato Parquet.</li>
+<li>CursorParquetDuckdb: Para operações com dados Parquet em integração com DuckDB.</li>
+</ul>
+</details>
+
+<details class="métodos" open>
+  <summary>Métodos</summary>
+  <ul>
+<li>execute: Executa uma consulta SQL, com parâmetros opcionais.</li>
+<li>fetchone: Retorna a próxima linha do resultado.</li>
+<li>fetchall: Retorna todas as linhas do resultado.</li>
+<li>fetchmany: Retorna um número especificado de linhas.</li>
+<li>to_arrow: Converte os resultados para um formato Arrow.</li>
+<li>to_parquet: Converte os resultados para o formato Parquet.</li>
+<li>to_csv: Converte os resultados para um arquivo CSV.</li>
+<li>to_create_table_db: Cria uma tabela no banco de dados usando os resultados.</li>
+<li>to_partition_create_table_db: Cria uma tabela particionada no banco de dados.</li>
+<li>to_insert_table_db: Insere dados em uma tabela do banco de dados.</li>
+<li>write_dataframe: Escreve um DataFrame em uma tabela no banco de dados.</li>
+<li>write_parquet: Escreve dados em formato Parquet no banco de dados.</li>
+<li>write_table_iceberg: Escreve dados em formato Iceberg no banco de dados.</li>
+<li>merge_table_iceberg: Realiza uma operação de merge em uma tabela Iceberg.</li>
+<li>to_pandas: Converte os resultados para um DataFrame Pandas.</li>
+<li>close: Libera os recursos utilizados pela consulta.</li>
+<li><strong>enter</strong> / <strong>exit</strong>: Suporte para contexto (gerenciamento de recursos).</li>
+</ul>
+</details>
+
+<details class="exceções" open>
+  <summary>Exceções</summary>
+  <ul>
+<li>ProgrammingError: Lançada quando um método não é implementado para o tipo de cursor atual.</li>
+</ul>
+</details>
+
+<details class="exemplo-de-uso" open>
+  <summary>Exemplo de uso</summary>
+  <p>Supondo que o cursor seja uma instância válida de um dos tipos: CursorPython, CursorParquet ou CursorParquetDuckdb</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">CursorPython</span><span class="p">,</span> <span class="n">CursorParquet</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># ou CursorParquet(...) ou CursorParquetDuckdb(...)</span>
+</code></pre></div>
+<p>Criando uma instância da classe Athena
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="c1"># Executando uma consulta SQL</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM sales_data WHERE region = &#39;US&#39;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Obtendo os resultados</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="c1"># Convertendo os resultados para um DataFrame Pandas</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+
+    <span class="c1"># Exportando os resultados para um arquivo CSV</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;sales_data_us.csv&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="n">include_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Escrevendo dados em uma tabela no banco de dados</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">write_parquet</span><span class="p">(</span>
+        <span class="n">file</span><span class="o">=</span><span class="s2">&quot;sales_data.parquet&quot;</span><span class="p">,</span> 
+        <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;sales_table&quot;</span><span class="p">,</span> 
+        <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;public&quot;</span>
+    <span class="p">)</span>
+</code></pre></div></p>
+</details>
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="athena_mvsh.connection.Athena" class="doc doc-heading">
+            <code>Athena</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="athena_mvsh.cursores.CursorIterator">CursorIterator</span></code></p>
+
+
+        <p>Classe responsável por executar consultas SQL no AWS Athena ou em cursores alternativos, 
+como CursorParquetDuckdb, CursorPython ou CursorParquet. A classe suporta gerenciamento 
+automático de recursos com o uso de um gerenciador de contexto.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="athena_mvsh.connection.Athena.cursor">cursor</span></code></td>
+            <td>
+                  <code><span title="athena_mvsh.cursores.CursorParquetDuckdb">CursorParquetDuckdb</span> | <span title="athena_mvsh.cursores.CursorPython">CursorPython</span> | <span title="athena_mvsh.cursores.CursorParquet">CursorParquet</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Instância do cursor utilizado para executar consultas.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="athena_mvsh.connection.Athena.row_cursor">row_cursor</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Armazena o resultado da execução da query.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="athena_mvsh.connection.Athena.description" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">description</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retorna os metadados da consulta executada.</p>
+<p>Esta propriedade retorna uma lista de tuplas que representam as colunas 
+da consulta executada. Cada tupla contém as seguintes informações:
+    - Nome da coluna
+    - Tipo da coluna
+    - (Valor não utilizado, sempre <code>None</code>)
+    - (Valor não utilizado, sempre <code>None</code>)
+    - Precisão da coluna
+    - Escala da coluna
+    - Se a coluna pode ser nula (<code>Nullable</code>)</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>list[tuple] | None: Uma lista de tuplas contendo os metadados de cada </p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>coluna ou <code>None</code> se os metadados não estiverem disponíveis.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id, name FROM users&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">athena</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+<span class="p">[(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;INTEGER&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;STRING&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)]</span>
+</code></pre></div>
+</details>    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Inicializa a classe Athena com um cursor, permitindo a execução de consultas SQL.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>cursor</code>
+            </td>
+            <td>
+                  <code><span title="athena_mvsh.cursores.CursorParquetDuckdb">CursorParquetDuckdb</span> | <span title="athena_mvsh.cursores.CursorPython">CursorPython</span> | <span title="athena_mvsh.cursores.CursorParquet">CursorParquet</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Instância do cursor que define o backend para execução das queries.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.execute" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">result_reuse_enable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Executa uma consulta SQL no backend configurado pelo cursor.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>query</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A string da consulta SQL a ser executada.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>parameters</code>
+            </td>
+            <td>
+                  <code>tuple | dict</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Parâmetros para a consulta. 
+- Se for uma tupla, é interpretada como argumentos posicionais.
+- Se for um dicionário, é interpretado como argumentos nomeados.
+- Padrão é None.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>result_reuse_enable</code>
+            </td>
+            <td>
+                  <code>bool</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Habilita a reutilização de resultados da consulta 
+armazenados em cache (se suportado pelo cursor). Padrão é False.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>self</code></td>            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A instância atual da classe Athena, permitindo chamadas encadeadas.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="notes" open>
+  <summary>Notes</summary>
+  <ul>
+<li>A classe é compatível com os cursores:</li>
+<li><code>CursorParquetDuckdb</code></li>
+<li><code>CursorPython</code></li>
+<li><code>CursorParquet</code></li>
+<li>
+<p>Cada cursor deve ser inicializado com os seguintes parâmetros obrigatórios:</p>
+<ul>
+<li><code>s3_staging_dir</code> (str): Diretório no Amazon S3 usado como área de staging.</li>
+<li><code>schema_name</code> (str, optional): Nome do schema do banco de dados.</li>
+<li><code>catalog_name</code> (str, optional): Nome do catálogo no Athena.</li>
+<li><code>poll_interval</code> (float, optional): Intervalo em segundos entre verificações de consulta. Padrão: 1.0.</li>
+<li><code>result_reuse_enable</code> (bool, optional): Habilita reutilização de resultados.</li>
+</ul>
+</li>
+<li>
+<p>Caso as configurações do AWS CLI não estejam disponíveis, os parâmetros opcionais 
+  para autenticação podem ser passados como <strong>kwargs</strong> ao instanciar os cursores:</p>
+<ul>
+<li><code>region_name</code> (str): Região da AWS.</li>
+<li><code>aws_access_key_id</code> (str): Chave de acesso da AWS.</li>
+<li><code>aws_secret_access_key</code> (str): Chave secreta de acesso da AWS.</li>
+</ul>
+</li>
+<li>
+<p>Se a consulta for um comando DDL (ex.: CREATE, ALTER, DROP), o método retorna o resultado 
+  de <code>fetchone()</code> imediatamente.</p>
+</li>
+</ul>
+</details>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+</code></pre></div>
+<p>Inicializando CursorParquetDuckdb com credenciais AWS
+<div class="highlight"><pre><span></span><code><span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span>
+    <span class="n">s3_staging_dir</span><span class="o">=</span><span class="s2">&quot;s3://my-bucket/staging/&quot;</span><span class="p">,</span>
+    <span class="n">schema_name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+    <span class="n">catalog_name</span><span class="o">=</span><span class="s2">&quot;awsdatacatalog&quot;</span><span class="p">,</span>
+    <span class="n">region_name</span><span class="o">=</span><span class="s2">&quot;us-west-2&quot;</span><span class="p">,</span>
+    <span class="n">aws_access_key_id</span><span class="o">=</span><span class="s2">&quot;my-access-key&quot;</span><span class="p">,</span>
+    <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="s2">&quot;my-secret-key&quot;</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM example_table&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</code></pre></div></p>
+<p>Inicializando CursorPython sem credenciais adicionais (usa AWS CLI configurado)
+<div class="highlight"><pre><span></span><code><span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span>
+    <span class="n">s3_staging_dir</span><span class="o">=</span><span class="s2">&quot;s3://my-bucket/staging/&quot;</span>
+ <span class="p">)</span>
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM parquet_data&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p>Inicializando CursorParquet com credenciais
+<div class="highlight"><pre><span></span><code><span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquet</span><span class="p">(</span>
+    <span class="n">s3_staging_dir</span><span class="o">=</span><span class="s2">&quot;s3://my-bucket/staging/&quot;</span><span class="p">,</span>
+    <span class="n">schema_name</span><span class="o">=</span><span class="s2">&quot;analytics&quot;</span><span class="p">,</span>
+    <span class="n">region_name</span><span class="o">=</span><span class="s2">&quot;us-west-1&quot;</span><span class="p">,</span>
+    <span class="n">aws_access_key_id</span><span class="o">=</span><span class="s2">&quot;my-access-key&quot;</span><span class="p">,</span>
+    <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="s2">&quot;my-secret-key&quot;</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM parquet_table&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1000</span><span class="p">,)</span>
+</code></pre></div></p>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.fetchall" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">fetchall</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retorna todas as linhas do cursor como uma lista.</p>
+<p>Este método converte todas as linhas disponíveis no cursor em uma lista de 
+tuplas, onde cada tupla representa uma linha do resultado da consulta executada.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>list</code></td>            <td>
+                  <code>list</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Uma lista de tuplas representando todas as linhas retornadas pela consulta.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id, name FROM users&quot;</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>  <span class="c1"># Exemplo: [(1, &#39;Alice&#39;), (2, &#39;Bob&#39;), (3, &#39;Charlie&#39;)]</span>
+</code></pre></div>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.fetchmany" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">fetchmany</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retorna um número especificado de linhas do cursor.</p>
+<p>Este método retorna até <code>size</code> linhas do cursor, como uma lista de tuplas. 
+Se o número de linhas disponíveis for menor que o valor de <code>size</code>, ele retorna 
+o número de linhas restantes. O valor padrão de <code>size</code> é 1.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>size</code>
+            </td>
+            <td>
+                  <code>(int, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O número de linhas a serem retornadas. O valor padrão é 1.</p>
+              </div>
+            </td>
+            <td>
+                  <code>1</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>list</code></td>            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Uma lista de tuplas representando as linhas retornadas pelo cursor.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id, name FROM users&quot;</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">fetchmany</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>  <span class="c1"># Exemplo: [(1, &#39;Alice&#39;), (2, &#39;Bob&#39;)]</span>
+</code></pre></div>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.fetchone" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">fetchone</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retorna a próxima linha do cursor.</p>
+<p>Este método tenta obter a próxima linha do cursor. Se houver uma linha disponível, 
+ela é retornada. Caso contrário, retorna <code>None</code> quando o cursor atingir o final 
+dos resultados.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>tuple | None: Retorna a próxima linha como uma tupla ou <code>None</code> se não houver mais linhas.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id, name FROM users&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">athena</span><span class="o">.</span><span class="n">fetchone</span><span class="p">())</span>  <span class="c1"># Exemplo de uma linha retornada: (1, &#39;Alice&#39;)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">athena</span><span class="o">.</span><span class="n">fetchone</span><span class="p">())</span>  <span class="c1"># Exemplo de uma linha retornada: (2, &#39;Bob&#39;)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">athena</span><span class="o">.</span><span class="n">fetchone</span><span class="p">())</span>  <span class="c1"># Exemplo de retorno `None`, se não houver mais dados</span>
+</code></pre></div>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.to_arrow" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_arrow</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Converte os resultados da consulta para um <code>pa.Table</code> (PyArrow Table).</p>
+<p>Este método converte os dados retornados pela consulta executada em um 
+objeto <code>pa.Table</code> (tabela do PyArrow). A conversão só é realizada se o 
+cursor utilizado for uma instância de <code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>. 
+Caso contrário, uma exceção <code>ProgrammingError</code> será levantada.</p>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="athena_mvsh.error.ProgrammingError">ProgrammingError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Se o cursor não for uma instância de <code>CursorParquet</code> </p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="pyarrow.Table">Table</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>pa.Table: Um objeto <code>pa.Table</code> contendo os resultados da consulta.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>cursor = CursorParquet(...)
+with Athena(cursor) as athena:
+...     athena.execute("SELECT id, name FROM users")
+...     table = athena.to_arrow()
+...     print(table)  # Exemplo de saída: <pyarrow.table></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.to_create_table_db" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_create_table_db</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s1">&#39;db.duckdb&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Cria uma tabela no banco de dados DuckDB com base nos resultados da consulta executada.</p>
+<p>Este método cria uma tabela no banco de dados DuckDB especificado usando os dados retornados 
+pela consulta executada. A tabela será criada com o nome fornecido como <code>table_name</code>. </p>
+<p>O método só pode ser utilizado com o cursor do tipo <code>CursorParquetDuckdb</code>. O nome do banco 
+de dados pode ser especificado como um argumento, e se não fornecido, o banco de dados padrão 
+será <code>'db.duckdb'</code>.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>table_name</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O nome da tabela a ser criada no banco de dados.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>database</code>
+            </td>
+            <td>
+                  <code>(str, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O nome do banco de dados onde a tabela será criada. O valor padrão é <code>'db.duckdb'</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;db.duckdb&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="athena_mvsh.error.ProgrammingError">ProgrammingError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Se o cursor não for uma instância de <code>CursorParquetDuckdb</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>None</code></td>            <td>
+                  <code>None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Este método não retorna valor, mas cria a tabela no banco de dados.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>cursor = CursorParquetDuckdb(...)
+with Athena(cursor) as athena:
+...     athena.execute("SELECT id, name FROM users")
+...     athena.to_create_table_db('users_table')</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.to_csv" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="n">include_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Converte os resultados da consulta para um arquivo CSV.</p>
+<p>Este método converte os dados retornados pela consulta executada e os salva em um arquivo 
+CSV. A conversão é realizada apenas se o cursor utilizado for do tipo 
+<code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>. Dependendo do tipo do cursor, o método 
+chama a função <code>to_csv</code> correspondente.</p>
+<ul>
+<li>
+<p>Se o cursor for uma instância de <code>CursorParquetDuckdb</code>, o método chamará diretamente 
+o método <code>to_csv</code> do cursor, passando os parâmetros apropriados para ele.</p>
+</li>
+<li>
+<p>Para o cursor <code>CursorParquet</code>, os dados são primeiro convertidos para um <code>pa.Table</code> 
+e então salvos como CSV, com opções de escrita personalizáveis.</p>
+</li>
+</ul>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>output_file</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O caminho do arquivo CSV de saída.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>delimiter</code>
+            </td>
+            <td>
+                  <code>(str, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O delimitador a ser usado no arquivo CSV. O valor padrão é <code>';'</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>include_header</code>
+            </td>
+            <td>
+                  <code>(bool, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Indica se o cabeçalho deve ser incluído no CSV. O valor padrão é <code>True</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="athena_mvsh.error.ProgrammingError">ProgrammingError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Se o cursor não for uma instância de <code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>None</code></td>            <td>
+                  <code>None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Este método não retorna valor, mas realiza a conversão para o formato CSV.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>cursor = CursorParquet(...)
+with Athena(cursor) as athena:
+...     athena.execute("SELECT id, name FROM users")
+...     athena.to_csv('/path/to/file.csv')</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.to_parquet" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_parquet</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Converte os resultados da consulta para o formato Parquet.</p>
+<p>Este método converte os dados retornados pela consulta executada em um arquivo 
+Parquet. A conversão é realizada apenas se o cursor utilizado for do tipo 
+<code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>. Dependendo do tipo do cursor, o método 
+chama a função <code>to_parquet</code> correspondente.</p>
+<ul>
+<li>
+<p>Se o cursor for uma instância de <code>CursorParquetDuckdb</code>, o método chamará diretamente 
+o método <code>to_parquet</code> do cursor, passando os argumentos fornecidos para ele.</p>
+</li>
+<li>
+<p>Para o cursor <code>CursorParquet</code>, os dados são primeiro convertidos para um <code>pa.Table</code> 
+e então são gravados como Parquet.</p>
+</li>
+</ul>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>*args</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Argumentos adicionais passados para a função <code>to_parquet</code> do cursor.
+- Para detalhes sobre os argumentos esperados, consulte a documentação do 
+<code>DuckDB</code> e <code>PyArrow</code>:
+    - DuckDB: https://duckdb.org/docs
+    - PyArrow: https://arrow.apache.org/docs/python/</p>
+              </div>
+            </td>
+            <td>
+                  <code>()</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>**kwargs</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Argumentos de palavra-chave adicionais passados para a função </p>
+              </div>
+            </td>
+            <td>
+                  <code>{}</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="athena_mvsh.error.ProgrammingError">ProgrammingError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Se o cursor não for uma instância de <code>CursorParquet</code> ou </p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>None</code></td>            <td>
+                  <code>None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Este método não retorna valor, mas realiza a conversão para o formato Parquet.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>cursor = CursorParquet(...)
+with Athena(cursor) as athena:
+...     athena.execute("SELECT id, name FROM users")
+...     athena.to_parquet('/path/to/file.parquet')</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.to_partition_create_table_db" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_partition_create_table_db</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s1">&#39;db.duckdb&#39;</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="n">WORKERS</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Lê arquivos Parquet gerados a partir da consulta executada e insere os dados na tabela do banco de dados DuckDB.</p>
+<p>Este método executa uma consulta no Athena para gerar arquivos Parquet que são armazenados no S3. 
+Após a consulta, os arquivos Parquet são lidos e os dados são inseridos na tabela especificada no DuckDB. 
+A inserção dos dados é paralelizada utilizando múltiplos trabalhadores (threads) para otimizar o desempenho.</p>
+<p>O método realiza os seguintes passos:
+- Executa a consulta fornecida no Athena para gerar os arquivos Parquet.
+- Descarrega os arquivos Parquet do S3 a partir do manifest gerado pela consulta.
+- Para cada arquivo Parquet, insere os dados na tabela especificada no DuckDB, utilizando 
+<code>ThreadPoolExecutor</code> para paralelizar as inserções.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>table_name</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O nome da tabela onde os dados serão inseridos no DuckDB.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>database</code>
+            </td>
+            <td>
+                  <code>(str, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O nome do banco de dados DuckDB. O valor padrão é 'db.duckdb'.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;db.duckdb&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>workers</code>
+            </td>
+            <td>
+                  <code>(int, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O número de trabalhadores (threads) a serem usados para paralelizar a inserção dos arquivos Parquet. O valor padrão é <code>WORKERS</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code><span title="athena_mvsh.connection.WORKERS">WORKERS</span></code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="athena_mvsh.error.ProgrammingError">ProgrammingError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Se o cursor não for do tipo <code>CursorParquetDuckdb</code>.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code>Exception</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Se ocorrer um erro durante a execução da inserção dos dados.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>None</code></td>            <td>
+                  <code>None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O método não retorna valor, mas insere os dados na tabela do banco de dados DuckDB.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>cursor = CursorParquetDuckdb(...)
+with Athena(cursor) as athena:
+...     athena.to_partition_create_table_db(
+...         table_name='target_table',
+...         database='db.duckdb', 
+...         workers=4
+...     )</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

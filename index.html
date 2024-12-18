@@ -1,0 +1,577 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="referencia/">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>Athena Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#athena-mvsh" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="Athena Docs" class="md-header__button md-logo" aria-label="Athena Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Athena Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Athena Docs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Athena Docs" class="md-nav__button md-logo" aria-label="Athena Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Athena Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Athena Docs
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Athena Docs
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#caracteristicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Características
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conformidade-com-db-api-20-pep-249" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conformidade com DB API 2.0 (PEP 249)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conformidade com DB API 2.0 (PEP 249)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Cursor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-execucao-de-consultas" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Execução de Consultas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-propriedades-e-metodos-do-cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Propriedades e Métodos do Cursor
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exemplo-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemplo de Uso
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exemplo de Uso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-executando-uma-consulta-e-recuperando-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Executando uma Consulta e Recuperando Resultados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="referencia/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Referencia
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#caracteristicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Características
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conformidade-com-db-api-20-pep-249" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conformidade com DB API 2.0 (PEP 249)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conformidade com DB API 2.0 (PEP 249)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Cursor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-execucao-de-consultas" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Execução de Consultas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-propriedades-e-metodos-do-cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Propriedades e Métodos do Cursor
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exemplo-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemplo de Uso
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exemplo de Uso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-executando-uma-consulta-e-recuperando-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Executando uma Consulta e Recuperando Resultados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="athena-mvsh">Athena-MVSH</h1>
+<p>A <strong>athena-mvsh</strong> é uma biblioteca Python projetada para facilitar a execução de consultas no <strong>AWS Athena</strong> com suporte ao uso de <strong>pyarrow</strong> e <strong>DuckDB</strong> para resultados e execução de consultas. A biblioteca oferece uma interface intuitiva, integrando com o Athena e outros formatos de dados, como Parquet, CSV, e Arrow, permitindo exportações e transformações de dados eficientes.</p>
+<p>Além disso, <strong>athena-mvsh</strong> implementa partes da <strong>DB API 2.0</strong> (PEP 249), garantindo que a interação com o Athena seja simples e padronizada, seguindo as boas práticas de acesso a bancos de dados em Python.</p>
+<h2 id="caracteristicas">Características</h2>
+<ul>
+<li><strong>Execução de consultas no Athena</strong>: Execute consultas SQL no <strong>AWS Athena</strong> e manipule os resultados com facilidade.</li>
+<li><strong>Suporte a formatos de dados</strong>: Converta os resultados para <strong>Parquet</strong>, <strong>CSV</strong>, <strong>Arrow</strong>, e <strong>Pandas</strong> DataFrames.</li>
+<li><strong>Conformidade com DB API 2.0 (PEP 249)</strong>: A biblioteca segue várias convenções da DB API 2.0, como o uso de cursores, gerenciamento de exceções e execução de consultas.</li>
+<li><strong>Gerenciamento de Contexto</strong>: Utilize a biblioteca com a sintaxe <code>with</code> para garantir a limpeza de recursos ao final de uma operação.</li>
+</ul>
+<h2 id="conformidade-com-db-api-20-pep-249">Conformidade com DB API 2.0 (PEP 249)</h2>
+<p>A <strong>athena-mvsh</strong> foi projetada para implementar a interface padrão de acesso a bancos de dados em Python, seguindo as diretrizes da <strong>DB API 2.0</strong> (PEP 249). Abaixo estão alguns dos componentes implementados:</p>
+<h3 id="1-cursor">1. <strong>Cursor</strong></h3>
+<p>O <strong>Cursor</strong> é responsável por interagir com o banco de dados, executar consultas e recuperar resultados. A biblioteca <code>athena-mvsh</code> implementa a classe <code>Athena</code>, que se comporta como um cursor:</p>
+<ul>
+<li><strong>Criação do Cursor</strong>: O cursor é criado a partir de um objeto <code>DBAthena</code> (que pode ser um <code>CursorPython</code>, <code>CursorParquet</code>, ou <code>CursorParquetDuckdb</code>), e gerencia a execução de consultas no Athena.</li>
+<li><strong>Métodos principais</strong>:</li>
+<li><code>execute(query, parameters=None)</code>: Executa uma consulta SQL.</li>
+<li><code>fetchone()</code>: Recupera a próxima linha de um resultado.</li>
+<li><code>fetchall()</code>: Recupera todas as linhas de um resultado.</li>
+<li><code>fetchmany(size)</code>: Recupera um número especificado de linhas.</li>
+</ul>
+<h3 id="2-execucao-de-consultas">2. <strong>Execução de Consultas</strong></h3>
+<ul>
+<li><strong><code>execute(query, parameters=None)</code></strong>: Executa uma consulta SQL. Caso parâmetros sejam fornecidos, a biblioteca os passa de forma segura.</li>
+<li><strong>Consultas DML e DDL</strong>: Suporte a consultas de manipulação de dados e definição de dados.</li>
+</ul>
+<h3 id="3-propriedades-e-metodos-do-cursor">3. <strong>Propriedades e Métodos do Cursor</strong></h3>
+<p>A <code>athena-mvsh</code> implementa métodos e propriedades como a <code>description</code> (descrição das colunas do resultado) e <code>rowcount</code> (número de linhas afetadas pela consulta), conforme esperado pela DB API 2.0:</p>
+<ul>
+<li><strong><code>description</code></strong>: Retorna uma lista com informações sobre as colunas da consulta.
+  <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+</code></pre></div></li>
+</ul>
+<h2 id="exemplo-de-uso">Exemplo de Uso</h2>
+<p>A seguir, um exemplo de como utilizar a biblioteca <strong>athena-mvsh</strong> para executar uma consulta e manipular os resultados:</p>
+<h3 id="1-executando-uma-consulta-e-recuperando-resultados">1. <strong>Executando uma Consulta e Recuperando Resultados</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>  <span class="c1"># ou CursorParquet, ou CursorParquetDuckdb</span>
+
+<span class="c1"># Criando um cursor Athena</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># Usando o cursor dentro de um contexto</span>
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="c1"># Executando a consulta SQL</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM sales_data WHERE region = &#39;US&#39;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Usando fetchone() para obter uma linha</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>  <span class="c1"># Exemplo: (&#39;US&#39;, 1000, &#39;2024-01-01&#39;)</span>
+
+    <span class="c1"># Usando fetchall() para obter todas as linhas</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>  <span class="c1"># Exemplo: [(&#39;US&#39;, 1000, &#39;2024-01-01&#39;), (&#39;US&#39;, 1500, &#39;2024-02-01&#39;)]</span>
+
+    <span class="c1"># Usando fetchmany() para obter um número específico de linhas</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">fetchmany</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>  <span class="c1"># Exemplo: [(&#39;US&#39;, 1000, &#39;2024-01-01&#39;), (&#39;US&#39;, 1500, &#39;2024-02-01&#39;)]</span>
+
+    <span class="c1"># Convertendo os resultados para um Pandas DataFrame</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">athena</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="c1"># Exemplo de saída:</span>
+    <span class="c1">#    region  sales     date</span>
+    <span class="c1"># 0     US  1000  2024-01-01</span>
+    <span class="c1"># 1     US  1500  2024-02-01</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

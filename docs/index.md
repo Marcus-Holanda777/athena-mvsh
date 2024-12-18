@@ -1,4 +1,5 @@
 # Athena-MVSH
+[![PyPI](https://img.shields.io/pypi/v/athena-mvsh.svg)](https://pypi.org/project/athena-mvsh/)
 
 A **athena-mvsh** é uma biblioteca Python projetada para facilitar a execução de consultas no **AWS Athena** com suporte ao uso de **pyarrow** e **DuckDB** para resultados e execução de consultas. A biblioteca oferece uma interface intuitiva, integrando com o Athena e outros formatos de dados, como Parquet, CSV, e Arrow, permitindo exportações e transformações de dados eficientes.
 
@@ -40,40 +41,159 @@ A `athena-mvsh` implementa métodos e propriedades como a `description` (descri�
   print(cursor.description)
   ```
 
+- **`rowcount`**: Retorna o número de linhas afetadas pela consulta.
+  ```python
+  print(cursor.rowcount)
+  ```
+
+## Instalação
+
+```bash
+pip install athena-mvsh
+```
+
+## Credenciais
+
+Para se conectar é preciso informar o `aws_access_key_id`, `aws_secret_access_key` o local de saida das consultas `s3_staging_dir` 
+e a regiao do bucket `region_name`. Se você usar o arquivo de perfil padrão, não será necessário informar as credenciais.
+
+```python
+from athena_mvsh import (
+    Athena,
+    CursorPython
+)
+
+cursor = CursorPython(
+    s3_staging_dir='s3://caminho-saida-consulta/',
+    aws_access_key_id='KEY_ID',
+    aws_secret_access_key='SECRET_KEY',
+    region_name='us-east-1'
+)
+```
+
+## Iteração do cursor
+
+O cursor fornecido por esta biblioteca implementa o protocolo de iterator do Python, permitindo que você itere sobre os resultados da consulta linha por linha. Isso é útil para processar grandes conjuntos de dados sem precisar carregá-los completamente na memória.
+
+```python
+
+cursor = CursorPython(
+  s3_staging_dir='s3://caminho-saida-consulta/'
+)
+
+with Athena(cursor) as athena:
+    athena.execute("SELECT * FROM sales_data")
+    for row in athena:
+        print(row)
+```
+
 ## Exemplo de Uso
 
 A seguir, um exemplo de como utilizar a biblioteca **athena-mvsh** para executar uma consulta e manipular os resultados:
 
-### 1. **Executando uma Consulta e Recuperando Resultados**
+### 1. **Uso Básico**
 
 ```python
-from athena_mvsh import Athena, CursorPython  # ou CursorParquet, ou CursorParquetDuckdb
+from athena_mvsh import Athena, CursorPython
 
-# Criando um cursor Athena
-cursor = CursorPython(...)
+cursor = CursorPython(
+  s3_staging_dir='s3:/caminho-saida-consulta/'
+)
 
-# Usando o cursor dentro de um contexto
 with Athena(cursor) as athena:
-    # Executando a consulta SQL
-    athena.execute("SELECT * FROM sales_data WHERE region = 'US'")
+    athena.execute("SELECT * FROM sales_data")
+    print(athena.fetchall())
+    print(athena.description)
+    print(athena.rowcount)
+```
 
-    # Usando fetchone() para obter uma linha
-    row = athena.fetchone()
-    print(row)  # Exemplo: ('US', 1000, '2024-01-01')
+### 2. **Reutilização de consultas**
 
-    # Usando fetchall() para obter todas as linhas
-    rows = athena.fetchall()
-    print(rows)  # Exemplo: [('US', 1000, '2024-01-01'), ('US', 1500, '2024-02-01')]
+O parâmetro `result_reuse_enable` é uma funcionalidade que habilita ou desabilita a reutilização de resultados de consultas previamente executadas no Amazon Athena. Essa abordagem reduz custos e melhora o desempenho ao aproveitar resultados armazenados em cache, desde que os dados subjacentes não tenham sido alterados.
 
-    # Usando fetchmany() para obter um número específico de linhas
-    rows = athena.fetchmany(5)
-    print(rows)  # Exemplo: [('US', 1000, '2024-01-01'), ('US', 1500, '2024-02-01')]
+```python
+from athena_mvsh import Athena, CursorPython
 
-    # Convertendo os resultados para um Pandas DataFrame
-    df = athena.to_pandas()
-    print(df)
-    # Exemplo de saída:
-    #    region  sales     date
-    # 0     US  1000  2024-01-01
-    # 1     US  1500  2024-02-01
+cursor = CursorPython(
+  s3_staging_dir='s3://caminho-saida-consulta/',
+  result_reuse_enable=True
+)
+
+with Athena(cursor) as athena:
+    athena.execute("SELECT * FROM sales_data")
+    print(athena.fetchone())
+```
+
+## DuckDB consulta e transformação
+
+A biblioteca suporta a execução de consultas no Amazon Athena utilizando o recurso UNLOAD para exportar os resultados diretamente em formato Parquet no Amazon S3. Em seguida, o DuckDB é utilizado para carregar e processar esses dados localmente, aproveitando as vantagens do formato Parquet para consultas analíticas rápidas e eficientes.
+
+É possível criar tabelas externas e do tipo Iceberg diretamente a partir de DataFrames do pandas ou arquivos Parquet. Essa funcionalidade permite que dados estruturados sejam facilmente integrados a ambientes analíticos, facilitando o uso em consultas SQL e outras operações analíticas
+
+### Métodos disponíveis
+
+- **to_arrow**: Converte os resultados para um formato Arrow.
+- **to_pandas**: Converte os resultados para um DataFrame Pandas.
+- **to_parquet**: Converte os resultados para o formato Parquet.
+- **to_csv**: Converte os resultados para um arquivo CSV.
+- **to_create_table_db**: Cria uma tabela no DuckDB usando os resultados.
+- **to_partition_create_table_db**: Cria uma tabela no DuckDB inserindo os dados de forma incremental.
+- **to_insert_table_db**: Insere dados em uma tabela do DuckDB.
+- **write_dataframe**: Escreve um DataFrame em uma tabela externa no Athena.
+- **write_parquet**: Escreve dados a partir de um ou mais arquivos `.parquet` em uma tabela externa no Athena.
+- **write_table_iceberg**: Cria uma tabela do tipo `Iceberg` no Athena
+- **merge_table_iceberg**: Realiza uma operação de merge em uma tabela `Iceberg`.
+
+### 1. **Criando tabela no Duckdb a partir de uma consulta**
+
+```python
+from athena_mvsh import Athena, CursorParquetDuckdb
+
+cursor = CursorParquetDuckdb(
+    s3_staging_dir='s3://caminho-saida-consulta/'
+)
+
+with Athena(cursor) as athena:
+    athena.execute("SELECT * FROM sales_data")
+    athena.to_create_table_db('sales_table', database='db.duckdb')
+```
+
+### 2. **Criando tabela externa no Athena a partir de um DataFrame do pandas**
+
+```python
+import pandas as pd
+from athena_mvsh import Athena, CursorParquetDuckdb
+
+cursor = CursorParquetDuckdb(
+    s3_staging_dir='s3://caminho-saida-consulta/'
+)
+
+df = pd.read_excel('caminho_plan.xlsx')
+
+with Athena(cursor=cursor) as athena:
+    athena.write_dataframe(
+        df,
+        schema='schema-tabela',
+        table_name='nome_tabela',
+        location=f's3://caminho-saida-tabela/tabela/nome_tabela/',
+    )
+```
+
+### 3. **Criando tabela externa no Athena a partir de arquivos Parquet**
+
+```python
+import pandas as pd
+from athena_mvsh import Athena, CursorParquetDuckdb
+
+cursor = CursorParquetDuckdb(
+    s3_staging_dir='s3://caminho-saida-consulta/'
+)
+
+with Athena(cursor=cursor) as athena:
+    athena.write_parquet(
+        'arquivo_parquet.parquet',
+        schema='schema-tabela',
+        table_name='nome_tabela',
+        location=f's3://caminho-saida-tabela/tabela/nome_tabela/',
+    )
 ```

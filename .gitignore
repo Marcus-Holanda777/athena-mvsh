@@ -8,3 +8,5 @@ main.py
 *.xlsx
 *$.xlsx
 *.sql
+/site
+site

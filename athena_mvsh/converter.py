@@ -5,8 +5,73 @@ from decimal import Decimal
 from typing import Any
 import pandas as pd
 from duckdb import DuckDBPyConnection
-from pathlib import Path
-import os
+from typing import cast
+from pyarrow import (
+    Schema, 
+    DataType
+)
+
+
+def to_column_info_arrow(schema: Schema) -> tuple[dict]:
+    columns = []
+    for field in schema:
+        type_, precision, scale = get_athena_type(field.type)
+        columns.append(
+            {
+                "Name": field.name,
+                "Type": type_,
+                "Precision": precision,
+                "Scale": scale,
+                "Nullable": "NULLABLE" if field.nullable else "NOT_NULL",
+            }
+        )
+    return tuple(columns)
+
+
+def get_athena_type(type_: DataType) -> tuple[str, int, int]:
+    import pyarrow.lib as types
+
+    if type_.id in [types.Type_BOOL]:
+        return "boolean", 0, 0
+    elif type_.id in [types.Type_UINT8, types.Type_INT8]:
+        return "tinyint", 3, 0
+    elif type_.id in [types.Type_UINT16, types.Type_INT16]:
+        return "smallint", 5, 0
+    elif type_.id in [types.Type_UINT32, types.Type_INT32]:
+        return "integer", 10, 0
+    elif type_.id in [types.Type_UINT64, types.Type_INT64]:
+        return "bigint", 19, 0
+    elif type_.id in [types.Type_HALF_FLOAT, types.Type_FLOAT]:
+        return "float", 17, 0
+    elif type_.id in [types.Type_DOUBLE]:
+        return "double", 17, 0
+    elif type_.id in [types.Type_STRING, types.Type_LARGE_STRING]:
+        return "varchar", 2147483647, 0
+    elif type_.id in [
+        types.Type_BINARY,
+        types.Type_FIXED_SIZE_BINARY,
+        types.Type_LARGE_BINARY,
+    ]:
+        return "varbinary", 1073741824, 0
+    elif type_.id in [types.Type_DATE32, types.Type_DATE64]:
+        return "date", 0, 0
+    elif type_.id == types.Type_TIMESTAMP:
+        return "timestamp", 3, 0
+    elif type_.id in [types.Type_DECIMAL128, types.Decimal256Type]:
+        type_ = cast(types.Decimal128Type, type_)
+        return "decimal", type_.precision, type_.scale
+    elif type_.id in [
+        types.Type_LIST,
+        types.Type_FIXED_SIZE_LIST,
+        types.Type_LARGE_LIST,
+    ]:
+        return "array", 0, 0
+    elif type_.id in [types.Type_STRUCT]:
+        return "row", 0, 0
+    elif type_.id in [types.Type_MAP]:
+        return "map", 0, 0
+    else:
+        return "string", 2147483647, 0
 
 
 def convert_df_athena(col: pd.Series) -> str:

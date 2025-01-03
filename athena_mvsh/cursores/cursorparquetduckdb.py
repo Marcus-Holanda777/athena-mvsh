@@ -60,12 +60,21 @@ class CursorParquetDuckdb(CursorBaseParquet):
         self, 
         database: str = 'db.duckdb'
     ):
+        
+        self.home_duckdb = 'duckdb_home'
+        os.makedirs(self.home_duckdb, exist_ok=True)
+
         try:
             config = {
                 'preserve_insertion_order': False,
                 'threads': (os.cpu_count() or 1) * 5
             }
             con = duckdb.connect(database, config=config)
+            
+            # diretorio de extensoes
+            if os.path.isdir(self.home_duckdb):
+                con.sql(f"SET home_directory='{self.home_duckdb}'")
+
             con.install_extension('httpfs')
             con.load_extension('httpfs')
 

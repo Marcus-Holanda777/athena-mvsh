@@ -7,6 +7,7 @@ from athena_mvsh.error import ProgrammingError
 from itertools import filterfalse
 import pandas as pd
 from athena_mvsh.utils import query_is_ddl
+from athena_mvsh.converter import to_column_info_arrow
 
 
 class CursorParquet(CursorBaseParquet):
@@ -37,6 +38,26 @@ class CursorParquet(CursorBaseParquet):
             secret_key=self.config['aws_secret_access_key'],
             region=self.config['region_name']
         )
+    
+    def rowcount(self):
+        return self.getrowcount
+    
+    def description(self):
+        if self.metadata is None:
+            return None 
+        else:
+            return [
+                (
+                    c["Name"],
+                    c["Type"],
+                    None,
+                    None,
+                    c["Precision"],
+                    c["Scale"],
+                    c["Nullable"],
+                )
+                for c in self.metadata
+            ]
 
     def __read_parquet(self) -> pa.Table:
         bucket_s3 = self.get_bucket_s3()
@@ -47,6 +68,17 @@ class CursorParquet(CursorBaseParquet):
         dataset = pq.ParquetDataset(
             f"{bucket}/{key}",
             filesystem=fs_s3
+        )
+
+        # ADICIONAR OS METADADOS -- NESSA PARTE
+        # add description
+        self.metadata = to_column_info_arrow(dataset.schema)
+
+        # add row count
+        self.getrowcount = sum( 
+            tbl.num_rows 
+            for fragment in dataset.fragments
+            for tbl in fragment.row_groups
         )
 
         return dataset.read(use_threads=True)

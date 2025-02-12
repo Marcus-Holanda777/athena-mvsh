@@ -4,25 +4,12 @@ import pyarrow as pa
 from contextlib import contextmanager
 import os
 import pandas as pd
-from concurrent.futures import (
-    ThreadPoolExecutor, 
-    as_completed,
-    Future
-)
+from concurrent.futures import ThreadPoolExecutor, as_completed, Future
 from functools import partial
-from athena_mvsh.error import (
-    DatabaseError, 
-    ProgrammingError
-)
-from athena_mvsh.utils import (
-    parse_output_location,
-    query_is_ddl
-)
+from athena_mvsh.error import DatabaseError, ProgrammingError
+from athena_mvsh.utils import parse_output_location, query_is_ddl
 import uuid
-from athena_mvsh.converter import (
-    map_convert_df_athena,
-    map_convert_duckdb_athena
-)
+from athena_mvsh.converter import map_convert_df_athena, map_convert_duckdb_athena
 import logging
 from pathlib import Path
 from typing import Literal
@@ -33,57 +20,53 @@ logger = logging.getLogger(__name__)
 """@Experimental
 """
 
+
 class CursorParquetDuckdb(CursorBaseParquet):
     def __init__(
-        self, 
-        s3_staging_dir: str, 
-        schema_name: str = None, 
-        catalog_name: str = None, 
-        poll_interval: float = 1, 
-        result_reuse_enable: bool = False, 
-        *args, 
-        **kwargs
+        self,
+        s3_staging_dir: str,
+        schema_name: str = None,
+        catalog_name: str = None,
+        poll_interval: float = 1,
+        result_reuse_enable: bool = False,
+        *args,
+        **kwargs,
     ) -> None:
-        
         super().__init__(
             s3_staging_dir,
-            schema_name, 
-            catalog_name, 
-            poll_interval, 
-            result_reuse_enable, 
-            *args, 
-            **kwargs
+            schema_name,
+            catalog_name,
+            poll_interval,
+            result_reuse_enable,
+            *args,
+            **kwargs,
         )
-   
+
     @contextmanager
-    def __connect_duckdb(
-        self, 
-        database: str = 'db.duckdb'
-    ):
-        
-        self.home_duckdb = 'duckdb_home'
+    def __connect_duckdb(self, database: str = "db.duckdb"):
+        self.home_duckdb = "duckdb_home"
         os.makedirs(self.home_duckdb, exist_ok=True)
 
         try:
             config = {
-                'preserve_insertion_order': False,
-                'threads': (os.cpu_count() or 1) * 5
+                "preserve_insertion_order": False,
+                "threads": (os.cpu_count() or 1) * 5,
             }
             con = duckdb.connect(database, config=config)
-            
+
             # diretorio de extensoes
             if os.path.isdir(self.home_duckdb):
                 con.sql(f"SET home_directory='{self.home_duckdb}'")
 
-            con.install_extension('httpfs')
-            con.load_extension('httpfs')
+            con.install_extension("httpfs")
+            con.load_extension("httpfs")
 
             con.sql(f"""
                 CREATE SECRET IF NOT EXISTS(
                    TYPE s3,
-                   KEY_ID '{self.config['aws_access_key_id']}',
-                   SECRET '{self.config['aws_secret_access_key']}',
-                   REGION '{self.config['region_name']}'
+                   KEY_ID '{self.config["aws_access_key_id"]}',
+                   SECRET '{self.config["aws_secret_access_key"]}',
+                   REGION '{self.config["region_name"]}'
             )
             """)
             yield con
@@ -91,9 +74,8 @@ class CursorParquetDuckdb(CursorBaseParquet):
             raise
         finally:
             con.close()
-    
+
     def __read_duckdb(self):
-        
         bucket_s3 = self.get_bucket_s3()
         *__, manifest = self.unload_location(bucket_s3)
 
@@ -101,7 +83,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
             view = con.read_parquet(manifest)
             while row := view.fetchone():
                 yield row
-    
+
     def __read_arrow(self):
         bucket_s3 = self.get_bucket_s3()
         *__, manifest = self.unload_location(bucket_s3)
@@ -109,70 +91,42 @@ class CursorParquetDuckdb(CursorBaseParquet):
         with self.__connect_duckdb() as con:
             view = con.read_parquet(manifest)
             return view.arrow()
-        
+
     def __pre_execute(
-        self, 
-        query: str, 
-        result_reuse_enable: bool = False,
-        unload: bool = True
+        self, query: str, result_reuse_enable: bool = False, unload: bool = True
     ):
         if unload:
             query, __ = self.format_unload(query)
 
-        id_exec = self.start_query_execution(
-            query,
-            result_reuse_enable
-        )
+        id_exec = self.start_query_execution(query, result_reuse_enable)
 
         return id_exec
-    
-    def execute(
-        self, 
-        query: str, 
-        result_reuse_enable: bool = False
-    ):
+
+    def execute(self, query: str, result_reuse_enable: bool = False):
         unload = True
         if query_is_ddl(query):
             unload = False
 
-        __ = self.__pre_execute(
-            query,
-            result_reuse_enable,
-            unload=unload
-        )
+        __ = self.__pre_execute(query, result_reuse_enable, unload=unload)
 
         try:
             yield from self.__read_duckdb()
         except Exception:
             return
-        
-    def to_arrow(
-        self,
-        query: str, 
-        result_reuse_enable: bool = False
-    ):
-        __ = self.__pre_execute(
-            query,
-            result_reuse_enable
-        )
-        
+
+    def to_arrow(self, query: str, result_reuse_enable: bool = False):
+        __ = self.__pre_execute(query, result_reuse_enable)
+
         try:
             return self.__read_arrow()
         except Exception:
             return pa.Table.from_dict(dict())
 
     def to_parquet(
-        self,
-        query: str,
-        result_reuse_enable: bool = False,
-        *args, 
-        **kwargs
+        self, query: str, result_reuse_enable: bool = False, *args, **kwargs
     ):
-        __ = self.__pre_execute(
-            query,
-            result_reuse_enable
-        )
-        
+        __ = self.__pre_execute(query, result_reuse_enable)
+
         try:
             bucket_s3 = self.get_bucket_s3()
             *__, manifest = self.unload_location(bucket_s3)
@@ -181,21 +135,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 view = con.read_parquet(manifest)
                 view.write_parquet(*args, **kwargs)
 
-        except Exception as e:
+        except Exception:
             ...
-    
-    def to_csv(
-        self,
-        query: str,
-        result_reuse_enable: bool = False,
-        *args, 
-        **kwargs
-    ):
-        __ = self.__pre_execute(
-            query,
-            result_reuse_enable
-        )
-        
+
+    def to_csv(self, query: str, result_reuse_enable: bool = False, *args, **kwargs):
+        __ = self.__pre_execute(query, result_reuse_enable)
+
         try:
             bucket_s3 = self.get_bucket_s3()
             *__, manifest = self.unload_location(bucket_s3)
@@ -204,22 +149,14 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 view = con.read_parquet(manifest)
                 view.write_csv(*args, **kwargs)
 
-        except Exception as e:
+        except Exception:
             ...
 
     def to_pandas(
-        self,
-        query: str, 
-        result_reuse_enable: bool = False, 
-        *args,
-        **kwargs
+        self, query: str, result_reuse_enable: bool = False, *args, **kwargs
     ) -> pd.DataFrame:
-        
-        __ = self.__pre_execute(
-            query,
-            result_reuse_enable
-        )
-        
+        __ = self.__pre_execute(query, result_reuse_enable)
+
         try:
             bucket_s3 = self.get_bucket_s3()
             *__, manifest = self.unload_location(bucket_s3)
@@ -227,22 +164,19 @@ class CursorParquetDuckdb(CursorBaseParquet):
             with self.__connect_duckdb() as con:
                 view = con.read_parquet(manifest)
                 return view.df(*args, **kwargs)
-        except Exception as e:
+        except Exception:
             return pd.DataFrame()
 
     def to_create_table_db(
         self,
         database: str,
         query: str,
-        result_reuse_enable: bool = False, 
-        *args, 
-        **kwargs
+        result_reuse_enable: bool = False,
+        *args,
+        **kwargs,
     ):
-        __ = self.__pre_execute(
-            query,
-            result_reuse_enable
-        )
-        
+        __ = self.__pre_execute(query, result_reuse_enable)
+
         try:
             bucket_s3 = self.get_bucket_s3()
             *__, manifest = self.unload_location(bucket_s3)
@@ -252,35 +186,31 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 con.sql(f"DROP TABLE IF EXISTS {kwargs['table_name']}")
                 view.create(*args, **kwargs)
 
-        except Exception as e:
+        except Exception:
             ...
 
     def to_partition_create_table_db(
         self,
         database: str,
-        query: str, 
+        query: str,
         workers: int,
         result_reuse_enable: bool = False,
-        *args, 
-        **kwargs
+        *args,
+        **kwargs,
     ):
-        """Consulta com menor desempenho
-        """
+        """Consulta com menor desempenho"""
+
         # NOTE: Inserir por arquivo
         def insert_part(con, file):
             cursor = con.cursor()
             cursor.sql(f"""
-                INSERT INTO {kwargs['table_name']} 
+                INSERT INTO {kwargs["table_name"]} 
                 FROM read_parquet('{file}')
-            """
-            )
-            return f'File read_insert: {os.path.basename(file)}'
+            """)
+            return f"File read_insert: {os.path.basename(file)}"
 
-        __ = self.__pre_execute(
-            query,
-            result_reuse_enable
-        )
-        
+        __ = self.__pre_execute(query, result_reuse_enable)
+
         try:
             bucket_s3 = self.get_bucket_s3()
             *__, manifest = self.unload_location(bucket_s3)
@@ -292,10 +222,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 view.create(*args, **kwargs)
 
                 logger.info(f"Start create table: {kwargs['table_name']}")
-                
+
                 # NOTE: Considerar arquivos apartir da segunda posicao
                 rest_file = list(manifest[1:])
-                
+
                 logger.info(f"Length files: {len(rest_file)}")
 
                 with ThreadPoolExecutor(max_workers=workers) as executor:
@@ -304,86 +234,58 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
                     for rst in rest_file:
                         futures.append(executor.submit(fun_part, rst))
-                    
+
                     for fut in as_completed(futures):
                         result = fut.result()
-                        
+
                         logger.info(result)
 
-        except Exception as e:
+        except Exception:
             ...
-        
+
     def to_insert_table_db(
-        self,
-        database: str,
-        query: str,
-        result_reuse_enable: bool = False,
-        **kwargs
+        self, database: str, query: str, result_reuse_enable: bool = False, **kwargs
     ):
         # NOTE: Verifica se banco existe
         if not os.path.isfile(database):
             raise DatabaseError(f"Database {database} not exists !")
-        
+
         # NOTE: Verifica se tabela existe
         with self.__connect_duckdb(database) as con:
             rst = con.execute(f"""
             select 1 from information_schema.tables
-            where table_name = '{kwargs['table_name']}'
+            where table_name = '{kwargs["table_name"]}'
             """)
-            
+
             ok = rst.fetchone()
 
             if not ok:
-                raise DatabaseError(
-                    f"Table {kwargs['table_name']} not exists !"
-                )
+                raise DatabaseError(f"Table {kwargs['table_name']} not exists !")
 
-        __ = self.__pre_execute(
-            query,
-            result_reuse_enable
-        )
-        
+        __ = self.__pre_execute(query, result_reuse_enable)
+
         try:
             bucket_s3 = self.get_bucket_s3()
             *__, manifest = self.unload_location(bucket_s3)
 
             with self.__connect_duckdb(database) as con:
                 con.sql(f"""
-                    INSERT INTO {kwargs['table_name']}
+                    INSERT INTO {kwargs["table_name"]}
                     FROM read_parquet({manifest})
                 """)
 
-        except Exception as e:
+        except Exception:
             ...
 
-    def __get_table_exists(
-        self,
-        catalog_name: str,
-        schema: str,
-        table_name: str
-    ):
-        
+    def __get_table_exists(self, catalog_name: str, schema: str, table_name: str):
         response_meta = self.get_table_metadata(
-            catalog_name=catalog_name,
-            database_name=schema,
-            table_name=table_name
+            catalog_name=catalog_name, database_name=schema, table_name=table_name
         )
 
         return response_meta
 
-    
-    def __delete_table(
-        self, 
-        catalog_name: str,
-        schema: str, 
-        table_name: str
-    ) -> None:
-        
-        response_meta = self.__get_table_exists(
-            catalog_name,
-            schema,
-            table_name
-        )
+    def __delete_table(self, catalog_name: str, schema: str, table_name: str) -> None:
+        response_meta = self.__get_table_exists(catalog_name, schema, table_name)
 
         if response_meta:
             # TODO: Deletar a tabela
@@ -391,12 +293,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 f"""
                 DROP TABLE `{schema}`.`{table_name}`
                 """,
-                unload=False
+                unload=False,
             )
-                
+
             # TODO: Retornar bucket name
-            location_table = response_meta['Parameters']['location']
-            bucket_name, keys = parse_output_location(location_table) 
+            location_table = response_meta["Parameters"]["location"]
+            bucket_name, keys = parse_output_location(location_table)
 
             # TODO: Localizar e deletar o bucket associado a tabela
             bucket = self.get_bucket_resource(bucket_name)
@@ -412,33 +314,33 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str,
         output: pd.DataFrame | list[str | Path] | str | Path,
         partitions: list[str] = None,
-        compression: str = 'GZIP'
+        compression: str = "GZIP",
     ):
-
         # NOTE: LER DATAFRAME DUCKDB ou PARQUET
         with self.__connect_duckdb() as db:
             s3_dir = f"{location}{uuid.uuid4()}/"
-            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet.gzip'
-            
+            s3_dir_file = f"{s3_dir}{uuid.uuid4()}.parquet.gzip"
+
             if isinstance(output, pd.DataFrame):
-               cols_map = map_convert_df_athena(output)
+                cols_map = map_convert_df_athena(output)
             else:
-                
                 # NOTE: Normaliza o caminho para o duckdb
-                normaliza_path = lambda f: str(f).replace(os.sep, os.altsep)
+                def normaliza_path(f):
+                    return str(f).replace(os.sep, os.altsep)
+
                 if isinstance(output, list):
                     output = list(map(normaliza_path, output))
-                
+
                 if isinstance(output, (str, Path)):
                     output = normaliza_path(output)
 
                 cols_map = map_convert_duckdb_athena(db, output)
 
-            parts_duck = parts_athena = ''
+            parts_duck = parts_athena = ""
 
             if partitions:
                 parts_duck = f"""
-                , PARTITION_BY ({','.join(partitions)}), FILE_EXTENSION 'parquet.gz'
+                , PARTITION_BY ({",".join(partitions)}), FILE_EXTENSION 'parquet.gz'
                 """
 
                 parts_athena = f"""
@@ -446,7 +348,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
                     {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
                 )
                 """
-            
+
             if isinstance(output, pd.DataFrame):
                 db.sql(f"""
                 COPY output 
@@ -459,16 +361,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 TO '{s3_dir if partitions else s3_dir_file}'
                 (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
                 """)
-            
+
             if partitions is None:
                 partitions = list()
 
-            cols = ',\n'.join(
-                [
-                    f"`{col}` {tipo}"
-                    for col, tipo in cols_map
-                    if col not in partitions
-                ]
+            cols = ",\n".join(
+                [f"`{col}` {tipo}" for col, tipo in cols_map if col not in partitions]
             )
 
             stmt = f"""
@@ -483,16 +381,16 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             # TODO: Criar a tabela
             __ = self.__pre_execute(stmt, unload=False)
-            
+
             # NOTE: O duckdb só particiona os dados no
             # estilo HIVE, como as particoes ja existem antes de criar a tabela
             # é preciso realizar um reparo
             if partitions:
                 hive_parts = f"""MSCK REPAIR TABLE `{schema}`.`{table_name}`"""
                 __ = self.__pre_execute(hive_parts, unload=False)
-        
+
         return cols_map
-    
+
     def __create_table_iceberg(
         self,
         schema: str,
@@ -500,21 +398,16 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str,
         cols_map,
         partitions: list[str] = None,
-        catalog_name: str = 'awsdatacatalog',
-        compression: str = 'snappy',
-        if_exists: Literal['replace', 'append'] = 'replace'
+        catalog_name: str = "awsdatacatalog",
+        compression: str = "snappy",
+        if_exists: Literal["replace", "append"] = "replace",
     ) -> None:
-        
-        if if_exists == 'replace':
+        if if_exists == "replace":
             # NOTE: DELETAR SE EXISTIR
-            self.__delete_table(
-                catalog_name,
-                schema,
-                table_name
-            )
+            self.__delete_table(catalog_name, schema, table_name)
 
             s3_dir = f"{location}{uuid.uuid4()}/"
-            parts_athena = ''
+            parts_athena = ""
 
             if partitions:
                 parts_athena = f"""
@@ -522,16 +415,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
                     {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
                 )
                 """
-                
+
             if partitions is None:
                 partitions = list()
-                
-            cols = ',\n'.join(
-                [
-                    f"`{col}` {tipo}"
-                    for col, tipo in cols_map
-                    if col not in partitions
-                ]
+
+            cols = ",\n".join(
+                [f"`{col}` {tipo}" for col, tipo in cols_map if col not in partitions]
             )
 
             stmt = f"""
@@ -550,7 +439,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             # TODO: Criar a tabela
             __ = self.__pre_execute(stmt, unload=False)
-        
+
         stmt_insert = f"""
         INSERT INTO "{schema}"."{table_name}"
         SELECT * FROM "{schema}"."temp_{table_name}"
@@ -559,11 +448,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         __ = self.__pre_execute(stmt_insert, unload=False)
 
         # TODO: Deletar tabela temporaria
-        self.__delete_table(
-            catalog_name,
-            schema,
-            f'temp_{table_name}'
-        )
+        self.__delete_table(catalog_name, schema, f"temp_{table_name}")
 
     def write_dataframe(
         self,
@@ -572,39 +457,25 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = 'awsdatacatalog',
-        compression: str = 'GZIP'
+        catalog_name: str = "awsdatacatalog",
+        compression: str = "GZIP",
     ) -> None:
-        
         if not isinstance(df, pd.DataFrame):
             raise ProgrammingError("Parameter 'df' is not a dataframe |")
-        
+
         if df.empty:
             raise ProgrammingError("Dataframe is empty |")
 
         if location:
-            location = (
-                location if location.endswith('/')
-                else 
-                location + '/'
-            )
+            location = location if location.endswith("/") else location + "/"
         else:
             location = self.s3_staging_dir
-        
-        self.__delete_table(
-            catalog_name,
-            schema, 
-            table_name
-        )
-        
+
+        self.__delete_table(catalog_name, schema, table_name)
+
         # TODO: Criar tabela com o tipo correto
         self.__create_table_external(
-            schema, 
-            table_name, 
-            location,
-            df,
-            partitions,
-            compression
+            schema, table_name, location, df, partitions, compression
         )
 
     def write_parquet(
@@ -614,36 +485,21 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = 'awsdatacatalog',
-        compression: str = 'GZIP'
+        catalog_name: str = "awsdatacatalog",
+        compression: str = "GZIP",
     ) -> None:
-
         if location:
-            location = (
-                location if location.endswith('/')
-                else 
-                location + '/'
-            )
+            location = location if location.endswith("/") else location + "/"
         else:
             location = self.s3_staging_dir
-        
+
         # TODO: Verificar se tabela existe
-        self.__delete_table(
-            catalog_name,
-            schema,
-            table_name
-        )
+        self.__delete_table(catalog_name, schema, table_name)
 
         # TODO: Criar tabela com o tipo correto
         self.__create_table_external(
-            schema,
-            table_name,
-            location,
-            file,
-            partitions,
-            compression
+            schema, table_name, location, file, partitions, compression
         )
-    
 
     def write_table_iceberg(
         self,
@@ -652,35 +508,22 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = 'awsdatacatalog',
-        compression: str = 'snappy',
-        if_exists: Literal['replace', 'append'] = 'replace'
+        catalog_name: str = "awsdatacatalog",
+        compression: str = "snappy",
+        if_exists: Literal["replace", "append"] = "replace",
     ) -> None:
-        
         # TODO: TABELA EXTERNA
         if location:
-            location = (
-                location if location.endswith('/')
-                else 
-                location + '/'
-            )
+            location = location if location.endswith("/") else location + "/"
         else:
             location = self.s3_staging_dir
-        
-        temp_table_name = f'temp_{table_name}'
 
-        self.__delete_table(
-            catalog_name,
-            schema,
-            temp_table_name
-        )
-        
+        temp_table_name = f"temp_{table_name}"
+
+        self.__delete_table(catalog_name, schema, temp_table_name)
+
         cols_map = self.__create_table_external(
-            schema,
-            temp_table_name,
-            location,
-            data,
-            partitions
+            schema, temp_table_name, location, data, partitions
         )
 
         # TODO: Tabela ICEBERG
@@ -692,54 +535,42 @@ class CursorParquetDuckdb(CursorBaseParquet):
             partitions,
             catalog_name,
             compression,
-            if_exists
+            if_exists,
         )
-    
+
     def merge_table_iceberg(
         self,
         target_table: str,
         source_data: pd.DataFrame | list[str | Path] | str | Path,
         schema: str,
         predicate: str,
-        alias: tuple = ('t', 's'),
+        alias: tuple = ("t", "s"),
         location: str = None,
-        catalog_name: str = 'awsdatacatalog',
+        catalog_name: str = "awsdatacatalog",
     ) -> None:
-        
         # TODO: Criar a tabela temporaria para UPSERT
         # verificar se tabela existe se existir deletar
         if location:
-            location = (
-                location if location.endswith('/')
-                else 
-                location + '/'
-            )
+            location = location if location.endswith("/") else location + "/"
         else:
             location = self.s3_staging_dir
 
-        temp_table_name = f'temp_{target_table}'
+        temp_table_name = f"temp_{target_table}"
 
-        self.__delete_table(
-            catalog_name,
-            schema,
-            temp_table_name
-        )
-        
+        self.__delete_table(catalog_name, schema, temp_table_name)
+
         cols_map = self.__create_table_external(
-            schema,
-            temp_table_name,
-            location,
-            source_data
+            schema, temp_table_name, location, source_data
         )
 
         # TODO: Criar a consulta do tipo MERGE
         cols = list(map(lambda col: f'"{col[0]}"', cols_map))
         target, source = alias
-        update_cols = ', '.join(f'{col} = {source}.{col}' for col in cols)
-        insert_cols = ', '.join(cols)
-        values_cols = ', '.join(f'{source}.{col}' for col in cols)
+        update_cols = ", ".join(f"{col} = {source}.{col}" for col in cols)
+        insert_cols = ", ".join(cols)
+        values_cols = ", ".join(f"{source}.{col}" for col in cols)
 
-        stmt= f"""
+        stmt = f"""
             MERGE INTO "{schema}"."{target_table}" AS {target}
             USING "{schema}"."{temp_table_name}" AS {source}
             ON ({predicate})
@@ -748,13 +579,8 @@ class CursorParquetDuckdb(CursorBaseParquet):
             WHEN NOT MATCHED THEN
                INSERT ({insert_cols}) VALUES ({values_cols})
         """
-        
+
         # TODO: Executar consulta MERGE e deletar tabela temp
         __ = self.__pre_execute(stmt, unload=False)
 
-        self.__delete_table(
-            catalog_name,
-            schema,
-            temp_table_name
-        )
-
+        self.__delete_table(catalog_name, schema, temp_table_name)

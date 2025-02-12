@@ -6,10 +6,7 @@ from typing import Any
 import pandas as pd
 from duckdb import DuckDBPyConnection
 from typing import cast
-from pyarrow import (
-    Schema, 
-    DataType
-)
+from pyarrow import Schema, DataType
 
 
 def to_column_info_arrow(schema: Schema) -> tuple[dict]:
@@ -75,96 +72,82 @@ def get_athena_type(type_: DataType) -> tuple[str, int, int]:
 
 
 def convert_df_athena(col: pd.Series) -> str:
-
-    col_type = (
-        pd.api.types
-        .infer_dtype(
-            col, 
-            skipna=True
-        )
-    )
+    col_type = pd.api.types.infer_dtype(col, skipna=True)
 
     if col_type == "datetime64" or col_type == "datetime":
         return "TIMESTAMP"
-    
+
     elif col_type == "timedelta":
         return "INT"
-    
+
     elif col_type == "timedelta64":
         return "BIGINT"
-    
+
     elif col_type == "floating":
         if col.dtype == "float32":
             return "FLOAT"
         else:
             return "DOUBLE"
-    
+
     elif col_type == "integer":
         if col.dtype == "int32":
             return "INT"
         else:
             return "BIGINT"
-    
+
     elif col_type == "boolean":
         return "BOOLEAN"
-    
+
     elif col_type == "date":
         return "DATE"
-    
+
     elif col_type == "bytes":
         return "BINARY"
-    
+
     elif col_type in ["complex", "time"]:
         raise ValueError(f"Data type `{col_type}` is not supported")
-    
+
     return "STRING"
 
 
 def map_convert_df_athena(df: pd.DataFrame):
-    return [
-        (c, convert_df_athena(df[c])) 
-        for c in df.columns
-    ]
+    return [(c, convert_df_athena(df[c])) for c in df.columns]
 
 
 def convert_tp_duckdb(col_type: str) -> str:
     col_type = col_type.upper()
 
-    if col_type in('BIT', 'BLOB'):
+    if col_type in ("BIT", "BLOB"):
         return "BINARY"
-    
+
     if col_type.startswith("TIMESTAMP"):
         return "TIMESTAMP"
-    
-    if col_type.startswith('TIME'):
+
+    if col_type.startswith("TIME"):
         return "TIME"
-    
-    if col_type in("UBIGINT", "", "UHUGEINT", "HUGEINT"):
+
+    if col_type in ("UBIGINT", "", "UHUGEINT", "HUGEINT"):
         return "BIGINT"
-    
-    if col_type == 'USMALLINT':
-        return 'SMALLINT'
-    
+
+    if col_type == "USMALLINT":
+        return "SMALLINT"
+
     if col_type == "UTINYINT":
         return "TINYINT"
-    
-    if col_type == "UINTEGER":
-        return "INTEGER"
-    
-    if col_type in("UUID", "VARCHAR", "ENUM", "UNION"):
+
+    if col_type in ("INTEGER", "UINTEGER"):
+        return "INT"
+
+    if col_type in ("UUID", "VARCHAR", "ENUM", "UNION"):
         return "STRING"
-    
+
     if col_type == "LIST":
         return "ARRAY"
-    
+
     return col_type
 
 
-def map_convert_duckdb_athena(
-    con: DuckDBPyConnection, 
-    file: list[str] | str
-):
-    
+def map_convert_duckdb_athena(con: DuckDBPyConnection, file: list[str] | str):
     temp_tbl = f"""
         CREATE OR REPLACE TEMP TABLE validade_type 
         AS FROM read_parquet({file!r}) LIMIT 1;
@@ -176,13 +159,10 @@ def map_convert_duckdb_athena(
       where table_name = 'validade_type'
 	  ORDER BY ordinal_position;
     """
-	 
+
     rst = con.sql(stmt).fetchall()
 
-    return [
-        (col, convert_tp_duckdb(tep)) 
-        for col, tep in rst
-    ]
+    return [(col, convert_tp_duckdb(tep)) for col, tep in rst]
 
 
 def strtobool(val):

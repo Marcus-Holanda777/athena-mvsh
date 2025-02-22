@@ -13,6 +13,7 @@ from athena_mvsh.converter import (
     map_convert_df_athena,
     map_convert_duckdb_athena,
     partition_func_iceberg,
+    map_convert_duckdb_athena_pandas_arrow,
 )
 import logging
 from pathlib import Path
@@ -316,7 +317,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         table_name: str,
         location: str,
-        output: pd.DataFrame | list[str | Path] | str | Path,
+        output: pd.DataFrame | list[str | Path] | str | Path | pa.Table,
         partitions: list[str] = None,
         compression: str = "GZIP",
     ):
@@ -327,6 +328,9 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             if isinstance(output, pd.DataFrame):
                 cols_map = map_convert_df_athena(output)
+            elif isinstance(output, pa.Table):
+                cols_map = map_convert_duckdb_athena_pandas_arrow(db, output)
+
             else:
                 # NOTE: Normaliza o caminho para o duckdb
                 def normaliza_path(f):
@@ -353,7 +357,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 )
                 """
 
-            if isinstance(output, pd.DataFrame):
+            if isinstance(output, (pd.DataFrame, pa.Table)):
                 db.sql(f"""
                 COPY output 
                 TO '{s3_dir if partitions else s3_dir_file}'
@@ -382,13 +386,8 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 LOCATION '{s3_dir}'
                 TBLPROPERTIES ('parquet.compress'='{compression}')
             """
-
-            # TODO: Criar a tabela
             __ = self.__pre_execute(stmt, unload=False)
 
-            # NOTE: O duckdb só particiona os dados no
-            # estilo HIVE, como as particoes ja existem antes de criar a tabela
-            # é preciso realizar um reparo
             if partitions:
                 hive_parts = f"""MSCK REPAIR TABLE `{schema}`.`{table_name}`"""
                 __ = self.__pre_execute(hive_parts, unload=False)
@@ -480,6 +479,33 @@ class CursorParquetDuckdb(CursorBaseParquet):
             schema, table_name, location, df, partitions, compression
         )
 
+    def write_arrow(
+        self,
+        tbl: pa.Table,
+        table_name: str,
+        schema: str,
+        location: str = None,
+        partitions: list[str] = None,
+        catalog_name: str = "awsdatacatalog",
+        compression: str = "GZIP",
+    ) -> None:
+        if not isinstance(tbl, pa.Table):
+            raise ProgrammingError("Parameter 'tbl' is not a Table Arrow |")
+
+        if tbl.num_rows == 0:
+            raise ProgrammingError("Table Arrow is empty |")
+
+        if location:
+            location = location if location.endswith("/") else location + "/"
+        else:
+            location = self.s3_staging_dir
+
+        self.__delete_table(catalog_name, schema, table_name)
+
+        self.__create_table_external(
+            schema, table_name, location, tbl, partitions, compression
+        )
+
     def write_parquet(
         self,
         file: list[str | Path] | str | Path,
@@ -505,7 +531,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
     def write_table_iceberg(
         self,
-        data: pd.DataFrame | list[str | Path] | str | Path,
+        data: pd.DataFrame | list[str | Path] | str | Path | pa.Table,
         table_name: str,
         schema: str,
         location: str = None,
@@ -541,15 +567,16 @@ class CursorParquetDuckdb(CursorBaseParquet):
     def merge_table_iceberg(
         self,
         target_table: str,
-        source_data: pd.DataFrame | list[str | Path] | str | Path,
+        source_data: pd.DataFrame | list[str | Path] | str | Path | pa.Table,
         schema: str,
         predicate: str,
+        delete_condition: str = None,
+        update_condition: str = None,
+        insert_condition: str = None,
         alias: tuple = ("t", "s"),
         location: str = None,
         catalog_name: str = "awsdatacatalog",
     ) -> None:
-        # TODO: Criar a tabela temporaria para UPSERT
-        # verificar se tabela existe se existir deletar
         if location:
             location = location if location.endswith("/") else location + "/"
         else:
@@ -570,14 +597,27 @@ class CursorParquetDuckdb(CursorBaseParquet):
         insert_cols = ", ".join(cols)
         values_cols = ", ".join(f"{source}.{col}" for col in cols)
 
+        if delete_condition:
+            merge_del = f"""
+            WHEN MATCHED AND {delete_condition}
+                THEN DELETE
+            """
+
+        if update_condition:
+            conds_up = f"AND {update_condition}"
+
+        if insert_condition:
+            conds_ins = f"AND {insert_condition}"
+
         stmt = f"""
             MERGE INTO "{schema}"."{target_table}" AS {target}
             USING "{schema}"."{temp_table_name}" AS {source}
             ON ({predicate})
-            WHEN MATCHED THEN
-               UPDATE SET {update_cols}
-            WHEN NOT MATCHED THEN
-               INSERT ({insert_cols}) VALUES ({values_cols})
+            {merge_del if delete_condition else ""}
+            WHEN MATCHED {conds_up if update_condition else ""}
+               THEN UPDATE SET {update_cols}
+            WHEN NOT MATCHED {conds_ins if insert_condition else ""}
+               THEN INSERT ({insert_cols}) VALUES ({values_cols})
         """
 
         # TODO: Executar consulta MERGE e deletar tabela temp

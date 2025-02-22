@@ -1,6 +1,5 @@
+class Error(Exception): ...
 
-class Error(Exception):
-    ...
 
 class DatabaseError(Error):
     def __init__(self, response: dict | str) -> None:
@@ -9,16 +8,16 @@ class DatabaseError(Error):
 
     def __set_error(self):
         if not isinstance(self.response, dict):
-            self.args = (self.response, )
+            self.args = (self.response,)
         else:
             match self.response:
                 case {"QueryExecution": {"Status": {"AthenaError": dict_error}}}:
                     self.args = (*dict_error.items(),)
                 case __:
-                    self.args =  ("Failed to connect to database !", )
+                    self.args = ("Failed to connect to database !",)
 
-class OperationalError(DatabaseError):
-    ...
 
-class ProgrammingError(DatabaseError):
-    ...
+class OperationalError(DatabaseError): ...
+
+
+class ProgrammingError(DatabaseError): ...

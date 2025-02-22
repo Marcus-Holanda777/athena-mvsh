@@ -711,6 +711,80 @@ class Athena(CursorIterator):
             df, table_name, schema, location, partitions, catalog_name, compression
         )
 
+    def write_arrow(
+        self,
+        tbl: pa.Table,
+        table_name: str,
+        schema: str,
+        location: str = None,
+        partitions: list[str] = None,
+        catalog_name: str = "awsdatacatalog",
+        compression: str = "GZIP",
+    ) -> None:
+        """
+        Escreve um Table Arrow em uma tabela externa no Athena usando o DuckDB.
+
+        Este método utiliza o DuckDB para escrever um Table Arrow como uma tabela externa no Amazon Athena,
+        permitindo especificar o esquema, particionamento e compressão dos dados. Caso o cursor utilizado não seja
+        compatível, um erro será lançado.
+
+        Args:
+            tbl (pa.Table): O Table Arrow que será escrito na tabela externa no Athena.
+            table_name (str): O nome da tabela externa de destino no Athena.
+            schema (str): O esquema onde a tabela será criada ou atualizada no Athena.
+            location (str, optional): O local onde os dados serão armazenados (geralmente um bucket S3), se aplicável.
+            partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
+            catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
+            compression (str, optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'GZIP'`.
+
+        Exceções:
+            ProgrammingError: Se a função for chamada com um cursor incompatível.
+
+        Detalhes:
+            - O Table Arrow fornecido será convertido e escrito como uma tabela externa no Athena.
+            - A opção de particionamento permite distribuir os dados em várias pastas ou arquivos, facilitando o gerenciamento de grandes volumes de dados no S3.
+            - A compressão `GZIP` pode ser usada para reduzir o tamanho do arquivo gerado, com outras opções como `SNAPPY` também sendo suportadas.
+            - O catálogo de dados `awsdatacatalog` pode ser alterado para refletir configurações específicas do ambiente de execução.
+
+        Exemplo:
+            ```python
+            import pandas as pd
+            from athena_mvsh import Athena, CursorParquetDuckdb
+
+            cursor = CursorParquetDuckdb(...)
+
+            # Exemplo de DataFrame
+            df = pd.DataFrame({
+                "coluna1": [1, 2, 3],
+                "coluna2": ["A", "B", "C"]
+            })
+
+            # Escreve o Table Arrow em uma tabela externa no Athena
+            with Athena(cursor) as athena:
+                athena.write_arrow(
+                    tbl,
+                    table_name="tabela_destino",
+                    schema="meu_esquema",
+                    location="s3://meu-bucket/dados/",
+                    partitions=["coluna1"],
+                    catalog_name="meu_catalogo",
+                    compression="SNAPPY"
+                )
+            ```
+
+        Notas:
+            - Certifique-se de que o cursor utilizado seja instância de `CursorParquetDuckdb`.
+            - O particionamento é útil para grandes volumes de dados, permitindo consultas mais eficientes no Athena.
+            - A compressão pode ser ajustada para balancear entre desempenho e tamanho do arquivo.
+        """
+
+        if not isinstance(self.cursor, CursorParquetDuckdb):
+            raise ProgrammingError("Function not implemented for cursor !")
+
+        self.cursor.write_arrow(
+            tbl, table_name, schema, location, partitions, catalog_name, compression
+        )
+
     def write_parquet(
         self,
         file: list[str | Path] | str | Path,
@@ -785,7 +859,7 @@ class Athena(CursorIterator):
 
     def write_table_iceberg(
         self,
-        data: pd.DataFrame | list[str | Path] | str | Path,
+        data: pd.DataFrame | list[str | Path] | str | Path | pa.Table,
         table_name: str,
         schema: str,
         location: str = None,
@@ -795,15 +869,15 @@ class Athena(CursorIterator):
         if_exists: Literal["replace", "append"] = "replace",
     ) -> None:
         """
-        Cria ou insere dados em uma tabela Iceberg no Athena a partir de um DataFrame pandas ou arquivos Parquet.
+        Cria ou insere dados em uma tabela Iceberg no Athena a partir de um DataFrame pandas, Table Arrow ou arquivos Parquet.
 
         Este método usa o DuckDB para criar ou inserir dados em uma tabela Iceberg no Amazon Athena,
-        permitindo que os dados sejam inseridos a partir de um DataFrame pandas ou múltiplos arquivos Parquet.
+        permitindo que os dados sejam inseridos a partir de um DataFrame pandas, Table Arrow ou múltiplos arquivos Parquet.
         A operação pode substituir a tabela existente ou adicionar novos dados, dependendo do valor de `if_exists`.
 
         Args:
-            data (pd.DataFrame | list[str | Path] | str | Path): Dados a serem inseridos ou criados na tabela Iceberg.
-                Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato string ou Path).
+            data (pd.DataFrame | list[str | Path] | str | Path | pa.Table): Dados a serem inseridos ou criados na tabela Iceberg.
+                Pode ser um DataFrame pandas, Table Arrow ou um ou mais arquivos Parquet (caminhos em formato string ou Path).
             table_name (str): O nome da tabela Iceberg a ser criada ou inserida no Athena.
             schema (str): O esquema onde a tabela Iceberg será criada ou atualizada no Athena.
             location (str, optional): O local no S3 onde os dados serão armazenados, se aplicável.
@@ -873,9 +947,12 @@ class Athena(CursorIterator):
     def merge_table_iceberg(
         self,
         target_table: str,
-        source_data: pd.DataFrame | list[str | Path] | str | Path,
+        source_data: pd.DataFrame | list[str | Path] | str | Path | pa.Table,
         schema: str,
         predicate: str,
+        delete_condition: str = None,
+        update_condition: str = None,
+        insert_condition: str = None,
         alias: tuple = ("t", "s"),
         location: str = None,
         catalog_name: str = "awsdatacatalog",
@@ -890,7 +967,7 @@ class Athena(CursorIterator):
 
         Args:
             target_table (str): O nome da tabela de destino do tipo Iceberg no Athena, onde os dados serão mesclados.
-            source_data (pd.DataFrame | list[str | Path] | str | Path): Dados de origem a serem mesclados com a tabela de destino.
+            source_data (pd.DataFrame | list[str | Path] | str | Path | pa.Table): Dados de origem a serem mesclados com a tabela de destino.
                 Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato string ou Path).
             schema (str): O esquema onde a tabela Iceberg será manipulada no Athena.
             predicate (str): A condição de junção (predicate) que define a lógica de correspondência entre os dados de origem
@@ -946,7 +1023,16 @@ class Athena(CursorIterator):
             raise ProgrammingError("Function not implemented for cursor !")
 
         self.cursor.merge_table_iceberg(
-            target_table, source_data, schema, predicate, alias, location, catalog_name
+            target_table,
+            source_data,
+            schema,
+            predicate,
+            delete_condition,
+            update_condition,
+            insert_condition,
+            alias,
+            location,
+            catalog_name,
         )
 
     def to_pandas(self, *args, **kwargs) -> pd.DataFrame:

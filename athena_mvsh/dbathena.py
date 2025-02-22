@@ -289,6 +289,14 @@ class DBAthena(ABC):
         **kwargs
     ):
         ...
+    
+    @abstractmethod
+    def write_arrow(
+        self,
+        *args,
+        **kwargs
+    ):
+        ...
 
     @abstractmethod
     def write_parquet(

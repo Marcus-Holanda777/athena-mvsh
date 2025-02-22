@@ -103,7 +103,7 @@ class CursorParquet(CursorBaseParquet):
         try:
             return self.__read_parquet()
         except Exception:
-            return pa.Table.from_dict(dict())
+            return pa.Table.from_pydict(dict())
 
     def to_parquet(self, *args, **kwargs):
         pq.write_table(*args, **kwargs)
@@ -130,6 +130,9 @@ class CursorParquet(CursorBaseParquet):
         raise ProgrammingError("Function not implemented for cursor !")
 
     def write_dataframe(self, *args, **kwargs):
+        raise ProgrammingError("Function not implemented for cursor !")
+
+    def write_arrow(self, *args, **kwargs):
         raise ProgrammingError("Function not implemented for cursor !")
 
     def write_parquet(self, *args, **kwargs):

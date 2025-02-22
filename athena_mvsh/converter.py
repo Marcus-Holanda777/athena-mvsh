@@ -7,11 +7,11 @@ import pandas as pd
 from duckdb import DuckDBPyConnection
 from typing import cast
 from pyarrow import Schema, DataType
+import pyarrow as pa
+import re
 
 
 def partition_func_iceberg(columns: list[str]) -> list[str]:
-    import re
-
     patterns = [
         r"(year|month|day|hour)\((.+?)\)",
         r"(bucket|truncate)\((.+?),\s*(.+?)\)",
@@ -119,7 +119,7 @@ def convert_df_athena(col: pd.Series) -> str:
             return "DOUBLE"
 
     elif col_type == "integer":
-        if col.dtype == "int32":
+        if col.dtype == "int32" or col.dtype == "int16":
             return "INT"
         else:
             return "BIGINT"
@@ -184,10 +184,22 @@ def map_convert_duckdb_athena(con: DuckDBPyConnection, file: list[str] | str):
     """
     con.sql(temp_tbl)
 
-    stmt = """SELECT column_name, data_type 
+    stmt = """SELECT column_name, data_type
       FROM information_schema.columns
       where table_name = 'validade_type'
 	  ORDER BY ordinal_position;
+    """
+
+    rst = con.sql(stmt).fetchall()
+
+    return [(col, convert_tp_duckdb(tep)) for col, tep in rst]
+
+
+def map_convert_duckdb_athena_pandas_arrow(
+    con: DuckDBPyConnection, data: pd.DataFrame | pa.Table
+):
+    stmt = """FROM (DESCRIBE data)
+    select column_name, column_type
     """
 
     rst = con.sql(stmt).fetchall()

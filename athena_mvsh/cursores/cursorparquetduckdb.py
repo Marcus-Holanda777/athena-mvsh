@@ -9,7 +9,11 @@ from functools import partial
 from athena_mvsh.error import DatabaseError, ProgrammingError
 from athena_mvsh.utils import parse_output_location, query_is_ddl
 import uuid
-from athena_mvsh.converter import map_convert_df_athena, map_convert_duckdb_athena
+from athena_mvsh.converter import (
+    map_convert_df_athena,
+    map_convert_duckdb_athena,
+    partition_func_iceberg,
+)
 import logging
 from pathlib import Path
 from typing import Literal
@@ -399,7 +403,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         cols_map,
         partitions: list[str] = None,
         catalog_name: str = "awsdatacatalog",
-        compression: str = "snappy",
+        compression: Literal["ZSTD", "SNAPPY", "GZIP"] = "ZSTD",
         if_exists: Literal["replace", "append"] = "replace",
     ) -> None:
         if if_exists == "replace":
@@ -412,16 +416,14 @@ class CursorParquetDuckdb(CursorBaseParquet):
             if partitions:
                 parts_athena = f"""
                 PARTITIONED BY (
-                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
+                    {",".join(partition_func_iceberg(partitions))}
                 )
                 """
 
             if partitions is None:
                 partitions = list()
 
-            cols = ",\n".join(
-                [f"`{col}` {tipo}" for col, tipo in cols_map if col not in partitions]
-            )
+            cols = ",\n".join([f"`{col}` {tipo}" for col, tipo in cols_map])
 
             stmt = f"""
                 CREATE TABLE `{schema}`.`{table_name}` (
@@ -509,7 +511,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str = None,
         partitions: list[str] = None,
         catalog_name: str = "awsdatacatalog",
-        compression: str = "snappy",
+        compression: Literal["ZSTD", "SNAPPY", "GZIP"] = "ZSTD",
         if_exists: Literal["replace", "append"] = "replace",
     ) -> None:
         # TODO: TABELA EXTERNA
@@ -522,9 +524,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         self.__delete_table(catalog_name, schema, temp_table_name)
 
-        cols_map = self.__create_table_external(
-            schema, temp_table_name, location, data, partitions
-        )
+        cols_map = self.__create_table_external(schema, temp_table_name, location, data)
 
         # TODO: Tabela ICEBERG
         self.__create_table_iceberg(

@@ -9,6 +9,35 @@ from typing import cast
 from pyarrow import Schema, DataType
 
 
+def partition_func_iceberg(columns: list[str]) -> list[str]:
+    import re
+
+    patterns = [
+        r"(year|month|day|hour)\((.+?)\)",
+        r"(bucket|truncate)\((.+?),\s*(.+?)\)",
+    ]
+
+    def formatar_coluna(match):
+        if match.lastindex == 2:
+            return f"{match.group(1)}(`{match.group(2)}`)"
+        elif match.lastindex == 3:
+            return (
+                f"{match.group(1)}({match.group(2).split(',')[0]}, `{match.group(3)}`)"
+            )
+
+    rst = []
+    for string in columns:
+        for pattern in patterns:
+            if re.match(pattern, string):
+                resultado = re.sub(pattern, formatar_coluna, string)
+                rst.append(resultado)
+                break
+        else:
+            rst.append(f"`{string}`")
+
+    return rst
+
+
 def to_column_info_arrow(schema: Schema) -> tuple[dict]:
     columns = []
     for field in schema:
@@ -126,16 +155,17 @@ def convert_tp_duckdb(col_type: str) -> str:
     if col_type.startswith("TIME"):
         return "TIME"
 
-    if col_type in ("UBIGINT", "", "UHUGEINT", "HUGEINT"):
+    if col_type in ("UBIGINT", "UHUGEINT", "HUGEINT"):
         return "BIGINT"
 
-    if col_type == "USMALLINT":
-        return "SMALLINT"
-
-    if col_type == "UTINYINT":
-        return "TINYINT"
-
-    if col_type in ("INTEGER", "UINTEGER"):
+    if col_type in (
+        "INTEGER",
+        "UINTEGER",
+        "USMALLINT",
+        "SMALLINT",
+        "UTINYINT",
+        "TINYINT",
+    ):
         return "INT"
 
     if col_type in ("UUID", "VARCHAR", "ENUM", "UNION"):

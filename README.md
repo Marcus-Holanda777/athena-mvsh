@@ -47,3 +47,8 @@ Cursores Diversos:
 - `CursorPython`: Retorna os resultados da consulta como objetos Python.
 - `CursorParquet`: Retorna os resultados da consulta no formato Parquet.
 - `CursorParquetDuckdb`: Retorna os resultados da consulta integrados ao DuckDB.
+
+
+### Link para documentação
+
+[Documentação](https://marcus-holanda777.github.io/athena-mvsh)

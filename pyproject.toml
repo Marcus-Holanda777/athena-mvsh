@@ -14,6 +14,7 @@ classifiers = [
 
 [tool.poetry.urls]
 "Codigo" = "https://github.com/Marcus-Holanda777/athena-mvsh"
+"Documentacao" = "https://marcus-holanda777.github.io/athena-mvsh"
 
 [tool.poetry.dependencies]
 python = "^3.11"

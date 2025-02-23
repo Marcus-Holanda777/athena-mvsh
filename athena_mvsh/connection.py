@@ -390,7 +390,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorBaseParquet):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         return self.cursor.to_arrow(self.query, self.result_reuse_enable)
 
@@ -437,7 +437,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorBaseParquet):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         if isinstance(self.cursor, CursorParquetDuckdb):
             self.cursor.to_parquet(
@@ -450,7 +450,7 @@ class Athena(CursorIterator):
         self.cursor.to_parquet(*args, **kwargs)
 
     def to_csv(
-        self, output_file: str, delimiter: str = ";", include_header: bool = True
+        self, output_file: str, delimiter: str = ';', include_header: bool = True
     ) -> None:
         """
         Converte os resultados da consulta para um arquivo CSV.
@@ -487,11 +487,11 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorBaseParquet):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         kwargs = {}
         if isinstance(self.cursor, CursorParquetDuckdb):
-            kwargs |= {"header": include_header, "sep": delimiter}
+            kwargs |= {'header': include_header, 'sep': delimiter}
             args = (output_file,)
 
             self.cursor.to_csv(self.query, self.result_reuse_enable, *args, **kwargs)
@@ -500,17 +500,17 @@ class Athena(CursorIterator):
         options = csv_arrow.WriteOptions(
             delimiter=delimiter,
             include_header=include_header,
-            quoting_style="all_valid",
+            quoting_style='all_valid',
         )
 
-        kwargs["write_options"] = options
+        kwargs['write_options'] = options
         tbl = self.to_arrow()
         args = (tbl, output_file)
 
         self.cursor.to_csv(*args, **kwargs)
 
     def to_create_table_db(
-        self, table_name: str, *, database: str = "db.duckdb"
+        self, table_name: str, *, database: str = 'db.duckdb'
     ) -> None:
         """
         Cria uma tabela no banco de dados DuckDB com base nos resultados da consulta executada.
@@ -542,14 +542,14 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorParquetDuckdb):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.to_create_table_db(
             database, self.query, self.result_reuse_enable, table_name=table_name
         )
 
     def to_partition_create_table_db(
-        self, table_name: str, *, database: str = "db.duckdb", workers: int = WORKERS
+        self, table_name: str, *, database: str = 'db.duckdb', workers: int = WORKERS
     ) -> None:
         """
         Lê arquivos Parquet gerados a partir da consulta executada e insere os dados na tabela do banco de dados DuckDB.
@@ -589,7 +589,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorParquetDuckdb):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.to_partition_create_table_db(
             database,
@@ -600,7 +600,7 @@ class Athena(CursorIterator):
         )
 
     def to_insert_table_db(
-        self, table_name: str, *, database: str = "db.duckdb"
+        self, table_name: str, *, database: str = 'db.duckdb'
     ) -> None:
         """
         Insere os resultados de uma consulta executada no Amazon Athena em uma tabela no DuckDB.
@@ -632,7 +632,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorParquetDuckdb):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.to_insert_table_db(
             database, self.query, self.result_reuse_enable, table_name=table_name
@@ -645,8 +645,8 @@ class Athena(CursorIterator):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: str = "GZIP",
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'GZIP',
     ) -> None:
         """
         Escreve um DataFrame pandas em uma tabela externa no Athena usando o DuckDB.
@@ -706,7 +706,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorParquetDuckdb):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.write_dataframe(
             df, table_name, schema, location, partitions, catalog_name, compression
@@ -719,8 +719,8 @@ class Athena(CursorIterator):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: str = "GZIP",
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'GZIP',
     ) -> None:
         """
         Escreve um Table Arrow em uma tabela externa no Athena usando o DuckDB.
@@ -780,7 +780,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorParquetDuckdb):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.write_arrow(
             tbl, table_name, schema, location, partitions, catalog_name, compression
@@ -793,8 +793,8 @@ class Athena(CursorIterator):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: str = "GZIP",
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'GZIP',
     ) -> None:
         """
         Cria uma tabela externa no Athena a partir de um ou vários arquivos Parquet.
@@ -852,7 +852,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorParquetDuckdb):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.write_parquet(
             file, table_name, schema, location, partitions, catalog_name, compression
@@ -865,9 +865,9 @@ class Athena(CursorIterator):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: Literal["ZSTD", "SNAPPY", "GZIP"] = "ZSTD",
-        if_exists: Literal["replace", "append"] = "replace",
+        catalog_name: str = 'awsdatacatalog',
+        compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
+        if_exists: Literal['replace', 'append'] = 'replace',
     ) -> None:
         """
         Cria ou insere dados em uma tabela Iceberg no Athena a partir de um DataFrame pandas, Table Arrow ou arquivos Parquet.
@@ -932,7 +932,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorParquetDuckdb):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.write_table_iceberg(
             data,
@@ -954,9 +954,9 @@ class Athena(CursorIterator):
         delete_condition: str = None,
         update_condition: str = None,
         insert_condition: str = None,
-        alias: tuple = ("t", "s"),
+        alias: tuple = ('t', 's'),
         location: str = None,
-        catalog_name: str = "awsdatacatalog",
+        catalog_name: str = 'awsdatacatalog',
     ) -> None:
         """
         Executa um merge (UPSERT) em uma tabela Iceberg no Athena, utilizando uma tabela temporária criada no Athena.
@@ -1024,7 +1024,7 @@ class Athena(CursorIterator):
         """
 
         if not isinstance(self.cursor, CursorParquetDuckdb):
-            raise ProgrammingError("Function not implemented for cursor !")
+            raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.merge_table_iceberg(
             target_table,
@@ -1088,16 +1088,16 @@ class Athena(CursorIterator):
         if isinstance(self.cursor, CursorPython):
             tbl = self.fetchall()
             kwargs |= {
-                "columns": [c[0] for c in self.description],
-                "data": tbl,
-                "coerce_float": True,
+                'columns': [c[0] for c in self.description],
+                'data': tbl,
+                'coerce_float': True,
             }
             return self.cursor.to_pandas(*args, **kwargs)
 
         if isinstance(self.cursor, CursorParquet):
             tbl = self.to_arrow()
             args = args + (tbl,)
-            kwargs |= {"types_mapper": pd.ArrowDtype}
+            kwargs |= {'types_mapper': pd.ArrowDtype}
             return self.cursor.to_pandas(*args, **kwargs)
 
     def close(self):

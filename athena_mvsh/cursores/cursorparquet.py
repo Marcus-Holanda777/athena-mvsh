@@ -33,9 +33,9 @@ class CursorParquet(CursorBaseParquet):
 
     def get_filesystem_fs(self):
         return fs.S3FileSystem(
-            access_key=self.config["aws_access_key_id"],
-            secret_key=self.config["aws_secret_access_key"],
-            region=self.config["region_name"],
+            access_key=self.config['aws_access_key_id'],
+            secret_key=self.config['aws_secret_access_key'],
+            region=self.config['region_name'],
         )
 
     def rowcount(self):
@@ -47,13 +47,13 @@ class CursorParquet(CursorBaseParquet):
         else:
             return [
                 (
-                    c["Name"],
-                    c["Type"],
+                    c['Name'],
+                    c['Type'],
                     None,
                     None,
-                    c["Precision"],
-                    c["Scale"],
-                    c["Nullable"],
+                    c['Precision'],
+                    c['Scale'],
+                    c['Nullable'],
                 )
                 for c in self.metadata
             ]
@@ -64,7 +64,7 @@ class CursorParquet(CursorBaseParquet):
 
         fs_s3 = self.get_filesystem_fs()
 
-        dataset = pq.ParquetDataset(f"{bucket}/{key}", filesystem=fs_s3)
+        dataset = pq.ParquetDataset(f'{bucket}/{key}', filesystem=fs_s3)
 
         # ADICIONAR OS METADADOS -- NESSA PARTE
         # add description
@@ -121,25 +121,25 @@ class CursorParquet(CursorBaseParquet):
         return tbl.to_pandas(*args, **kwargs)
 
     def to_create_table_db(self, *args, **kwargs):
-        raise ProgrammingError("Function not implemented for cursor !")
+        raise ProgrammingError('Function not implemented for cursor !')
 
     def to_partition_create_table_db(self, *args, **kwargs):
-        raise ProgrammingError("Function not implemented for cursor !")
+        raise ProgrammingError('Function not implemented for cursor !')
 
     def to_insert_table_db(self, *args, **kwargs):
-        raise ProgrammingError("Function not implemented for cursor !")
+        raise ProgrammingError('Function not implemented for cursor !')
 
     def write_dataframe(self, *args, **kwargs):
-        raise ProgrammingError("Function not implemented for cursor !")
+        raise ProgrammingError('Function not implemented for cursor !')
 
     def write_arrow(self, *args, **kwargs):
-        raise ProgrammingError("Function not implemented for cursor !")
+        raise ProgrammingError('Function not implemented for cursor !')
 
     def write_parquet(self, *args, **kwargs):
-        raise ProgrammingError("Function not implemented for cursor !")
+        raise ProgrammingError('Function not implemented for cursor !')
 
     def write_table_iceberg(self, *args, **kwargs):
-        raise ProgrammingError("Function not implemented for cursor !")
+        raise ProgrammingError('Function not implemented for cursor !')
 
     def merge_table_iceberg(self, *args, **kwargs):
-        raise ProgrammingError("Function not implemented for cursor !")
+        raise ProgrammingError('Function not implemented for cursor !')

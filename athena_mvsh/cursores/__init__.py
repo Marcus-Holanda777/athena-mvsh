@@ -8,5 +8,5 @@ __all__ = [
     'CursorParquetDuckdb',
     'CursorPython',
     'CursorBaseParquet',
-    'CursorIterator'
+    'CursorIterator',
 ]

@@ -48,14 +48,14 @@ class CursorParquetDuckdb(CursorBaseParquet):
         )
 
     @contextmanager
-    def __connect_duckdb(self, database: str = "db.duckdb"):
-        self.home_duckdb = "duckdb_home"
+    def __connect_duckdb(self, database: str = 'db.duckdb'):
+        self.home_duckdb = 'duckdb_home'
         os.makedirs(self.home_duckdb, exist_ok=True)
 
         try:
             config = {
-                "preserve_insertion_order": False,
-                "threads": (os.cpu_count() or 1) * 5,
+                'preserve_insertion_order': False,
+                'threads': (os.cpu_count() or 1) * 5,
             }
             con = duckdb.connect(database, config=config)
 
@@ -63,15 +63,15 @@ class CursorParquetDuckdb(CursorBaseParquet):
             if os.path.isdir(self.home_duckdb):
                 con.sql(f"SET home_directory='{self.home_duckdb}'")
 
-            con.install_extension("httpfs")
-            con.load_extension("httpfs")
+            con.install_extension('httpfs')
+            con.load_extension('httpfs')
 
             con.sql(f"""
                 CREATE SECRET IF NOT EXISTS(
                    TYPE s3,
-                   KEY_ID '{self.config["aws_access_key_id"]}',
-                   SECRET '{self.config["aws_secret_access_key"]}',
-                   REGION '{self.config["region_name"]}'
+                   KEY_ID '{self.config['aws_access_key_id']}',
+                   SECRET '{self.config['aws_secret_access_key']}',
+                   REGION '{self.config['region_name']}'
             )
             """)
             yield con
@@ -188,7 +188,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             with self.__connect_duckdb(database) as con:
                 view = con.read_parquet(manifest)
-                con.sql(f"DROP TABLE IF EXISTS {kwargs['table_name']}")
+                con.sql(f'DROP TABLE IF EXISTS {kwargs["table_name"]}')
                 view.create(*args, **kwargs)
 
         except Exception:
@@ -209,10 +209,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
         def insert_part(con, file):
             cursor = con.cursor()
             cursor.sql(f"""
-                INSERT INTO {kwargs["table_name"]} 
+                INSERT INTO {kwargs['table_name']} 
                 FROM read_parquet('{file}')
             """)
-            return f"File read_insert: {os.path.basename(file)}"
+            return f'File read_insert: {os.path.basename(file)}'
 
         __ = self.__pre_execute(query, result_reuse_enable)
 
@@ -223,15 +223,15 @@ class CursorParquetDuckdb(CursorBaseParquet):
             with self.__connect_duckdb(database) as con:
                 start_file = manifest[0]
                 view = con.read_parquet(start_file)
-                con.sql(f"DROP TABLE IF EXISTS {kwargs['table_name']}")
+                con.sql(f'DROP TABLE IF EXISTS {kwargs["table_name"]}')
                 view.create(*args, **kwargs)
 
-                logger.info(f"Start create table: {kwargs['table_name']}")
+                logger.info(f'Start create table: {kwargs["table_name"]}')
 
                 # NOTE: Considerar arquivos apartir da segunda posicao
                 rest_file = list(manifest[1:])
 
-                logger.info(f"Length files: {len(rest_file)}")
+                logger.info(f'Length files: {len(rest_file)}')
 
                 with ThreadPoolExecutor(max_workers=workers) as executor:
                     futures: list[Future] = []
@@ -253,19 +253,19 @@ class CursorParquetDuckdb(CursorBaseParquet):
     ):
         # NOTE: Verifica se banco existe
         if not os.path.isfile(database):
-            raise DatabaseError(f"Database {database} not exists !")
+            raise DatabaseError(f'Database {database} not exists !')
 
         # NOTE: Verifica se tabela existe
         with self.__connect_duckdb(database) as con:
             rst = con.execute(f"""
             select 1 from information_schema.tables
-            where table_name = '{kwargs["table_name"]}'
+            where table_name = '{kwargs['table_name']}'
             """)
 
             ok = rst.fetchone()
 
             if not ok:
-                raise DatabaseError(f"Table {kwargs['table_name']} not exists !")
+                raise DatabaseError(f'Table {kwargs["table_name"]} not exists !')
 
         __ = self.__pre_execute(query, result_reuse_enable)
 
@@ -275,7 +275,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             with self.__connect_duckdb(database) as con:
                 con.sql(f"""
-                    INSERT INTO {kwargs["table_name"]}
+                    INSERT INTO {kwargs['table_name']}
                     FROM read_parquet({manifest})
                 """)
 
@@ -302,7 +302,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
             )
 
             # TODO: Retornar bucket name
-            location_table = response_meta["Parameters"]["location"]
+            location_table = response_meta['Parameters']['location']
             bucket_name, keys = parse_output_location(location_table)
 
             # TODO: Localizar e deletar o bucket associado a tabela
@@ -319,12 +319,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str,
         output: pd.DataFrame | list[str | Path] | str | Path | pa.Table,
         partitions: list[str] = None,
-        compression: str = "GZIP",
+        compression: str = 'GZIP',
     ):
         # NOTE: LER DATAFRAME DUCKDB ou PARQUET
         with self.__connect_duckdb() as db:
-            s3_dir = f"{location}{uuid.uuid4()}/"
-            s3_dir_file = f"{s3_dir}{uuid.uuid4()}.parquet.gzip"
+            s3_dir = f'{location}{uuid.uuid4()}/'
+            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet.gzip'
 
             if isinstance(output, pd.DataFrame):
                 cols_map = map_convert_df_athena(output)
@@ -344,16 +344,16 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
                 cols_map = map_convert_duckdb_athena(db, output)
 
-            parts_duck = parts_athena = ""
+            parts_duck = parts_athena = ''
 
             if partitions:
                 parts_duck = f"""
-                , PARTITION_BY ({",".join(partitions)}), FILE_EXTENSION 'parquet.gz'
+                , PARTITION_BY ({','.join(partitions)}), FILE_EXTENSION 'parquet.gz'
                 """
 
                 parts_athena = f"""
                 PARTITIONED BY (
-                    {",".join([f"`{col}` {tipo}" for col, tipo in cols_map if col in partitions])}
+                    {','.join([f'`{col}` {tipo}' for col, tipo in cols_map if col in partitions])}
                 )
                 """
 
@@ -373,8 +373,8 @@ class CursorParquetDuckdb(CursorBaseParquet):
             if partitions is None:
                 partitions = list()
 
-            cols = ",\n".join(
-                [f"`{col}` {tipo}" for col, tipo in cols_map if col not in partitions]
+            cols = ',\n'.join(
+                [f'`{col}` {tipo}' for col, tipo in cols_map if col not in partitions]
             )
 
             stmt = f"""
@@ -401,28 +401,28 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str,
         cols_map,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: Literal["ZSTD", "SNAPPY", "GZIP"] = "ZSTD",
-        if_exists: Literal["replace", "append"] = "replace",
+        catalog_name: str = 'awsdatacatalog',
+        compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
+        if_exists: Literal['replace', 'append'] = 'replace',
     ) -> None:
-        if if_exists == "replace":
+        if if_exists == 'replace':
             # NOTE: DELETAR SE EXISTIR
             self.__delete_table(catalog_name, schema, table_name)
 
-            s3_dir = f"{location}{uuid.uuid4()}/"
-            parts_athena = ""
+            s3_dir = f'{location}{uuid.uuid4()}/'
+            parts_athena = ''
 
             if partitions:
                 parts_athena = f"""
                 PARTITIONED BY (
-                    {",".join(partition_func_iceberg(partitions))}
+                    {','.join(partition_func_iceberg(partitions))}
                 )
                 """
 
             if partitions is None:
                 partitions = list()
 
-            cols = ",\n".join([f"`{col}` {tipo}" for col, tipo in cols_map])
+            cols = ',\n'.join([f'`{col}` {tipo}' for col, tipo in cols_map])
 
             stmt = f"""
                 CREATE TABLE `{schema}`.`{table_name}` (
@@ -449,7 +449,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         __ = self.__pre_execute(stmt_insert, unload=False)
 
         # TODO: Deletar tabela temporaria
-        self.__delete_table(catalog_name, schema, f"temp_{table_name}")
+        self.__delete_table(catalog_name, schema, f'temp_{table_name}')
 
     def write_dataframe(
         self,
@@ -458,17 +458,17 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: str = "GZIP",
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'GZIP',
     ) -> None:
         if not isinstance(df, pd.DataFrame):
             raise ProgrammingError("Parameter 'df' is not a dataframe |")
 
         if df.empty:
-            raise ProgrammingError("Dataframe is empty |")
+            raise ProgrammingError('Dataframe is empty |')
 
         if location:
-            location = location if location.endswith("/") else location + "/"
+            location = location if location.endswith('/') else location + '/'
         else:
             location = self.s3_staging_dir
 
@@ -486,17 +486,17 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: str = "GZIP",
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'GZIP',
     ) -> None:
         if not isinstance(tbl, pa.Table):
             raise ProgrammingError("Parameter 'tbl' is not a Table Arrow |")
 
         if tbl.num_rows == 0:
-            raise ProgrammingError("Table Arrow is empty |")
+            raise ProgrammingError('Table Arrow is empty |')
 
         if location:
-            location = location if location.endswith("/") else location + "/"
+            location = location if location.endswith('/') else location + '/'
         else:
             location = self.s3_staging_dir
 
@@ -513,11 +513,11 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: str = "GZIP",
+        catalog_name: str = 'awsdatacatalog',
+        compression: str = 'GZIP',
     ) -> None:
         if location:
-            location = location if location.endswith("/") else location + "/"
+            location = location if location.endswith('/') else location + '/'
         else:
             location = self.s3_staging_dir
 
@@ -536,17 +536,17 @@ class CursorParquetDuckdb(CursorBaseParquet):
         schema: str,
         location: str = None,
         partitions: list[str] = None,
-        catalog_name: str = "awsdatacatalog",
-        compression: Literal["ZSTD", "SNAPPY", "GZIP"] = "ZSTD",
-        if_exists: Literal["replace", "append"] = "replace",
+        catalog_name: str = 'awsdatacatalog',
+        compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
+        if_exists: Literal['replace', 'append'] = 'replace',
     ) -> None:
         # TODO: TABELA EXTERNA
         if location:
-            location = location if location.endswith("/") else location + "/"
+            location = location if location.endswith('/') else location + '/'
         else:
             location = self.s3_staging_dir
 
-        temp_table_name = f"temp_{table_name}"
+        temp_table_name = f'temp_{table_name}'
 
         self.__delete_table(catalog_name, schema, temp_table_name)
 
@@ -573,16 +573,16 @@ class CursorParquetDuckdb(CursorBaseParquet):
         delete_condition: str = None,
         update_condition: str = None,
         insert_condition: str = None,
-        alias: tuple = ("t", "s"),
+        alias: tuple = ('t', 's'),
         location: str = None,
-        catalog_name: str = "awsdatacatalog",
+        catalog_name: str = 'awsdatacatalog',
     ) -> None:
         if location:
-            location = location if location.endswith("/") else location + "/"
+            location = location if location.endswith('/') else location + '/'
         else:
             location = self.s3_staging_dir
 
-        temp_table_name = f"temp_{target_table}"
+        temp_table_name = f'temp_{target_table}'
 
         self.__delete_table(catalog_name, schema, temp_table_name)
 
@@ -593,9 +593,9 @@ class CursorParquetDuckdb(CursorBaseParquet):
         # TODO: Criar a consulta do tipo MERGE
         cols = list(map(lambda col: f'"{col[0]}"', cols_map))
         target, source = alias
-        update_cols = ", ".join(f"{col} = {source}.{col}" for col in cols)
-        insert_cols = ", ".join(cols)
-        values_cols = ", ".join(f"{source}.{col}" for col in cols)
+        update_cols = ', '.join(f'{col} = {source}.{col}' for col in cols)
+        insert_cols = ', '.join(cols)
+        values_cols = ', '.join(f'{source}.{col}' for col in cols)
 
         if delete_condition:
             merge_del = f"""
@@ -604,19 +604,19 @@ class CursorParquetDuckdb(CursorBaseParquet):
             """
 
         if update_condition:
-            conds_up = f"AND {update_condition}"
+            conds_up = f'AND {update_condition}'
 
         if insert_condition:
-            conds_ins = f"AND {insert_condition}"
+            conds_ins = f'AND {insert_condition}'
 
         stmt = f"""
             MERGE INTO "{schema}"."{target_table}" AS {target}
             USING "{schema}"."{temp_table_name}" AS {source}
             ON ({predicate})
-            {merge_del if delete_condition else ""}
-            WHEN MATCHED {conds_up if update_condition else ""}
+            {merge_del if delete_condition else ''}
+            WHEN MATCHED {conds_up if update_condition else ''}
                THEN UPDATE SET {update_cols}
-            WHEN NOT MATCHED {conds_ins if insert_condition else ""}
+            WHEN NOT MATCHED {conds_ins if insert_condition else ''}
                THEN INSERT ({insert_cols}) VALUES ({values_cols})
         """
 

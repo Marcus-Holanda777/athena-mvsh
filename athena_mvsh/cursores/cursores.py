@@ -30,8 +30,8 @@ class CursorIterator(ABC):
 
 
 class CursorBaseParquet(DBAthena):
-    FORMAT: str = "PARQUET"
-    COMPRESS: str = "SNAPPY"
+    FORMAT: str = 'PARQUET'
+    COMPRESS: str = 'SNAPPY'
 
     def __init__(
         self,
@@ -56,8 +56,8 @@ class CursorBaseParquet(DBAthena):
     def format_unload(self, query):
         local = self.s3_staging_dir
 
-        now = datetime.now(timezone.utc).strftime("%Y%m%d")
-        location = f"{local}unload/{now}/{str(uuid.uuid4())}/"
+        now = datetime.now(timezone.utc).strftime('%Y%m%d')
+        location = f'{local}unload/{now}/{str(uuid.uuid4())}/'
         quey = textwrap.dedent(
             f"""
                 UNLOAD (
@@ -75,17 +75,17 @@ class CursorBaseParquet(DBAthena):
 
     def get_manifest_local(self):
         match self.get_query_execution:
-            case {"QueryExecution": {"Statistics": {"DataManifestLocation": location}}}:
+            case {'QueryExecution': {'Statistics': {'DataManifestLocation': location}}}:
                 return location
             case __:
-                raise ProgrammingError("Data location does not exist")
+                raise ProgrammingError('Data location does not exist')
 
     def get_bucket_s3(self):
         cliente_s3 = boto3.client(
-            "s3",
-            aws_access_key_id=self.config["aws_access_key_id"],
-            aws_secret_access_key=self.config["aws_secret_access_key"],
-            region_name=self.config["region_name"],
+            's3',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key'],
+            region_name=self.config['region_name'],
         )
 
         data_manifest_local = self.get_manifest_local()
@@ -97,19 +97,19 @@ class CursorBaseParquet(DBAthena):
 
     def get_bucket_resource(self, bucket_name: str):
         bucket = boto3.resource(
-            "s3",
-            aws_access_key_id=self.config["aws_access_key_id"],
-            aws_secret_access_key=self.config["aws_secret_access_key"],
-            region_name=self.config["region_name"],
+            's3',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key'],
+            region_name=self.config['region_name'],
         )
 
         return bucket.Bucket(bucket_name)
 
     def unload_location(self, bucket_s3):
-        manifest = bucket_s3["Body"].read().decode("utf-8").strip()
-        manifest = manifest.split("\n") if manifest else []
+        manifest = bucket_s3['Body'].read().decode('utf-8').strip()
+        manifest = manifest.split('\n') if manifest else []
 
-        _unload_location = "/".join(manifest[0].split("/")[:-1]) + "/"
+        _unload_location = '/'.join(manifest[0].split('/')[:-1]) + '/'
         bucket, key = parse_output_location(_unload_location)
 
         return bucket, key, manifest

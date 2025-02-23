@@ -11,10 +11,10 @@ class DatabaseError(Error):
             self.args = (self.response,)
         else:
             match self.response:
-                case {"QueryExecution": {"Status": {"AthenaError": dict_error}}}:
+                case {'QueryExecution': {'Status': {'AthenaError': dict_error}}}:
                     self.args = (*dict_error.items(),)
                 case __:
-                    self.args = ("Failed to connect to database !",)
+                    self.args = ('Failed to connect to database !',)
 
 
 class OperationalError(DatabaseError): ...

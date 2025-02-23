@@ -4,7 +4,7 @@ from decimal import Decimal
 
 def get_value_format(v):
     if isinstance(v, type(None)):
-        return "null"
+        return 'null'
 
     if isinstance(v, bool):
         return str(v)
@@ -21,12 +21,12 @@ def get_value_format(v):
 
     # @experimental
     if isinstance(v, (list, set, tuple)):
-        return ",".join(f"{val!r}" for val in v)
+        return ','.join(f'{val!r}' for val in v)
 
     if isinstance(v, Decimal):
-        value = f"{v:f}"
+        value = f'{v:f}'
         value = value.replace("'", "''")
-        return f"DECIMAL {value}"
+        return f'DECIMAL {value}'
 
     if isinstance(v, (int, float)):
         return v

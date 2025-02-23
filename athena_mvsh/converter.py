@@ -13,16 +13,16 @@ import re
 
 def partition_func_iceberg(columns: list[str]) -> list[str]:
     patterns = [
-        r"(year|month|day|hour)\((.+?)\)",
-        r"(bucket|truncate)\((.+?),\s*(.+?)\)",
+        r'(year|month|day|hour)\((.+?)\)',
+        r'(bucket|truncate)\((.+?),\s*(.+?)\)',
     ]
 
     def formatar_coluna(match):
         if match.lastindex == 2:
-            return f"{match.group(1)}(`{match.group(2)}`)"
+            return f'{match.group(1)}(`{match.group(2)}`)'
         elif match.lastindex == 3:
             return (
-                f"{match.group(1)}({match.group(2).split(',')[0]}, `{match.group(3)}`)"
+                f'{match.group(1)}({match.group(2).split(",")[0]}, `{match.group(3)}`)'
             )
 
     rst = []
@@ -33,7 +33,7 @@ def partition_func_iceberg(columns: list[str]) -> list[str]:
                 rst.append(resultado)
                 break
         else:
-            rst.append(f"`{string}`")
+            rst.append(f'`{string}`')
 
     return rst
 
@@ -44,11 +44,11 @@ def to_column_info_arrow(schema: Schema) -> tuple[dict]:
         type_, precision, scale = get_athena_type(field.type)
         columns.append(
             {
-                "Name": field.name,
-                "Type": type_,
-                "Precision": precision,
-                "Scale": scale,
-                "Nullable": "NULLABLE" if field.nullable else "NOT_NULL",
+                'Name': field.name,
+                'Type': type_,
+                'Precision': precision,
+                'Scale': scale,
+                'Nullable': 'NULLABLE' if field.nullable else 'NOT_NULL',
             }
         )
     return tuple(columns)
@@ -58,85 +58,85 @@ def get_athena_type(type_: DataType) -> tuple[str, int, int]:
     import pyarrow.lib as types
 
     if type_.id in [types.Type_BOOL]:
-        return "boolean", 0, 0
+        return 'boolean', 0, 0
     elif type_.id in [types.Type_UINT8, types.Type_INT8]:
-        return "tinyint", 3, 0
+        return 'tinyint', 3, 0
     elif type_.id in [types.Type_UINT16, types.Type_INT16]:
-        return "smallint", 5, 0
+        return 'smallint', 5, 0
     elif type_.id in [types.Type_UINT32, types.Type_INT32]:
-        return "integer", 10, 0
+        return 'integer', 10, 0
     elif type_.id in [types.Type_UINT64, types.Type_INT64]:
-        return "bigint", 19, 0
+        return 'bigint', 19, 0
     elif type_.id in [types.Type_HALF_FLOAT, types.Type_FLOAT]:
-        return "float", 17, 0
+        return 'float', 17, 0
     elif type_.id in [types.Type_DOUBLE]:
-        return "double", 17, 0
+        return 'double', 17, 0
     elif type_.id in [types.Type_STRING, types.Type_LARGE_STRING]:
-        return "varchar", 2147483647, 0
+        return 'varchar', 2147483647, 0
     elif type_.id in [
         types.Type_BINARY,
         types.Type_FIXED_SIZE_BINARY,
         types.Type_LARGE_BINARY,
     ]:
-        return "varbinary", 1073741824, 0
+        return 'varbinary', 1073741824, 0
     elif type_.id in [types.Type_DATE32, types.Type_DATE64]:
-        return "date", 0, 0
+        return 'date', 0, 0
     elif type_.id == types.Type_TIMESTAMP:
-        return "timestamp", 3, 0
+        return 'timestamp', 3, 0
     elif type_.id in [types.Type_DECIMAL128, types.Decimal256Type]:
         type_ = cast(types.Decimal128Type, type_)
-        return "decimal", type_.precision, type_.scale
+        return 'decimal', type_.precision, type_.scale
     elif type_.id in [
         types.Type_LIST,
         types.Type_FIXED_SIZE_LIST,
         types.Type_LARGE_LIST,
     ]:
-        return "array", 0, 0
+        return 'array', 0, 0
     elif type_.id in [types.Type_STRUCT]:
-        return "row", 0, 0
+        return 'row', 0, 0
     elif type_.id in [types.Type_MAP]:
-        return "map", 0, 0
+        return 'map', 0, 0
     else:
-        return "string", 2147483647, 0
+        return 'string', 2147483647, 0
 
 
 def convert_df_athena(col: pd.Series) -> str:
     col_type = pd.api.types.infer_dtype(col, skipna=True)
 
-    if col_type == "datetime64" or col_type == "datetime":
-        return "TIMESTAMP"
+    if col_type == 'datetime64' or col_type == 'datetime':
+        return 'TIMESTAMP'
 
-    elif col_type == "timedelta":
-        return "INT"
+    elif col_type == 'timedelta':
+        return 'INT'
 
-    elif col_type == "timedelta64":
-        return "BIGINT"
+    elif col_type == 'timedelta64':
+        return 'BIGINT'
 
-    elif col_type == "floating":
-        if col.dtype == "float32":
-            return "FLOAT"
+    elif col_type == 'floating':
+        if col.dtype == 'float32':
+            return 'FLOAT'
         else:
-            return "DOUBLE"
+            return 'DOUBLE'
 
-    elif col_type == "integer":
-        if col.dtype == "int32" or col.dtype == "int16":
-            return "INT"
+    elif col_type == 'integer':
+        if col.dtype == 'int32' or col.dtype == 'int16':
+            return 'INT'
         else:
-            return "BIGINT"
+            return 'BIGINT'
 
-    elif col_type == "boolean":
-        return "BOOLEAN"
+    elif col_type == 'boolean':
+        return 'BOOLEAN'
 
-    elif col_type == "date":
-        return "DATE"
+    elif col_type == 'date':
+        return 'DATE'
 
-    elif col_type == "bytes":
-        return "BINARY"
+    elif col_type == 'bytes':
+        return 'BINARY'
 
-    elif col_type in ["complex", "time"]:
-        raise ValueError(f"Data type `{col_type}` is not supported")
+    elif col_type in ['complex', 'time']:
+        raise ValueError(f'Data type `{col_type}` is not supported')
 
-    return "STRING"
+    return 'STRING'
 
 
 def map_convert_df_athena(df: pd.DataFrame):
@@ -146,33 +146,33 @@ def map_convert_df_athena(df: pd.DataFrame):
 def convert_tp_duckdb(col_type: str) -> str:
     col_type = col_type.upper()
 
-    if col_type in ("BIT", "BLOB"):
-        return "BINARY"
+    if col_type in ('BIT', 'BLOB'):
+        return 'BINARY'
 
-    if col_type.startswith("TIMESTAMP"):
-        return "TIMESTAMP"
+    if col_type.startswith('TIMESTAMP'):
+        return 'TIMESTAMP'
 
-    if col_type.startswith("TIME"):
-        return "TIME"
+    if col_type.startswith('TIME'):
+        return 'TIME'
 
-    if col_type in ("UBIGINT", "UHUGEINT", "HUGEINT"):
-        return "BIGINT"
+    if col_type in ('UBIGINT', 'UHUGEINT', 'HUGEINT'):
+        return 'BIGINT'
 
     if col_type in (
-        "INTEGER",
-        "UINTEGER",
-        "USMALLINT",
-        "SMALLINT",
-        "UTINYINT",
-        "TINYINT",
+        'INTEGER',
+        'UINTEGER',
+        'USMALLINT',
+        'SMALLINT',
+        'UTINYINT',
+        'TINYINT',
     ):
-        return "INT"
+        return 'INT'
 
-    if col_type in ("UUID", "VARCHAR", "ENUM", "UNION"):
-        return "STRING"
+    if col_type in ('UUID', 'VARCHAR', 'ENUM', 'UNION'):
+        return 'STRING'
 
-    if col_type == "LIST":
-        return "ARRAY"
+    if col_type == 'LIST':
+        return 'ARRAY'
 
     return col_type
 
@@ -209,30 +209,30 @@ def map_convert_duckdb_athena_pandas_arrow(
 
 def strtobool(val):
     val = val.lower()
-    if val in ("y", "yes", "t", "true", "on", "1"):
+    if val in ('y', 'yes', 't', 'true', 'on', '1'):
         return 1
-    elif val in ("n", "no", "f", "false", "off", "0"):
+    elif val in ('n', 'no', 'f', 'false', 'off', '0'):
         return 0
     else:
-        raise ValueError(f"invalid truth value {val!r}")
+        raise ValueError(f'invalid truth value {val!r}')
 
 
 def _to_date(varchar_value: str | None) -> date | None:
     if varchar_value is None:
         return None
-    return datetime.strptime(varchar_value, "%Y-%m-%d").date()
+    return datetime.strptime(varchar_value, '%Y-%m-%d').date()
 
 
 def _to_datetime(varchar_value: str | None) -> datetime | None:
     if varchar_value is None:
         return None
-    return datetime.strptime(varchar_value, "%Y-%m-%d %H:%M:%S.%f")
+    return datetime.strptime(varchar_value, '%Y-%m-%d %H:%M:%S.%f')
 
 
 def _to_time(varchar_value: str | None) -> time | None:
     if varchar_value is None:
         return None
-    return datetime.strptime(varchar_value, "%H:%M:%S.%f").time()
+    return datetime.strptime(varchar_value, '%H:%M:%S.%f').time()
 
 
 def _to_float(varchar_value: str | None) -> float | None:
@@ -262,7 +262,7 @@ def _to_boolean(varchar_value: str | None) -> bool | None:
 def _to_binary(varchar_value: str | None) -> bytes | None:
     if varchar_value is None:
         return None
-    return binascii.a2b_hex("".join(varchar_value.split(" ")))
+    return binascii.a2b_hex(''.join(varchar_value.split(' ')))
 
 
 def _to_json(varchar_value: str | None) -> Any | None:
@@ -276,24 +276,24 @@ def _to_default(varchar_value: str | None) -> str | None:
 
 
 MAP_CONVERT = {
-    "boolean": _to_boolean,
-    "tinyint": _to_int,
-    "smallint": _to_int,
-    "integer": _to_int,
-    "bigint": _to_int,
-    "float": _to_float,
-    "real": _to_float,
-    "double": _to_float,
-    "char": _to_default,
-    "varchar": _to_default,
-    "string": _to_default,
-    "timestamp": _to_datetime,
-    "date": _to_date,
-    "time": _to_time,
-    "varbinary": _to_binary,
-    "array": _to_default,
-    "map": _to_default,
-    "row": _to_default,
-    "decimal": _to_decimal,
-    "json": _to_json,
+    'boolean': _to_boolean,
+    'tinyint': _to_int,
+    'smallint': _to_int,
+    'integer': _to_int,
+    'bigint': _to_int,
+    'float': _to_float,
+    'real': _to_float,
+    'double': _to_float,
+    'char': _to_default,
+    'varchar': _to_default,
+    'string': _to_default,
+    'timestamp': _to_datetime,
+    'date': _to_date,
+    'time': _to_time,
+    'varbinary': _to_binary,
+    'array': _to_default,
+    'map': _to_default,
+    'row': _to_default,
+    'decimal': _to_decimal,
+    'json': _to_json,
 }

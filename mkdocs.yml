@@ -1,7 +1,11 @@
 site_name: Athena Docs
+repo_url: https://github.com/Marcus-Holanda777/athena-mvsh
+repo_name: mvsh777/athena-mvsh
+edit_uri: tree/main/docs
 
 theme:
   name: "material"
+  language: pt-BR
   palette:
 
     # Light mode

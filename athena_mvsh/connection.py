@@ -26,6 +26,7 @@ Métodos:
     - **to_partition_create_table_db**: Cria uma tabela particionada no banco de dados.
     - **to_insert_table_db**: Insere dados em uma tabela do banco de dados.
     - **write_dataframe**: Escreve um DataFrame em uma tabela no banco de dados.
+    - **write_arrow**: Escreve um Table Arrow em uma tabela no banco de dados.
     - **write_parquet**: Escreve dados em formato Parquet no banco de dados.
     - **write_table_iceberg**: Escreve dados em formato Iceberg no banco de dados.
     - **merge_table_iceberg**: Realiza uma operação de merge em uma tabela Iceberg.
@@ -883,7 +884,7 @@ class Athena(CursorIterator):
             location (str, optional): O local no S3 onde os dados serão armazenados, se aplicável.
             partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
-            compression (str, optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'snappy'`.
+            compression (str, optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
             if_exists (Literal['replace', 'append'], optional): Define se os dados devem substituir a tabela existente
                 (`'replace'`) ou ser adicionados (`'append'`). O valor padrão é `'replace'`.
 
@@ -968,10 +969,13 @@ class Athena(CursorIterator):
         Args:
             target_table (str): O nome da tabela de destino do tipo Iceberg no Athena, onde os dados serão mesclados.
             source_data (pd.DataFrame | list[str | Path] | str | Path | pa.Table): Dados de origem a serem mesclados com a tabela de destino.
-                Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato string ou Path).
+                Pode ser um DataFrame pandas, Table Arrow ou um ou mais arquivos Parquet (caminhos em formato string ou Path).
             schema (str): O esquema onde a tabela Iceberg será manipulada no Athena.
             predicate (str): A condição de junção (predicate) que define a lógica de correspondência entre os dados de origem
                 e os dados da tabela de destino para o merge (atualização ou inserção).
+            delete_condition (str, opcional): Condição para excluir registros da tabela de destino. Se `None`, a cláusula `DELETE` não será aplicada.
+            update_condition (str, opcional): Condição para atualizar registros existentes na tabela de destino. Se `None`, todos os registros correspondentes serão atualizados..
+            insert_condition (str, opcional): Condição para inserir novos registros na tabela de destino. Se `None`, todos os registros correspondentes serão inseridos.
             alias (tuple, optional): Alias para as tabelas de origem e destino no merge. O valor padrão é `('t', 's')`,
                 onde `'t'` é o alias da tabela de destino e `'s'` é o alias da tabela de origem.
             location (str, optional): O local no S3 onde os dados serão armazenados, se aplicável.
@@ -981,7 +985,7 @@ class Athena(CursorIterator):
             ProgrammingError: Se a função for chamada com um cursor incompatível.
 
         Detalhes:
-            - O método cria uma **tabela temporária** no Athena com os dados fornecidos (DataFrame pandas ou arquivos Parquet)
+            - O método cria uma **tabela temporária** no Athena com os dados fornecidos (DataFrame pandas, Table Arrow ou arquivos Parquet)
             e executa um merge (UPSERT) entre a tabela de destino (Iceberg) e a tabela temporária.
             - O `predicate` define a condição de junção para o merge, permitindo atualizar ou inserir registros na tabela de destino.
             - O parâmetro `alias` é utilizado para dar nomes alias às tabelas de origem e destino durante a execução do SQL gerado.

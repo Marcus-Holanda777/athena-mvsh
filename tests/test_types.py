@@ -22,7 +22,7 @@ from pytest import mark
                 ('TIMEDELTA', 'BIGINT'),
                 ('F16', 'FLOAT'),
                 ('F32', 'FLOAT'),
-                ('F64', 'DOUBLE')
+                ('F64', 'DOUBLE'),
             ]
         )
     ],
@@ -44,7 +44,7 @@ def test_types_pandas(esperado):
             'TIMEDELTA': pd.to_timedelta(['1 days', '2 days', '3 days']),
             'F16': [1.0, 2.0, 3.0],
             'F32': [1.0, 2.0, 3.0],
-            'F64': [1.0, 2.0, 3.0]
+            'F64': [1.0, 2.0, 3.0],
         }
     ).astype(
         {
@@ -58,7 +58,7 @@ def test_types_pandas(esperado):
             'U8': 'uint8',
             'F16': 'float16',
             'F32': 'float32',
-            'F64': 'float64'
+            'F64': 'float64',
         }
     )
 

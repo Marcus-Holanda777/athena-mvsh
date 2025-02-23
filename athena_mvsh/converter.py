@@ -9,6 +9,7 @@ from typing import cast
 from pyarrow import Schema, DataType
 import pyarrow as pa
 import re
+from functools import reduce
 
 
 def partition_func_iceberg(columns: list[str]) -> list[str]:
@@ -19,21 +20,26 @@ def partition_func_iceberg(columns: list[str]) -> list[str]:
 
     def formatar_coluna(match):
         if match.lastindex == 2:
-            return f'{match.group(1)}(`{match.group(2)}`)'
+            return f'{match.group(1)}(`{match.group(2).strip()}`)'
         elif match.lastindex == 3:
-            return (
-                f'{match.group(1)}({match.group(2).split(",")[0]}, `{match.group(3)}`)'
-            )
+            return f'{match.group(1)}({match.group(2).split(",")[0].strip()}, `{match.group(3).strip()}`)'
 
     rst = []
     for string in columns:
+        pattern_sub = re.compile(r'["`](.*?)["`]', re.I)
+        new_string = reduce(
+            lambda s, match: s.replace(match.group(0), match.group(1)),
+            pattern_sub.finditer(string),
+            string,
+        )
+
         for pattern in patterns:
-            if re.match(pattern, string):
-                resultado = re.sub(pattern, formatar_coluna, string)
+            if re.match(pattern, new_string, re.I):
+                resultado = re.sub(pattern, formatar_coluna, new_string, flags=re.I)
                 rst.append(resultado)
                 break
         else:
-            rst.append(f'`{string}`')
+            rst.append(f'`{new_string.strip()}`')
 
     return rst
 
@@ -113,13 +119,15 @@ def convert_df_athena(col: pd.Series) -> str:
         return 'BIGINT'
 
     elif col_type == 'floating':
-        if col.dtype == 'float32':
+        dtype_float = ['float16', 'float32']
+        if col.dtype in dtype_float:
             return 'FLOAT'
         else:
             return 'DOUBLE'
 
     elif col_type == 'integer':
-        if col.dtype == 'int32' or col.dtype == 'int16':
+        dtype_ints = ['int8', 'int16', 'int32', 'uint8', 'uint16', 'uint32']
+        if col.dtype in dtype_ints:
             return 'INT'
         else:
             return 'BIGINT'

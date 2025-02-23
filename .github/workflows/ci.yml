@@ -7,6 +7,33 @@ on:
     workflow_dispatch:
 
 jobs:
+  tests:
+    name: Testar e formatar o projeto
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copiar repositorio
+        uses: actions/checkout@v4
+    
+      - name: Instalar o python
+        uses: actions/setup-python@v5
+        with:
+            python-version: 3.11.x
+
+      - name: Instalar o Poetry
+        run: pip install poetry
+      
+      - name: Install dependencias
+        run: poetry install
+    
+      - name: Configura parte do test
+        run: poetry install --with dev
+     
+      - name: Testar e formatar
+        run: |
+          poetry run ruff check .
+          poetry run ruff format .
+          poetry run pytest
+
   publish:
     name: Publicar projeto no PYPI
     runs-on: ubuntu-latest

@@ -30,7 +30,17 @@ markdown_extensions:
 
 plugins:
   - mkdocstrings
+  - search
 
 nav:
   - Athena Docs: index.md
   - referencia.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Marcus-Holanda777/athena-mvsh
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/athena-mvsh/
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/marcus-holanda-b544a81b5/

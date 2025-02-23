@@ -1,5 +1,7 @@
 # Athena-mvsh
 [![PyPI](https://img.shields.io/pypi/v/athena-mvsh.svg)](https://pypi.org/project/athena-mvsh/)
+[![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-blue?logo=github)](https://marcus-holanda777.github.io/athena-mvsh)
+
 
 ## O que é o Athena-mvsh ?
 
@@ -47,8 +49,3 @@ Cursores Diversos:
 - `CursorPython`: Retorna os resultados da consulta como objetos Python.
 - `CursorParquet`: Retorna os resultados da consulta no formato Parquet.
 - `CursorParquetDuckdb`: Retorna os resultados da consulta integrados ao DuckDB.
-
-
-### Link para documentação
-
-[Documentação](https://marcus-holanda777.github.io/athena-mvsh)

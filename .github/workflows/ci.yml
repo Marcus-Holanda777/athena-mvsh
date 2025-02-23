@@ -24,9 +24,6 @@ jobs:
       
       - name: Instalar as dependencias
         run: poetry install
-    
-      - name: Instalar dependencias de desenvolvimento
-        run: poetry install --with dev
      
       - name: Executar ruff check
         run: poetry run ruff check .

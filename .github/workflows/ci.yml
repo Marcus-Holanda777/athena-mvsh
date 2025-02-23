@@ -22,21 +22,26 @@ jobs:
       - name: Instalar o Poetry
         run: pip install poetry
       
-      - name: Install dependencias
+      - name: Instalar as dependencias
         run: poetry install
     
-      - name: Configura parte do test
+      - name: Instalar dependencias de desenvolvimento
         run: poetry install --with dev
      
-      - name: Testar e formatar
-        run: |
-          poetry run ruff check .
-          poetry run ruff format .
-          poetry run pytest
+      - name: Executar ruff check
+        run: poetry run ruff check .
+      
+      - name: Executar ruff format
+        run: poetry run ruff format .
+      
+      - name: Executar tests
+        run: poetry run pytest
 
   publish:
     name: Publicar projeto no PYPI
     runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    needs: [tests]
     steps:
       - name: Copiar repositorio
         uses: actions/checkout@v4

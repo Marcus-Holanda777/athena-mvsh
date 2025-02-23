@@ -14,7 +14,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.6f8fc17f.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.8608ea7d.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -195,6 +195,7 @@
   
   <span class="md-ellipsis">
     Athena Docs
+    
   </span>
   
 
@@ -222,6 +223,7 @@
   
   <span class="md-ellipsis">
     Referencia
+    
   </span>
   
 
@@ -233,6 +235,7 @@
   
   <span class="md-ellipsis">
     Referencia
+    
   </span>
   
 
@@ -400,6 +403,15 @@
   <a href="#athena_mvsh.connection.Athena.to_partition_create_table_db" class="md-nav__link">
     <span class="md-ellipsis">
       to_partition_create_table_db
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.write_arrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      write_arrow
     </span>
   </a>
   
@@ -624,6 +636,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#athena_mvsh.connection.Athena.write_arrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      write_arrow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#athena_mvsh.connection.Athena.write_dataframe" class="md-nav__link">
     <span class="md-ellipsis">
       write_dataframe
@@ -670,6 +691,7 @@
                   
 
 
+
   <h1>Referencia</h1>
 
 <div class="doc doc-object doc-module">
@@ -679,13 +701,13 @@
 <a id="athena_mvsh.connection"></a>
     <div class="doc doc-contents first">
 
-        <p>A classe Athena estende a funcionalidade de <code>CursorIterator</code> para executar consultas 
-SQL no Athena, gerenciar os resultados e fornecer métodos para exportar os dados 
+        <p>A classe Athena estende a funcionalidade de <code>CursorIterator</code> para executar consultas
+SQL no Athena, gerenciar os resultados e fornecer métodos para exportar os dados
 para diversos formatos (CSV, Parquet, Iceberg, etc.).</p>
-<p>Ela permite a execução de consultas SQL, a obtenção dos resultados de forma iterativa 
-e a conversão desses resultados para estruturas de dados como Pandas DataFrame, 
-Parquet ou Arrow. A classe também oferece métodos para escrever dados de volta ao banco 
-de dados ou armazená-los em formatos como Parquet e Iceberg, com suporte para operações 
+<p>Ela permite a execução de consultas SQL, a obtenção dos resultados de forma iterativa
+e a conversão desses resultados para estruturas de dados como Pandas DataFrame,
+Parquet ou Arrow. A classe também oferece métodos para escrever dados de volta ao banco
+de dados ou armazená-los em formatos como Parquet e Iceberg, com suporte para operações
 de particionamento e compressão.</p>
 
 
@@ -731,7 +753,7 @@ de particionamento e compressão.</p>
 <details class="exemplo-de-uso" open>
   <summary>Exemplo de uso</summary>
   <p>Supondo que o cursor seja uma instância válida de um dos tipos: CursorPython, CursorParquet ou CursorParquetDuckdb</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">CursorPython</span><span class="p">,</span> <span class="n">CursorParquet</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">CursorPython</span><span class="p">,</span> <span class="n">CursorParquet</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># ou CursorParquet(...) ou CursorParquetDuckdb(...)</span>
 </code></pre></div>
@@ -754,8 +776,8 @@ de particionamento e compressão.</p>
 
     <span class="c1"># Escrevendo dados em uma tabela no banco de dados</span>
     <span class="n">athena</span><span class="o">.</span><span class="n">write_parquet</span><span class="p">(</span>
-        <span class="n">file</span><span class="o">=</span><span class="s2">&quot;sales_data.parquet&quot;</span><span class="p">,</span> 
-        <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;sales_table&quot;</span><span class="p">,</span> 
+        <span class="n">file</span><span class="o">=</span><span class="s2">&quot;sales_data.parquet&quot;</span><span class="p">,</span>
+        <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;sales_table&quot;</span><span class="p">,</span>
         <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;public&quot;</span>
     <span class="p">)</span>
 </code></pre></div></p>
@@ -792,8 +814,8 @@ de particionamento e compressão.</p>
               Bases: <code><span title="athena_mvsh.cursores.CursorIterator">CursorIterator</span></code></p>
 
 
-        <p>Classe responsável por executar consultas SQL no AWS Athena ou em cursores alternativos, 
-como CursorParquetDuckdb, CursorPython ou CursorParquet. A classe suporta gerenciamento 
+        <p>Classe responsável por executar consultas SQL no AWS Athena ou em cursores alternativos,
+como CursorParquetDuckdb, CursorPython ou CursorParquet. A classe suporta gerenciamento
 automático de recursos com o uso de um gerenciador de contexto.</p>
 
 
@@ -852,7 +874,7 @@ automático de recursos com o uso de um gerenciador de contexto.</p>
 
 
 <h3 id="athena_mvsh.connection.Athena.description" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">description</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span></code>
+            <code class="highlight language-python"><span class="n">description</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -864,7 +886,7 @@ automático de recursos com o uso de um gerenciador de contexto.</p>
     <div class="doc doc-contents ">
 
         <p>Retorna os metadados da consulta executada.</p>
-<p>Esta propriedade retorna uma lista de tuplas que representam as colunas 
+<p>Esta propriedade retorna uma lista de tuplas que representam as colunas
 da consulta executada. Cada tupla contém as seguintes informações:
     - Nome da coluna
     - Tipo da coluna
@@ -877,7 +899,7 @@ da consulta executada. Cada tupla contém as seguintes informações:
 
 <details class="retorno" open>
   <summary>Retorno</summary>
-  <p>list[tuple] | None: Uma lista de tuplas contendo os metadados de cada 
+  <p>list[tuple] | None: Uma lista de tuplas contendo os metadados de cada
 coluna ou <code>None</code> se os metadados não estiverem disponíveis.</p>
 </details>
 
@@ -898,7 +920,7 @@ coluna ou <code>None</code> se os metadados não estiverem disponíveis.</p>
 
 
 <h3 id="athena_mvsh.connection.Athena.rowcount" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">rowcount</span><span class="p">:</span> <span class="nb">int</span></code>
+            <code class="highlight language-python"><span class="n">rowcount</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
@@ -910,8 +932,8 @@ coluna ou <code>None</code> se os metadados não estiverem disponíveis.</p>
     <div class="doc doc-contents ">
 
         <p>Retorna o número total de registros afetados pela execução da consulta.</p>
-<p>Este método recupera o número de registros afetados pela última execução de consulta, 
-como determinado pelo cursor utilizado. O valor é fornecido pela implementação do cursor, 
+<p>Este método recupera o número de registros afetados pela última execução de consulta,
+como determinado pelo cursor utilizado. O valor é fornecido pela implementação do cursor,
 seguindo as especificações da DB API Python.</p>
 
 
@@ -949,7 +971,7 @@ seguindo as especificações da DB API Python.</p>
 
 <details class="exemplo" open>
   <summary>Exemplo</summary>
-  <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
@@ -1061,7 +1083,7 @@ seguindo as especificações da DB API Python.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Parâmetros para a consulta. 
+                <p>Parâmetros para a consulta.
 - Se for uma tupla, é interpretada como argumentos posicionais.
 - Se for um dicionário, é interpretado como argumentos nomeados.
 - Padrão é None.</p>
@@ -1080,7 +1102,7 @@ seguindo as especificações da DB API Python.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Habilita a reutilização de resultados da consulta 
+                <p>Habilita a reutilização de resultados da consulta
 armazenados em cache (se suportado pelo cursor). Padrão é False.</p>
               </div>
             </td>
@@ -1115,7 +1137,7 @@ armazenados em cache (se suportado pelo cursor). Padrão é False.</p>
 </ul>
 </li>
 <li>
-<p>Caso as configurações do AWS CLI não estejam disponíveis, os parâmetros opcionais 
+<p>Caso as configurações do AWS CLI não estejam disponíveis, os parâmetros opcionais
   para autenticação podem ser passados como <strong>kwargs</strong> ao instanciar os cursores:</p>
 <ul>
 <li><code>region_name</code> (str): Região da AWS.</li>
@@ -1124,7 +1146,7 @@ armazenados em cache (se suportado pelo cursor). Padrão é False.</p>
 </ul>
 </li>
 <li>
-<p>Se a consulta for um comando DDL (ex.: CREATE, ALTER, DROP), o método retorna o resultado 
+<p>Se a consulta for um comando DDL (ex.: CREATE, ALTER, DROP), o método retorna o resultado
   de <code>fetchone()</code> imediatamente.</p>
 </li>
 </ul>
@@ -1132,7 +1154,7 @@ armazenados em cache (se suportado pelo cursor). Padrão é False.</p>
 
 <details class="exemplo" open>
   <summary>Exemplo</summary>
-  <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 </code></pre></div>
 <p>Inicializando CursorParquetDuckdb com credenciais AWS
 <div class="highlight"><pre><span></span><code><span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span>
@@ -1185,7 +1207,7 @@ armazenados em cache (se suportado pelo cursor). Padrão é False.</p>
     <div class="doc doc-contents ">
 
         <p>Retorna todas as linhas do cursor como uma lista.</p>
-<p>Este método converte todas as linhas disponíveis no cursor em uma lista de 
+<p>Este método converte todas as linhas disponíveis no cursor em uma lista de
 tuplas, onde cada tupla representa uma linha do resultado da consulta executada.</p>
 
 
@@ -1219,8 +1241,8 @@ tuplas, onde cada tupla representa uma linha do resultado da consulta executada.
     <div class="doc doc-contents ">
 
         <p>Retorna um número especificado de linhas do cursor.</p>
-<p>Este método retorna até <code>size</code> linhas do cursor, como uma lista de tuplas. 
-Se o número de linhas disponíveis for menor que o valor de <code>size</code>, ele retorna 
+<p>Este método retorna até <code>size</code> linhas do cursor, como uma lista de tuplas.
+Se o número de linhas disponíveis for menor que o valor de <code>size</code>, ele retorna
 o número de linhas restantes. O valor padrão de <code>size</code> é 1.</p>
 
 
@@ -1285,8 +1307,8 @@ o número de linhas restantes. O valor padrão de <code>size</code> é 1.</p>
     <div class="doc doc-contents ">
 
         <p>Retorna a próxima linha do cursor.</p>
-<p>Este método tenta obter a próxima linha do cursor. Se houver uma linha disponível, 
-ela é retornada. Caso contrário, retorna <code>None</code> quando o cursor atingir o final 
+<p>Este método tenta obter a próxima linha do cursor. Se houver uma linha disponível,
+ela é retornada. Caso contrário, retorna <code>None</code> quando o cursor atingir o final
 dos resultados.</p>
 
 
@@ -1313,7 +1335,7 @@ dos resultados.</p>
 
 
 <h3 id="athena_mvsh.connection.Athena.merge_table_iceberg" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">merge_table_iceberg</span><span class="p">(</span><span class="n">target_table</span><span class="p">,</span> <span class="n">source_data</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">predicate</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span> <span class="n">location</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="s1">&#39;awsdatacatalog&#39;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">merge_table_iceberg</span><span class="p">(</span><span class="n">target_table</span><span class="p">,</span> <span class="n">source_data</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">predicate</span><span class="p">,</span> <span class="n">delete_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">insert_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span> <span class="n">location</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="s1">&#39;awsdatacatalog&#39;</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1321,9 +1343,9 @@ dos resultados.</p>
     <div class="doc doc-contents ">
 
         <p>Executa um merge (UPSERT) em uma tabela Iceberg no Athena, utilizando uma tabela temporária criada no Athena.</p>
-<p>Este método usa o DuckDB para criar uma tabela temporária no Athena com os dados fornecidos e, em seguida, 
-executa um merge (UPSERT) entre a tabela de destino e os dados da tabela temporária. A operação permite 
-atualizar ou inserir registros na tabela de destino com base em uma condição de junção (predicate). 
+<p>Este método usa o DuckDB para criar uma tabela temporária no Athena com os dados fornecidos e, em seguida,
+executa um merge (UPSERT) entre a tabela de destino e os dados da tabela temporária. A operação permite
+atualizar ou inserir registros na tabela de destino com base em uma condição de junção (predicate).
 Pode-se utilizar um DataFrame pandas ou arquivos Parquet como dados de origem.</p>
 
 
@@ -1359,7 +1381,7 @@ Pode-se utilizar um DataFrame pandas ou arquivos Parquet como dados de origem.</
                 <code>source_data</code>
             </td>
             <td>
-                  <code><span title="pandas.DataFrame">DataFrame</span> | list[str | <span title="pathlib.Path">Path</span>] | str | <span title="pathlib.Path">Path</span></code>
+                  <code><span title="pandas.DataFrame">DataFrame</span> | list[str | <span title="pathlib.Path">Path</span>] | str | <span title="pathlib.Path">Path</span> | <span title="pyarrow.Table">Table</span></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1396,7 +1418,7 @@ Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A condição de junção (predicate) que define a lógica de correspondência entre os dados de origem 
+                <p>A condição de junção (predicate) que define a lógica de correspondência entre os dados de origem
 e os dados da tabela de destino para o merge (atualização ou inserção).</p>
               </div>
             </td>
@@ -1413,7 +1435,7 @@ e os dados da tabela de destino para o merge (atualização ou inserção).</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Alias para as tabelas de origem e destino no merge. O valor padrão é <code>('t', 's')</code>, 
+                <p>Alias para as tabelas de origem e destino no merge. O valor padrão é <code>('t', 's')</code>,
 onde <code>'t'</code> é o alias da tabela de destino e <code>'s'</code> é o alias da tabela de origem.</p>
               </div>
             </td>
@@ -1465,7 +1487,7 @@ onde <code>'t'</code> é o alias da tabela de destino e <code>'s'</code> é o al
 <details class="detalhes" open>
   <summary>Detalhes</summary>
   <ul>
-<li>O método cria uma <strong>tabela temporária</strong> no Athena com os dados fornecidos (DataFrame pandas ou arquivos Parquet) 
+<li>O método cria uma <strong>tabela temporária</strong> no Athena com os dados fornecidos (DataFrame pandas ou arquivos Parquet)
 e executa um merge (UPSERT) entre a tabela de destino (Iceberg) e a tabela temporária.</li>
 <li>O <code>predicate</code> define a condição de junção para o merge, permitindo atualizar ou inserir registros na tabela de destino.</li>
 <li>O parâmetro <code>alias</code> é utilizado para dar nomes alias às tabelas de origem e destino durante a execução do SQL gerado.</li>
@@ -1475,8 +1497,8 @@ e executa um merge (UPSERT) entre a tabela de destino (Iceberg) e a tabela tempo
 
 <details class="exemplo" open>
   <summary>Exemplo</summary>
-  <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+  <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
@@ -1524,15 +1546,15 @@ e executa um merge (UPSERT) entre a tabela de destino (Iceberg) e a tabela tempo
     <div class="doc doc-contents ">
 
         <p>Converte os resultados da consulta para um <code>pa.Table</code> (PyArrow Table).</p>
-<p>Este método converte os dados retornados pela consulta executada em um 
-objeto <code>pa.Table</code> (tabela do PyArrow). A conversão só é realizada se o 
-cursor utilizado for uma instância de <code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>. 
+<p>Este método converte os dados retornados pela consulta executada em um
+objeto <code>pa.Table</code> (tabela do PyArrow). A conversão só é realizada se o
+cursor utilizado for uma instância de <code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>.
 Caso contrário, uma exceção <code>ProgrammingError</code> será levantada.</p>
 
 
 <details class="exceções" open>
   <summary>Exceções</summary>
-  <p>ProgrammingError: Se o cursor não for uma instância de <code>CursorParquet</code> 
+  <p>ProgrammingError: Se o cursor não for uma instância de <code>CursorParquet</code>
 ou <code>CursorParquetDuckdb</code>.</p>
 </details>
 
@@ -1566,10 +1588,10 @@ ou <code>CursorParquetDuckdb</code>.</p>
     <div class="doc doc-contents ">
 
         <p>Cria uma tabela no banco de dados DuckDB com base nos resultados da consulta executada.</p>
-<p>Este método cria uma tabela no banco de dados DuckDB especificado usando os dados retornados 
-pela consulta executada. A tabela será criada com o nome fornecido como <code>table_name</code>. </p>
-<p>O método só pode ser utilizado com o cursor do tipo <code>CursorParquetDuckdb</code>. O nome do banco 
-de dados pode ser especificado como um argumento, e se não fornecido, o banco de dados padrão 
+<p>Este método cria uma tabela no banco de dados DuckDB especificado usando os dados retornados
+pela consulta executada. A tabela será criada com o nome fornecido como <code>table_name</code>.</p>
+<p>O método só pode ser utilizado com o cursor do tipo <code>CursorParquetDuckdb</code>. O nome do banco
+de dados pode ser especificado como um argumento, e se não fornecido, o banco de dados padrão
 será <code>'db.duckdb'</code>.</p>
 
 
@@ -1654,17 +1676,17 @@ será <code>'db.duckdb'</code>.</p>
     <div class="doc doc-contents ">
 
         <p>Converte os resultados da consulta para um arquivo CSV.</p>
-<p>Este método converte os dados retornados pela consulta executada e os salva em um arquivo 
-CSV. A conversão é realizada apenas se o cursor utilizado for do tipo 
-<code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>. Dependendo do tipo do cursor, o método 
+<p>Este método converte os dados retornados pela consulta executada e os salva em um arquivo
+CSV. A conversão é realizada apenas se o cursor utilizado for do tipo
+<code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>. Dependendo do tipo do cursor, o método
 chama a função <code>to_csv</code> correspondente.</p>
 <ul>
 <li>
-<p>Se o cursor for uma instância de <code>CursorParquetDuckdb</code>, o método chamará diretamente 
+<p>Se o cursor for uma instância de <code>CursorParquetDuckdb</code>, o método chamará diretamente
 o método <code>to_csv</code> do cursor, passando os parâmetros apropriados para ele.</p>
 </li>
 <li>
-<p>Para o cursor <code>CursorParquet</code>, os dados são primeiro convertidos para um <code>pa.Table</code> 
+<p>Para o cursor <code>CursorParquet</code>, os dados são primeiro convertidos para um <code>pa.Table</code>
 e então salvos como CSV, com opções de escrita personalizáveis.</p>
 </li>
 </ul>
@@ -1767,8 +1789,8 @@ e então salvos como CSV, com opções de escrita personalizáveis.</p>
     <div class="doc doc-contents ">
 
         <p>Insere os resultados de uma consulta executada no Amazon Athena em uma tabela no DuckDB.</p>
-<p>Esta função utiliza o cursor específico da biblioteca, <code>CursorParquetDuckdb</code>, para transferir 
-os dados resultantes de uma consulta executada no Amazon Athena para uma tabela no banco de dados 
+<p>Esta função utiliza o cursor específico da biblioteca, <code>CursorParquetDuckdb</code>, para transferir
+os dados resultantes de uma consulta executada no Amazon Athena para uma tabela no banco de dados
 DuckDB. Caso o cursor utilizado não seja compatível, um erro será lançado.</p>
 
 
@@ -1808,7 +1830,7 @@ DuckDB. Caso o cursor utilizado não seja compatível, um erro será lançado.</
             </td>
             <td>
               <div class="doc-md-description">
-                <p>O caminho ou nome do banco de dados DuckDB onde a tabela será criada 
+                <p>O caminho ou nome do banco de dados DuckDB onde a tabela será criada
 ou atualizada. O valor padrão é <code>'db.duckdb'</code>.</p>
               </div>
             </td>
@@ -1827,7 +1849,7 @@ ou atualizada. O valor padrão é <code>'db.duckdb'</code>.</p>
 
 <details class="exemplo" open>
   <summary>Exemplo</summary>
-  <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
@@ -1854,7 +1876,7 @@ ou atualizada. O valor padrão é <code>'db.duckdb'</code>.</p>
     <div class="doc doc-contents ">
 
         <p>Exporta os resultados de uma consulta para um DataFrame pandas.</p>
-<p>Este método converte os resultados da consulta executada em diferentes tipos de cursor para um DataFrame pandas. 
+<p>Este método converte os resultados da consulta executada em diferentes tipos de cursor para um DataFrame pandas.
 Ele suporta cursors do tipo <code>CursorParquetDuckdb</code>, <code>CursorPython</code> e <code>CursorParquet</code>, adaptando-se conforme o tipo de cursor utilizado.</p>
 
 
@@ -1892,7 +1914,7 @@ Ele suporta cursors do tipo <code>CursorParquetDuckdb</code>, <code>CursorPython
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Argumentos adicionais que serão passados para o método <code>to_pandas</code> do cursor. </p>
+                <p>Argumentos adicionais que serão passados para o método <code>to_pandas</code> do cursor.</p>
               </div>
             </td>
             <td>
@@ -1924,7 +1946,7 @@ Ele suporta cursors do tipo <code>CursorParquetDuckdb</code>, <code>CursorPython
 
 <details class="exemplo" open>
   <summary>Exemplo</summary>
-  <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
@@ -1960,17 +1982,17 @@ Ele suporta cursors do tipo <code>CursorParquetDuckdb</code>, <code>CursorPython
     <div class="doc doc-contents ">
 
         <p>Converte os resultados da consulta para o formato Parquet.</p>
-<p>Este método converte os dados retornados pela consulta executada em um arquivo 
-Parquet. A conversão é realizada apenas se o cursor utilizado for do tipo 
-<code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>. Dependendo do tipo do cursor, o método 
+<p>Este método converte os dados retornados pela consulta executada em um arquivo
+Parquet. A conversão é realizada apenas se o cursor utilizado for do tipo
+<code>CursorParquet</code> ou <code>CursorParquetDuckdb</code>. Dependendo do tipo do cursor, o método
 chama a função <code>to_parquet</code> correspondente.</p>
 <ul>
 <li>
-<p>Se o cursor for uma instância de <code>CursorParquetDuckdb</code>, o método chamará diretamente 
+<p>Se o cursor for uma instância de <code>CursorParquetDuckdb</code>, o método chamará diretamente
 o método <code>to_parquet</code> do cursor, passando os argumentos fornecidos para ele.</p>
 </li>
 <li>
-<p>Para o cursor <code>CursorParquet</code>, os dados são primeiro convertidos para um <code>pa.Table</code> 
+<p>Para o cursor <code>CursorParquet</code>, os dados são primeiro convertidos para um <code>pa.Table</code>
 e então são gravados como Parquet.</p>
 </li>
 </ul>
@@ -1996,7 +2018,7 @@ e então são gravados como Parquet.</p>
             <td>
               <div class="doc-md-description">
                 <p>Argumentos adicionais passados para a função <code>to_parquet</code> do cursor.
-- Para detalhes sobre os argumentos esperados, consulte a documentação do 
+- Para detalhes sobre os argumentos esperados, consulte a documentação do
 <code>DuckDB</code> e <code>PyArrow</code>:
     - DuckDB: https://duckdb.org/docs
     - PyArrow: https://arrow.apache.org/docs/python/</p>
@@ -2014,7 +2036,7 @@ e então são gravados como Parquet.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Argumentos de palavra-chave adicionais passados para a função </p>
+                <p>Argumentos de palavra-chave adicionais passados para a função</p>
               </div>
             </td>
             <td>
@@ -2027,7 +2049,7 @@ e então são gravados como Parquet.</p>
 
 <details class="exceções" open>
   <summary>Exceções</summary>
-  <p>ProgrammingError: Se o cursor não for uma instância de <code>CursorParquet</code> ou 
+  <p>ProgrammingError: Se o cursor não for uma instância de <code>CursorParquet</code> ou
 <code>CursorParquetDuckdb</code>.</p>
 </details>
 
@@ -2060,13 +2082,13 @@ e então são gravados como Parquet.</p>
     <div class="doc doc-contents ">
 
         <p>Lê arquivos Parquet gerados a partir da consulta executada e insere os dados na tabela do banco de dados DuckDB.</p>
-<p>Este método executa uma consulta no Athena para gerar arquivos Parquet que são armazenados no S3. 
-Após a consulta, os arquivos Parquet são lidos e os dados são inseridos na tabela especificada no DuckDB. 
+<p>Este método executa uma consulta no Athena para gerar arquivos Parquet que são armazenados no S3.
+Após a consulta, os arquivos Parquet são lidos e os dados são inseridos na tabela especificada no DuckDB.
 A inserção dos dados é paralelizada utilizando múltiplos trabalhadores (threads) para otimizar o desempenho.</p>
 <p>O método realiza os seguintes passos:
 - Executa a consulta fornecida no Athena para gerar os arquivos Parquet.
 - Descarrega os arquivos Parquet do S3 a partir do manifest gerado pela consulta.
-- Para cada arquivo Parquet, insere os dados na tabela especificada no DuckDB, utilizando 
+- Para cada arquivo Parquet, insere os dados na tabela especificada no DuckDB, utilizando
 <code>ThreadPoolExecutor</code> para paralelizar as inserções.</p>
 
 
@@ -2150,10 +2172,208 @@ Exception: Se ocorrer um erro durante a execução da inserção dos dados.</p>
 <span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
     <span class="n">athena</span><span class="o">.</span><span class="n">to_partition_create_table_db</span><span class="p">(</span>
         <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;target_table&#39;</span><span class="p">,</span>
-        <span class="n">database</span><span class="o">=</span><span class="s1">&#39;db.duckdb&#39;</span><span class="p">,</span> 
+        <span class="n">database</span><span class="o">=</span><span class="s1">&#39;db.duckdb&#39;</span><span class="p">,</span>
         <span class="n">workers</span><span class="o">=</span><span class="mi">4</span>
     <span class="p">)</span>
 </code></pre></div>
+</details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="athena_mvsh.connection.Athena.write_arrow" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">write_arrow</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partitions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="s1">&#39;awsdatacatalog&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s1">&#39;GZIP&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Escreve um Table Arrow em uma tabela externa no Athena usando o DuckDB.</p>
+<p>Este método utiliza o DuckDB para escrever um Table Arrow como uma tabela externa no Amazon Athena,
+permitindo especificar o esquema, particionamento e compressão dos dados. Caso o cursor utilizado não seja
+compatível, um erro será lançado.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>tbl</code>
+            </td>
+            <td>
+                  <code><span title="pyarrow.Table">Table</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O Table Arrow que será escrito na tabela externa no Athena.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>table_name</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O nome da tabela externa de destino no Athena.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>schema</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O esquema onde a tabela será criada ou atualizada no Athena.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>location</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O local onde os dados serão armazenados (geralmente um bucket S3), se aplicável.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>partitions</code>
+            </td>
+            <td>
+                  <code>list[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Lista de colunas para particionamento dos dados na tabela.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>catalog_name</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O nome do catálogo de dados a ser utilizado. O valor padrão é <code>'awsdatacatalog'</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;awsdatacatalog&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>compression</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>O algoritmo de compressão a ser utilizado nos dados. O valor padrão é <code>'GZIP'</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;GZIP&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="exceções" open>
+  <summary>Exceções</summary>
+  <p>ProgrammingError: Se a função for chamada com um cursor incompatível.</p>
+</details>
+
+<details class="detalhes" open>
+  <summary>Detalhes</summary>
+  <ul>
+<li>O Table Arrow fornecido será convertido e escrito como uma tabela externa no Athena.</li>
+<li>A opção de particionamento permite distribuir os dados em várias pastas ou arquivos, facilitando o gerenciamento de grandes volumes de dados no S3.</li>
+<li>A compressão <code>GZIP</code> pode ser usada para reduzir o tamanho do arquivo gerado, com outras opções como <code>SNAPPY</code> também sendo suportadas.</li>
+<li>O catálogo de dados <code>awsdatacatalog</code> pode ser alterado para refletir configurações específicas do ambiente de execução.</li>
+</ul>
+</details>
+
+<details class="exemplo" open>
+  <summary>Exemplo</summary>
+  <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># Exemplo de DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;coluna1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="s2">&quot;coluna2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="c1"># Escreve o Table Arrow em uma tabela externa no Athena</span>
+<span class="k">with</span> <span class="n">Athena</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="k">as</span> <span class="n">athena</span><span class="p">:</span>
+    <span class="n">athena</span><span class="o">.</span><span class="n">write_arrow</span><span class="p">(</span>
+        <span class="n">tbl</span><span class="p">,</span>
+        <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;tabela_destino&quot;</span><span class="p">,</span>
+        <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;meu_esquema&quot;</span><span class="p">,</span>
+        <span class="n">location</span><span class="o">=</span><span class="s2">&quot;s3://meu-bucket/dados/&quot;</span><span class="p">,</span>
+        <span class="n">partitions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;coluna1&quot;</span><span class="p">],</span>
+        <span class="n">catalog_name</span><span class="o">=</span><span class="s2">&quot;meu_catalogo&quot;</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;SNAPPY&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+</details>
+
+<details class="notas" open>
+  <summary>Notas</summary>
+  <ul>
+<li>Certifique-se de que o cursor utilizado seja instância de <code>CursorParquetDuckdb</code>.</li>
+<li>O particionamento é útil para grandes volumes de dados, permitindo consultas mais eficientes no Athena.</li>
+<li>A compressão pode ser ajustada para balancear entre desempenho e tamanho do arquivo.</li>
+</ul>
 </details>
     </div>
 
@@ -2171,8 +2391,8 @@ Exception: Se ocorrer um erro durante a execução da inserção dos dados.</p>
     <div class="doc doc-contents ">
 
         <p>Escreve um DataFrame pandas em uma tabela externa no Athena usando o DuckDB.</p>
-<p>Este método utiliza o DuckDB para escrever um DataFrame pandas como uma tabela externa no Amazon Athena, 
-permitindo especificar o esquema, particionamento e compressão dos dados. Caso o cursor utilizado não seja 
+<p>Este método utiliza o DuckDB para escrever um DataFrame pandas como uma tabela externa no Amazon Athena,
+permitindo especificar o esquema, particionamento e compressão dos dados. Caso o cursor utilizado não seja
 compatível, um erro será lançado.</p>
 
 
@@ -2320,8 +2540,8 @@ compatível, um erro será lançado.</p>
 
 <details class="exemplo" open>
   <summary>Exemplo</summary>
-  <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+  <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
@@ -2369,8 +2589,8 @@ compatível, um erro será lançado.</p>
     <div class="doc doc-contents ">
 
         <p>Cria uma tabela externa no Athena a partir de um ou vários arquivos Parquet.</p>
-<p>Este método utiliza o DuckDB para criar uma tabela externa no Amazon Athena a partir de arquivos Parquet, 
-permitindo especificar o esquema, particionamento e compressão dos dados. Caso o cursor utilizado não seja 
+<p>Este método utiliza o DuckDB para criar uma tabela externa no Amazon Athena a partir de arquivos Parquet,
+permitindo especificar o esquema, particionamento e compressão dos dados. Caso o cursor utilizado não seja
 compatível, um erro será lançado.</p>
 
 
@@ -2394,7 +2614,7 @@ compatível, um erro será lançado.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Um ou vários caminhos para arquivos Parquet ou diretórios 
+                <p>Um ou vários caminhos para arquivos Parquet ou diretórios
 contendo arquivos Parquet. Pode ser uma lista ou uma única string/Path.</p>
               </div>
             </td>
@@ -2519,8 +2739,8 @@ contendo arquivos Parquet. Pode ser uma lista ou uma única string/Path.</p>
 
 <details class="exemplo" open>
   <summary>Exemplo</summary>
-  <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
@@ -2556,16 +2776,16 @@ contendo arquivos Parquet. Pode ser uma lista ou uma única string/Path.</p>
 
 
 <h3 id="athena_mvsh.connection.Athena.write_table_iceberg" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">write_table_iceberg</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partitions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="s1">&#39;awsdatacatalog&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s1">&#39;snappy&#39;</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">write_table_iceberg</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partitions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="s1">&#39;awsdatacatalog&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s1">&#39;ZSTD&#39;</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span></code>
 
 </h3>
 
 
     <div class="doc doc-contents ">
 
-        <p>Cria ou insere dados em uma tabela Iceberg no Athena a partir de um DataFrame pandas ou arquivos Parquet.</p>
-<p>Este método usa o DuckDB para criar ou inserir dados em uma tabela Iceberg no Amazon Athena, 
-permitindo que os dados sejam inseridos a partir de um DataFrame pandas ou múltiplos arquivos Parquet. 
+        <p>Cria ou insere dados em uma tabela Iceberg no Athena a partir de um DataFrame pandas, Table Arrow ou arquivos Parquet.</p>
+<p>Este método usa o DuckDB para criar ou inserir dados em uma tabela Iceberg no Amazon Athena,
+permitindo que os dados sejam inseridos a partir de um DataFrame pandas, Table Arrow ou múltiplos arquivos Parquet.
 A operação pode substituir a tabela existente ou adicionar novos dados, dependendo do valor de <code>if_exists</code>.</p>
 
 
@@ -2585,12 +2805,12 @@ A operação pode substituir a tabela existente ou adicionar novos dados, depend
                 <code>data</code>
             </td>
             <td>
-                  <code><span title="pandas.DataFrame">DataFrame</span> | list[str | <span title="pathlib.Path">Path</span>] | str | <span title="pathlib.Path">Path</span></code>
+                  <code><span title="pandas.DataFrame">DataFrame</span> | list[str | <span title="pathlib.Path">Path</span>] | str | <span title="pathlib.Path">Path</span> | <span title="pyarrow.Table">Table</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Dados a serem inseridos ou criados na tabela Iceberg. 
-Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato string ou Path).</p>
+                <p>Dados a serem inseridos ou criados na tabela Iceberg.
+Pode ser um DataFrame pandas, Table Arrow ou um ou mais arquivos Parquet (caminhos em formato string ou Path).</p>
               </div>
             </td>
             <td>
@@ -2690,7 +2910,7 @@ Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato
               </div>
             </td>
             <td>
-                  <code>&#39;snappy&#39;</code>
+                  <code>&#39;ZSTD&#39;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -2702,7 +2922,7 @@ Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Define se os dados devem substituir a tabela existente 
+                <p>Define se os dados devem substituir a tabela existente
 (<code>'replace'</code>) ou ser adicionados (<code>'append'</code>). O valor padrão é <code>'replace'</code>.</p>
               </div>
             </td>
@@ -2732,8 +2952,8 @@ Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato
 
 <details class="exemplo" open>
   <summary>Exemplo</summary>
-  <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+  <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
@@ -2832,10 +3052,10 @@ Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      <script src="../assets/javascripts/bundle.f1b6f286.min.js"></script>
       
     
   </body>

@@ -14,7 +14,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.6f8fc17f.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.8608ea7d.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
@@ -204,6 +204,7 @@
   
   <span class="md-ellipsis">
     Athena Docs
+    
   </span>
   
 
@@ -215,6 +216,7 @@
   
   <span class="md-ellipsis">
     Athena Docs
+    
   </span>
   
 
@@ -417,6 +419,7 @@
   
   <span class="md-ellipsis">
     Referencia
+    
   </span>
   
 
@@ -628,6 +631,7 @@
                   
 
 
+
 <h1 id="athena-mvsh">Athena-MVSH</h1>
 <p><a href="https://pypi.org/project/athena-mvsh/"><img alt="PyPI" src="https://img.shields.io/pypi/v/athena-mvsh.svg" /></a></p>
 <p>A <strong>athena-mvsh</strong> é uma biblioteca Python projetada para facilitar a execução de consultas no <strong>AWS Athena</strong> com suporte ao uso de <strong>pyarrow</strong> e <strong>DuckDB</strong> para resultados e execução de consultas. A biblioteca oferece uma interface intuitiva, integrando com o Athena e outros formatos de dados, como Parquet, CSV, e Arrow, permitindo exportações e transformações de dados eficientes.</p>
@@ -676,7 +680,7 @@
 <h2 id="credenciais">Credenciais</h2>
 <p>Para se conectar é preciso informar o <code>aws_access_key_id</code>, <code>aws_secret_access_key</code> o local de saida das consultas <code>s3_staging_dir</code> 
 e a regiao do bucket <code>region_name</code>. Se você usar o arquivo de perfil padrão, não será necessário informar as credenciais.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Athena</span><span class="p">,</span>
     <span class="n">CursorPython</span>
 <span class="p">)</span>
@@ -702,7 +706,7 @@ e a regiao do bucket <code>region_name</code>. Se você usar o arquivo de perfil
 <h2 id="exemplo-de-uso">Exemplo de Uso</h2>
 <p>A seguir, um exemplo de como utilizar a biblioteca <strong>athena-mvsh</strong> para executar uma consulta e manipular os resultados:</p>
 <h3 id="1-uso-basico">1. <strong>Uso Básico</strong></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span>
   <span class="n">s3_staging_dir</span><span class="o">=</span><span class="s1">&#39;s3:/caminho-saida-consulta/&#39;</span>
@@ -716,7 +720,7 @@ e a regiao do bucket <code>region_name</code>. Se você usar o arquivo de perfil
 </code></pre></div>
 <h3 id="2-reutilizacao-de-consultas">2. <strong>Reutilização de consultas</strong></h3>
 <p>O parâmetro <code>result_reuse_enable</code> é uma funcionalidade que habilita ou desabilita a reutilização de resultados de consultas previamente executadas no Amazon Athena. Essa abordagem reduz custos e melhora o desempenho ao aproveitar resultados armazenados em cache, desde que os dados subjacentes não tenham sido alterados.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorPython</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorPython</span><span class="p">(</span>
   <span class="n">s3_staging_dir</span><span class="o">=</span><span class="s1">&#39;s3://caminho-saida-consulta/&#39;</span><span class="p">,</span>
@@ -745,7 +749,7 @@ e a regiao do bucket <code>region_name</code>. Se você usar o arquivo de perfil
 <li><strong>merge_table_iceberg</strong>: Realiza uma operação de merge em uma tabela <code>Iceberg</code>.</li>
 </ul>
 <h3 id="1-criando-tabela-no-duckdb-a-partir-de-uma-consulta">1. <strong>Criando tabela no Duckdb a partir de uma consulta</strong></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span>
     <span class="n">s3_staging_dir</span><span class="o">=</span><span class="s1">&#39;s3://caminho-saida-consulta/&#39;</span>
@@ -756,8 +760,8 @@ e a regiao do bucket <code>region_name</code>. Se você usar o arquivo de perfil
     <span class="n">athena</span><span class="o">.</span><span class="n">to_create_table_db</span><span class="p">(</span><span class="s1">&#39;sales_table&#39;</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s1">&#39;db.duckdb&#39;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="2-criando-tabela-externa-no-athena-a-partir-de-um-dataframe-do-pandas">2. <strong>Criando tabela externa no Athena a partir de um DataFrame do pandas</strong></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span>
     <span class="n">s3_staging_dir</span><span class="o">=</span><span class="s1">&#39;s3://caminho-saida-consulta/&#39;</span>
@@ -774,8 +778,8 @@ e a regiao do bucket <code>region_name</code>. Se você usar o arquivo de perfil
     <span class="p">)</span>
 </code></pre></div>
 <h3 id="3-criando-tabela-externa-no-athena-a-partir-de-arquivos-parquet">3. <strong>Criando tabela externa no Athena a partir de arquivos Parquet</strong></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">athena_mvsh</span> <span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">athena_mvsh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Athena</span><span class="p">,</span> <span class="n">CursorParquetDuckdb</span>
 
 <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorParquetDuckdb</span><span class="p">(</span>
     <span class="n">s3_staging_dir</span><span class="o">=</span><span class="s1">&#39;s3://caminho-saida-consulta/&#39;</span>
@@ -835,10 +839,10 @@ e a regiao do bucket <code>region_name</code>. Se você usar o arquivo de perfil
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      <script src="assets/javascripts/bundle.f1b6f286.min.js"></script>
       
     
   </body>

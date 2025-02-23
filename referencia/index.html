@@ -1386,7 +1386,7 @@ Pode-se utilizar um DataFrame pandas ou arquivos Parquet como dados de origem.</
             <td>
               <div class="doc-md-description">
                 <p>Dados de origem a serem mesclados com a tabela de destino.
-Pode ser um DataFrame pandas ou um ou mais arquivos Parquet (caminhos em formato string ou Path).</p>
+Pode ser um DataFrame pandas, Table Arrow ou um ou mais arquivos Parquet (caminhos em formato string ou Path).</p>
               </div>
             </td>
             <td>
@@ -1424,6 +1424,54 @@ e os dados da tabela de destino para o merge (atualização ou inserção).</p>
             </td>
             <td>
                 <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>delete_condition</code>
+            </td>
+            <td>
+                  <code>(str, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Condição para excluir registros da tabela de destino. Se <code>None</code>, a cláusula <code>DELETE</code> não será aplicada.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>update_condition</code>
+            </td>
+            <td>
+                  <code>(str, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Condição para atualizar registros existentes na tabela de destino. Se <code>None</code>, todos os registros correspondentes serão atualizados..</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>insert_condition</code>
+            </td>
+            <td>
+                  <code>(str, opcional)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Condição para inserir novos registros na tabela de destino. Se <code>None</code>, todos os registros correspondentes serão inseridos.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -1487,7 +1535,7 @@ onde <code>'t'</code> é o alias da tabela de destino e <code>'s'</code> é o al
 <details class="detalhes" open>
   <summary>Detalhes</summary>
   <ul>
-<li>O método cria uma <strong>tabela temporária</strong> no Athena com os dados fornecidos (DataFrame pandas ou arquivos Parquet)
+<li>O método cria uma <strong>tabela temporária</strong> no Athena com os dados fornecidos (DataFrame pandas, Table Arrow ou arquivos Parquet)
 e executa um merge (UPSERT) entre a tabela de destino (Iceberg) e a tabela temporária.</li>
 <li>O <code>predicate</code> define a condição de junção para o merge, permitindo atualizar ou inserir registros na tabela de destino.</li>
 <li>O parâmetro <code>alias</code> é utilizado para dar nomes alias às tabelas de origem e destino durante a execução do SQL gerado.</li>
@@ -2906,7 +2954,7 @@ Pode ser um DataFrame pandas, Table Arrow ou um ou mais arquivos Parquet (caminh
             </td>
             <td>
               <div class="doc-md-description">
-                <p>O algoritmo de compressão a ser utilizado nos dados. O valor padrão é <code>'snappy'</code>.</p>
+                <p>O algoritmo de compressão a ser utilizado nos dados. O valor padrão é <code>'ZSTD'</code>.</p>
               </div>
             </td>
             <td>

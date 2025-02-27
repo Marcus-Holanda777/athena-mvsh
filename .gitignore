@@ -10,3 +10,5 @@ main.py
 *.sql
 /site
 site
+duckdb_home
+/duckdb_home

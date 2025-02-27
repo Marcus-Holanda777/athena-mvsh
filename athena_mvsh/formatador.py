@@ -2,6 +2,22 @@ from datetime import datetime, date
 from decimal import Decimal
 
 
+def escape_presto(val: str) -> str:
+    escaped = val.replace("'", "''")
+    return f"'{escaped}'"
+
+
+def escape_hive(val: str) -> str:
+    escaped = (
+        val.replace('\\', '\\\\')
+        .replace("'", "\\'")
+        .replace('\r', '\\r')
+        .replace('\n', '\\n')
+        .replace('\t', '\\t')
+    )
+    return f"'{escaped}'"
+
+
 def get_value_format(v):
     if isinstance(v, type(None)):
         return 'null'
@@ -16,17 +32,15 @@ def get_value_format(v):
         return f"DATE '{v:%Y-%m-%d}'"
 
     if isinstance(v, str):
-        value = v.replace("'", "''")
-        return f"'{value}'"
+        return escape_presto(v)
 
     # @experimental
     if isinstance(v, (list, set, tuple)):
         return ','.join(f'{val!r}' for val in v)
 
     if isinstance(v, Decimal):
-        value = f'{v:f}'
-        value = value.replace("'", "''")
-        return f'DECIMAL {value}'
+        value = escape_presto(f'{v:f}')
+        return f"DECIMAL {value}"
 
     if isinstance(v, (int, float)):
         return v

@@ -646,7 +646,7 @@ class Athena(CursorIterator):
         location: str = None,
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
-        compression: str = 'GZIP',
+        compression: Literal['GZIP', 'SNAPPY', 'ZSTD'] = 'ZSTD',
     ) -> None:
         """
         Escreve um DataFrame pandas em uma tabela externa no Athena usando o DuckDB.
@@ -662,7 +662,7 @@ class Athena(CursorIterator):
             location (str, optional): O local onde os dados serão armazenados (geralmente um bucket S3), se aplicável.
             partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
-            compression (str, optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'GZIP'`.
+            compression (Literal['ZSTD', 'SNAPPY', 'GZIP'], optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
 
         Exceções:
             ProgrammingError: Se a função for chamada com um cursor incompatível.
@@ -670,7 +670,7 @@ class Athena(CursorIterator):
         Detalhes:
             - O DataFrame pandas fornecido será convertido e escrito como uma tabela externa no Athena.
             - A opção de particionamento permite distribuir os dados em várias pastas ou arquivos, facilitando o gerenciamento de grandes volumes de dados no S3.
-            - A compressão `GZIP` pode ser usada para reduzir o tamanho do arquivo gerado, com outras opções como `SNAPPY` também sendo suportadas.
+            - A compressão `ZSTD` pode ser usada para reduzir o tamanho do arquivo gerado, com outras opções como `SNAPPY` também sendo suportadas.
             - O catálogo de dados `awsdatacatalog` pode ser alterado para refletir configurações específicas do ambiente de execução.
 
         Exemplo:
@@ -695,7 +695,7 @@ class Athena(CursorIterator):
                     location="s3://meu-bucket/dados/",
                     partitions=["coluna1"],
                     catalog_name="meu_catalogo",
-                    compression="SNAPPY"
+                    compression="ZSTD"
                 )
             ```
 
@@ -720,7 +720,7 @@ class Athena(CursorIterator):
         location: str = None,
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
-        compression: str = 'GZIP',
+        compression: Literal['GZIP', 'SNAPPY', 'ZSTD'] = 'ZSTD',
     ) -> None:
         """
         Escreve um Table Arrow em uma tabela externa no Athena usando o DuckDB.
@@ -736,7 +736,7 @@ class Athena(CursorIterator):
             location (str, optional): O local onde os dados serão armazenados (geralmente um bucket S3), se aplicável.
             partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
-            compression (str, optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'GZIP'`.
+            compression (Literal['ZSTD', 'SNAPPY', 'GZIP'], optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
 
         Exceções:
             ProgrammingError: Se a função for chamada com um cursor incompatível.
@@ -744,7 +744,7 @@ class Athena(CursorIterator):
         Detalhes:
             - O Table Arrow fornecido será convertido e escrito como uma tabela externa no Athena.
             - A opção de particionamento permite distribuir os dados em várias pastas ou arquivos, facilitando o gerenciamento de grandes volumes de dados no S3.
-            - A compressão `GZIP` pode ser usada para reduzir o tamanho do arquivo gerado, com outras opções como `SNAPPY` também sendo suportadas.
+            - A compressão `ZSTD` pode ser usada para reduzir o tamanho do arquivo gerado, com outras opções como `SNAPPY` também sendo suportadas.
             - O catálogo de dados `awsdatacatalog` pode ser alterado para refletir configurações específicas do ambiente de execução.
 
         Exemplo:
@@ -769,7 +769,7 @@ class Athena(CursorIterator):
                     location="s3://meu-bucket/dados/",
                     partitions=["coluna1"],
                     catalog_name="meu_catalogo",
-                    compression="SNAPPY"
+                    compression="ZSTD"
                 )
             ```
 
@@ -794,7 +794,7 @@ class Athena(CursorIterator):
         location: str = None,
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
-        compression: str = 'GZIP',
+        compression: Literal['GZIP', 'SNAPPY', 'ZSTD'] = 'ZSTD',
     ) -> None:
         """
         Cria uma tabela externa no Athena a partir de um ou vários arquivos Parquet.
@@ -811,7 +811,7 @@ class Athena(CursorIterator):
             location (str, optional): O local no S3 onde os arquivos Parquet serão armazenados, se aplicável.
             partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
-            compression (str, optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'GZIP'`.
+            compression (Literal['ZSTD', 'SNAPPY', 'GZIP'], optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
 
         Exceções:
             ProgrammingError: Se a função for chamada com um cursor incompatível.
@@ -819,7 +819,7 @@ class Athena(CursorIterator):
         Detalhes:
             - O(s) arquivo(s) Parquet fornecido(s) serão usados para criar uma tabela externa no Athena.
             - A opção de particionamento permite distribuir os dados em várias pastas ou arquivos no S3, facilitando o gerenciamento de grandes volumes de dados.
-            - A compressão `GZIP` pode ser usada para reduzir o tamanho dos arquivos Parquet gerados, com outras opções como `SNAPPY` também sendo suportadas.
+            - A compressão `ZSTD` pode ser usada para reduzir o tamanho dos arquivos Parquet gerados, com outras opções como `SNAPPY` também sendo suportadas.
             - O catálogo de dados `awsdatacatalog` pode ser alterado para refletir configurações específicas do ambiente de execução.
 
         Exemplo:
@@ -884,7 +884,7 @@ class Athena(CursorIterator):
             location (str, optional): O local no S3 onde os dados serão armazenados, se aplicável.
             partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
-            compression (str, optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
+            compression (Literal['ZSTD', 'SNAPPY', 'GZIP'], optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
             if_exists (Literal['replace', 'append'], optional): Define se os dados devem substituir a tabela existente
                 (`'replace'`) ou ser adicionados (`'append'`). O valor padrão é `'replace'`.
 
@@ -894,7 +894,7 @@ class Athena(CursorIterator):
         Detalhes:
             - A tabela Iceberg será criada ou atualizada no Athena com os dados fornecidos.
             - O particionamento permite distribuir os dados em várias pastas ou arquivos no S3, facilitando o gerenciamento de grandes volumes de dados.
-            - A compressão `snappy` pode ser usada para reduzir o tamanho dos arquivos Parquet gerados, com outras opções como `GZIP` também sendo suportadas.
+            - A compressão `ZSTD` pode ser usada para reduzir o tamanho dos arquivos Parquet gerados, com outras opções como `GZIP` também sendo suportadas.
             - O catálogo de dados `awsdatacatalog` pode ser alterado para refletir configurações específicas do ambiente de execução.
             - O parâmetro `if_exists` controla se os dados devem substituir ou ser adicionados à tabela existente.
 
@@ -964,7 +964,7 @@ class Athena(CursorIterator):
         Este método usa o DuckDB para criar uma tabela temporária no Athena com os dados fornecidos e, em seguida,
         executa um merge (UPSERT) entre a tabela de destino e os dados da tabela temporária. A operação permite
         atualizar ou inserir registros na tabela de destino com base em uma condição de junção (predicate).
-        Pode-se utilizar um DataFrame pandas ou arquivos Parquet como dados de origem.
+        Pode-se utilizar um DataFrame pandas, Table Arrow ou arquivos Parquet como dados de origem.
 
         Args:
             target_table (str): O nome da tabela de destino do tipo Iceberg no Athena, onde os dados serão mesclados.

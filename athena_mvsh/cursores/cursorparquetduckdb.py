@@ -319,12 +319,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str,
         output: pd.DataFrame | list[str | Path] | str | Path | pa.Table,
         partitions: list[str] = None,
-        compression: str = 'GZIP',
+        compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
     ):
         # NOTE: LER DATAFRAME DUCKDB ou PARQUET
         with self.__connect_duckdb() as db:
             s3_dir = f'{location}{uuid.uuid4()}/'
-            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet.gzip'
+            s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet'
 
             if isinstance(output, pd.DataFrame):
                 cols_map = map_convert_df_athena(output)
@@ -348,7 +348,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             if partitions:
                 parts_duck = f"""
-                , PARTITION_BY ({','.join(partitions)}), FILE_EXTENSION 'parquet.gz'
+                , PARTITION_BY ({','.join(partitions)})'
                 """
 
                 parts_athena = f"""
@@ -459,7 +459,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str = None,
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
-        compression: str = 'GZIP',
+        compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
     ) -> None:
         if not isinstance(df, pd.DataFrame):
             raise ProgrammingError("Parameter 'df' is not a dataframe |")
@@ -487,7 +487,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str = None,
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
-        compression: str = 'GZIP',
+        compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
     ) -> None:
         if not isinstance(tbl, pa.Table):
             raise ProgrammingError("Parameter 'tbl' is not a Table Arrow |")
@@ -514,7 +514,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         location: str = None,
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
-        compression: str = 'GZIP',
+        compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
     ) -> None:
         if location:
             location = location if location.endswith('/') else location + '/'

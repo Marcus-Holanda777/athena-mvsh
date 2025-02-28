@@ -31,7 +31,7 @@ class CursorIterator(ABC):
 
 class CursorBaseParquet(DBAthena):
     FORMAT: str = 'PARQUET'
-    COMPRESS: str = 'SNAPPY'
+    COMPRESS: str = 'ZSTD'
 
     def __init__(
         self,

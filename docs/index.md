@@ -128,7 +128,7 @@ with Athena(cursor) as athena:
 
 A biblioteca suporta a execução de consultas no Amazon Athena utilizando o recurso UNLOAD para exportar os resultados diretamente em formato Parquet no Amazon S3. Em seguida, o DuckDB é utilizado para carregar e processar esses dados localmente, aproveitando as vantagens do formato Parquet para consultas analíticas rápidas e eficientes.
 
-É possível criar tabelas externas e do tipo Iceberg diretamente a partir de DataFrames do pandas ou arquivos Parquet. Essa funcionalidade permite que dados estruturados sejam facilmente integrados a ambientes analíticos, facilitando o uso em consultas SQL e outras operações analíticas
+É possível criar tabelas externas e do tipo Iceberg diretamente a partir de DataFrames do pandas, Table Arrow ou arquivos Parquet. Essa funcionalidade permite que dados estruturados sejam facilmente integrados a ambientes analíticos, facilitando o uso em consultas SQL e outras operações analíticas
 
 ### Métodos disponíveis
 
@@ -140,6 +140,7 @@ A biblioteca suporta a execução de consultas no Amazon Athena utilizando o rec
 - **to_partition_create_table_db**: Cria uma tabela no DuckDB inserindo os dados de forma incremental.
 - **to_insert_table_db**: Insere dados em uma tabela do DuckDB.
 - **write_dataframe**: Escreve um DataFrame em uma tabela externa no Athena.
+- **write_arrow**: Escreve um Table Arrow em uma tabela externa no Athena.
 - **write_parquet**: Escreve dados a partir de um ou mais arquivos `.parquet` em uma tabela externa no Athena.
 - **write_table_iceberg**: Cria uma tabela do tipo `Iceberg` no Athena
 - **merge_table_iceberg**: Realiza uma operação de merge em uma tabela `Iceberg`.

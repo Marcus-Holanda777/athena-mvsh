@@ -128,7 +128,7 @@ def test_list():
         [Decimal('1.000'), Decimal('2.000')],
         ['tp', 'sp'],
         [1.1, 2.2],
-        [date(2021,1,1), date(2022,1,1)]
+        [date(2021, 1, 1), date(2022, 1, 1)],
     )
 
     assert rst == esperado

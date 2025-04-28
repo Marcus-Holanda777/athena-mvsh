@@ -23,7 +23,7 @@ jobs:
         run: pip install poetry
       
       - name: Instalar as dependencias
-        run: poetry install
+        run: poetry install --with dev
      
       - name: Executar ruff check
         run: poetry run ruff check .
@@ -33,12 +33,36 @@ jobs:
       
       - name: Executar tests
         run: poetry run pytest
+  
+  docs:
+    name: Gerar a documentacao
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copiar repositorio
+        uses: actions/checkout@v4
+    
+      - name: Instalar o python
+        uses: actions/setup-python@v5
+        with:
+            python-version: 3.11.x
+
+      - name: Instalar o Poetry
+        run: pip install poetry
+      
+      - name: Instalar as dependencias
+        run: poetry install --with docs
+      
+      - name: Gerar a documentacao
+        run: poetry run mkdocs build --clean
+      
+      - name: Deploy da documentacao
+        run: poetry run mkdocs gh-deploy --force --clean
 
   publish:
     name: Publicar projeto no PYPI
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags/') }}
-    needs: [tests]
+    needs: [tests, docs]
     steps:
       - name: Copiar repositorio
         uses: actions/checkout@v4

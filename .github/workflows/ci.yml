@@ -26,7 +26,7 @@ jobs:
         run: pip install poetry
       
       - name: Instalar as dependencias
-        run: poetry install --with dev
+        run: poetry install --without dev
      
       - name: Executar ruff check
         run: poetry run ruff check .
@@ -58,7 +58,7 @@ jobs:
         run: pip install poetry
       
       - name: Instalar as dependencias
-        run: poetry install --with docs
+        run: poetry install --without docs
       
       - name: Gerar a documentacao
         run: poetry run mkdocs build --clean

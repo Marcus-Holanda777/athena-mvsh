@@ -1,7 +1,7 @@
 # Athena-mvsh
 [![PyPI](https://img.shields.io/pypi/v/athena-mvsh.svg)](https://pypi.org/project/athena-mvsh/)
 [![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-blue?logo=github)](https://marcus-holanda777.github.io/athena-mvsh)
-
+[![PyPI Downloads](https://static.pepy.tech/badge/athena-mvsh)](https://pepy.tech/projects/athena-mvsh)
 
 ## O que é o Athena-mvsh ?
 

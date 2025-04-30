@@ -1,5 +1,6 @@
 # Athena-MVSH
 [![PyPI](https://img.shields.io/pypi/v/athena-mvsh.svg)](https://pypi.org/project/athena-mvsh/)
+[![PyPI Downloads](https://static.pepy.tech/badge/athena-mvsh)](https://pepy.tech/projects/athena-mvsh)
 
 A **athena-mvsh** é uma biblioteca Python projetada para facilitar a execução de consultas no **AWS Athena** com suporte ao uso de **pyarrow** e **DuckDB** para resultados e execução de consultas. A biblioteca oferece uma interface intuitiva, integrando com o Athena e outros formatos de dados, como Parquet, CSV, e Arrow, permitindo exportações e transformações de dados eficientes.
 

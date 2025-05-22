@@ -3,5 +3,6 @@ from athena_mvsh.cursores import CursorParquet, CursorParquetDuckdb, CursorPytho
 
 __version__ = '0.0.21'
 __author__ = 'Marcus Holanda'
+__appname__ = 'athena'
 
 __all__ = ['Athena', 'CursorParquetDuckdb', 'CursorPython', 'CursorParquet']

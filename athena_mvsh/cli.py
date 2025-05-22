@@ -14,15 +14,24 @@ def version(value: bool):
         raise typer.Exit()
 
 
-@app.command()
+@app.command(
+    help='Comando para criar tabelas no Athena.',
+    short_help='Criar tabelas no Athena',
+    name='create-table'
+)
 def create_table(
     version: Optional[bool] = typer.Option(
         None, '--version', '-v', callback=version, is_eager=True
     ),
 ):
-    
     mark = """
 ### 🛠️ CREATE TABLE no Athena
+
+O comando `CREATE TABLE` é **exclusivo para tabelas do tipo Iceberg** no Amazon Athena. 
+Tabelas Iceberg são transacionais e oferecem recursos avançados como versionamento, 
+atualizações incrementais, e evolução de schema.
+Athena **não permite usar `CREATE TABLE` para formatos tradicionais** como CSV, JSON ou Parquet puro. 
+Nestes casos, deve-se usar `CREATE EXTERNAL TABLE`.
 
 **Sinpse:**
 
@@ -51,11 +60,15 @@ TBLPROPERTIES (
 )
 ```
 """
-   
+
     terminal.print(Markdown(mark))
 
 
-@app.command()
+@app.command(
+    help='Comando para criar tabelas no Athena a partir de uma consulta.',
+    short_help='Criar tabelas no Athena a partir de uma consulta',
+    name='create-table-as' 
+)
 def create_table_as(
     version: Optional[bool] = typer.Option(
         None, '--version', '-v', callback=version, is_eager=True

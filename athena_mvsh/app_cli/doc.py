@@ -13,7 +13,7 @@ terminal = Console()
 )
 def create_table():
     mark = """
-### 🛠️ CREATE TABLE no Athena
+# CREATE TABLE
 
 O comando `CREATE TABLE` é **exclusivo para tabelas do tipo Iceberg** no Amazon Athena. 
 Tabelas Iceberg são transacionais e oferecem recursos avançados como versionamento, 
@@ -21,7 +21,7 @@ atualizações incrementais, e evolução de schema.
 Athena **não permite usar `CREATE TABLE` para formatos tradicionais** como CSV, JSON ou Parquet puro. 
 Nestes casos, deve-se usar `CREATE EXTERNAL TABLE`.
 
-**Sinpse:**
+**Sinopse:**
 
 ```sql
 CREATE TABLE
@@ -59,7 +59,7 @@ TBLPROPERTIES (
 )
 def create_table_as():
     mark = """
-### 🛠️ CREATE TABLE AS SELECT (CTAS) no Athena
+# CREATE TABLE AS SELECT (CTAS)
 
 O comando `CREATE TABLE AS SELECT` (CTAS) permite criar uma nova tabela no Amazon Athena.
 Com base no resultado de uma consulta `SELECT`. 
@@ -99,7 +99,7 @@ FROM
 
 
 @app.command(
-    help='Comandos para otimizar uma tabela do tipo iceerg no Athena.',
+    help='Comandos para otimizar uma tabela do tipo iceberg no Athena.',
     short_help='Otimizar tabela do tipo iceberg no Athena',
     name='optimize-table',
 )
@@ -142,3 +142,39 @@ VACUUM iceberg_table
 """
     terminal.print(Markdown(mark))
 
+
+@app.command(
+    help='Grava os resultados da consulta de uma SELECT instrução no formato de dados especificado',
+    short_help='Grava os resultados da consulta de uma SELECT instrução',
+    name='unload',
+)
+def unload():
+    mark = """
+# UNLOAD
+
+O comando UNLOAD é usado para exportar os resultados de uma consulta SQL diretamente para um arquivo no Amazon S3, 
+geralmente no formato Parquet ou CSV. Ele é ideal para mover dados de forma eficiente do Athena para uma área de data lake.
+
+**Sinopse:**
+
+```sql
+UNLOAD (SELECT col_name[, ...] FROM old_table) 
+TO 's3://amzn-s3-demo-bucket/my_folder/' 
+WITH ( property_name = 'expression' [, ...] )
+```
+
+**Exemplo básico:**
+
+```sql
+UNLOAD (
+  SELECT * FROM old_table
+) 
+TO 's3://amzn-s3-demo-bucket/' 
+WITH (
+  format = 'PARQUET', 
+  compression = 'ZSTD', 
+  compression_level = 4
+)
+"""
+
+    terminal.print(Markdown(mark))

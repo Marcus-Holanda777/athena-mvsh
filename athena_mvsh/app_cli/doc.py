@@ -8,7 +8,7 @@ terminal = Console()
 
 
 def create_table_rich(title: str, rows: list[tuple]) -> Table:
-    table = Table(title=f"\n{title}\n", show_lines=True, title_justify='left')
+    table = Table(title=f'\n{title}\n', show_lines=True, title_justify='left')
 
     table.add_column('Propriedade', style='cyan', no_wrap=True)
     table.add_column('Valor padrão', style='magenta')
@@ -71,8 +71,8 @@ TBLPROPERTIES (
 
     if property:
         rows = [
-            ('format', 'parquet', 'Formato de dados do arquivo'),
-            ('write_compression', 'snappy', 'Codec de compactação de arquivo'),
+            ('format', 'parquet', 'Formato de dados do arquivo.'),
+            ('write_compression', 'snappy', 'Codec de compactação de arquivo.'),
             (
                 'optimize_rewrite_data_file_threshold',
                 '5',
@@ -101,7 +101,7 @@ TBLPROPERTIES (
         ]
 
         tbl = create_table_rich(
-            'Propriedades de tabela cláusula [b red]TBLPROPERTIES[/b red]:', rows
+            'Propriedades de tabela [b green]CREATE TABLE[/b green] cláusula [b red]TBLPROPERTIES[/b red]:', rows
         )
         terminal.print(tbl)
 

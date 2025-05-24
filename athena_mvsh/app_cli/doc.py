@@ -1,9 +1,23 @@
 import typer
 from rich.markdown import Markdown
 from rich.console import Console
+from rich.table import Table
 
 app = typer.Typer()
 terminal = Console()
+
+
+def create_table_rich(title: str, rows: list[tuple]) -> Table:
+    table = Table(title=f"\n{title}\n", show_lines=True, title_justify='left')
+
+    table.add_column('Propriedade', style='cyan', no_wrap=True)
+    table.add_column('Valor padrão', style='magenta')
+    table.add_column('Descrição', style='green')
+
+    for row in rows:
+        table.add_row(*row)
+
+    return table
 
 
 @app.command(
@@ -11,11 +25,15 @@ terminal = Console()
     short_help='Criar tabelas no Athena',
     name='create-table',
 )
-def create_table():
+def create_table(
+    property: bool = typer.Option(
+        False, '--property', '-p', help='Propriedade de table CREATE TABLE'
+    ),
+):
     mark = """
 # CREATE TABLE
 
-O comando `CREATE TABLE` é **exclusivo para tabelas do tipo Iceberg** no Amazon Athena. 
+O comando `CREATE TABLE` é **exclusivo para tabelas do tipo Iceberg** no Amazon Athena.
 Tabelas Iceberg são transacionais e oferecem recursos avançados como versionamento, 
 atualizações incrementais, e evolução de schema.
 Athena **não permite usar `CREATE TABLE` para formatos tradicionais** como CSV, JSON ou Parquet puro. 
@@ -50,6 +68,42 @@ TBLPROPERTIES (
 """
 
     terminal.print(Markdown(mark))
+
+    if property:
+        rows = [
+            ('format', 'parquet', 'Formato de dados do arquivo'),
+            ('write_compression', 'snappy', 'Codec de compactação de arquivo'),
+            (
+                'optimize_rewrite_data_file_threshold',
+                '5',
+                'Ignora reescrita se poucos arquivos de dados precisarem de otimização, reduzindo custo computacional.',
+            ),
+            (
+                'optimize_rewrite_delete_file_threshold',
+                '2',
+                'Ignora reescrita se poucos arquivos de exclusão estiverem associados, acumulando mais antes de otimizar.',
+            ),
+            (
+                'vacuum_min_snapshots_to_keep',
+                '1',
+                'Número mínimo de snapshots a serem retidos na ramificação principal de uma tabela.',
+            ),
+            (
+                'vacuum_max_snapshot_age_seconds',
+                '432 mil segundos',
+                'Período máximo para reter os snapshots na ramificação principal.',
+            ),
+            (
+                'vacuum_max_metadata_files_to_keep',
+                '100',
+                'O número máximo de arquivos de metadados anteriores a serem retidos na ramificação principal da tabela.',
+            ),
+        ]
+
+        tbl = create_table_rich(
+            'Propriedades de tabela cláusula [b red]TBLPROPERTIES[/b red]:', rows
+        )
+        terminal.print(tbl)
 
 
 @app.command(

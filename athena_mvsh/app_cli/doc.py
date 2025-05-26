@@ -2,7 +2,6 @@ import typer
 from rich.markdown import Markdown
 from rich.console import Console
 from rich.table import Table
-from rich.text import Text
 
 app = typer.Typer()
 terminal = Console()

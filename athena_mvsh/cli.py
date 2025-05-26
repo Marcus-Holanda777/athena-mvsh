@@ -5,7 +5,7 @@ from athena_mvsh.app_cli.version import app as app_version
 
 app = typer.Typer()
 app.add_typer(app_version)
-app.add_typer(app_doc, name='doc', help='Ajuda sobre a sintaxe sql do Athena')
+app.add_typer(app_doc, name='doc', help='Ajuda sobre a sintaxe sql do Athena.')
 
 
 def main():

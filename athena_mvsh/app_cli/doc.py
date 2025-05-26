@@ -2,6 +2,7 @@ import typer
 from rich.markdown import Markdown
 from rich.console import Console
 from rich.table import Table
+from rich.text import Text
 
 app = typer.Typer()
 terminal = Console()
@@ -101,7 +102,8 @@ TBLPROPERTIES (
         ]
 
         tbl = create_table_rich(
-            'Propriedades de tabela [b green]CREATE TABLE[/b green] cláusula [b red]TBLPROPERTIES[/b red]:', rows
+            'Propriedades de tabela [b green]CREATE TABLE[/b green] cláusula [b red]TBLPROPERTIES[/b red]:',
+            rows,
         )
         terminal.print(tbl)
 
@@ -111,7 +113,11 @@ TBLPROPERTIES (
     short_help='Criar tabelas no Athena a partir de uma consulta',
     name='create-table-as',
 )
-def create_table_as():
+def create_table_as(
+    property: bool = typer.Option(
+        False, '--property', '-p', help='Propriedade de table CREATE TABLE AS'
+    ),
+):
     mark = """
 # CREATE TABLE AS SELECT (CTAS)
 
@@ -150,6 +156,102 @@ FROM
 """
 
     terminal.print(Markdown(mark))
+
+    if property:
+        rows = [
+            (
+                'table_type',
+                'hive',
+                'Opcional. O padrão é `HIVE` (outra opção `ICEBERG`). Especifica o tipo de tabela da tabela resultante.',
+            ),
+            (
+                'external_location',
+                's3://amzn-s3-demo-bucket/',
+                'Opcional. O local no qual o Athena salvará sua consulta CTAS no Amazon S3.',
+            ),
+            (
+                'is_external',
+                'true',
+                'Opcional. Indica se a tabela corresponde a uma tabela externa. O padrão é true. Para tabelas do Iceberg, deve ser definido como “false”',
+            ),
+            (
+                'location',
+                's3://amzn-s3-demo-bucket/',
+                'Obrigatório para tabelas do Iceberg. Especifica o local raiz da tabela do Iceberg que será criada a partir dos resultados da consulta.',
+            ),
+            (
+                'field_delimiter',
+                r'\001',
+                r'Delimitador de campo para arquivos de texto (como CSV) deve ser um único caractere; se não for especificado, o padrão é \001. Delimitadores com vários caracteres não são permitidos em CTAS.',
+            ),
+            (
+                'format',
+                'parquet',
+                'O formato de armazenamento dos resultados de consultas CTAS, como ORC, PARQUET, AVRO, JSON, ION ou TEXTFILE. Para tabelas do Iceberg, os formatos permitidos são ORC, PARQUET e AVRO.',
+            ),
+            ('write_compression', 'snappy', 'Codec de compactação de arquivo.'),
+            (
+                'compression_level',
+                '3',
+                'O nível de compressão a ser usado. Essa propriedade se aplica apenas à compressão ZSTD. Os valores possíveis são de 1 a 22. O valor padrão é 3.',
+            ),
+            (
+                'bucketed_by',
+                'ARRAY[ column_name[,…] ]',
+                'Uma lista matriz de buckets para dados do bucket. Se omitida, o Athena não armazenará os dados dessa consulta em bucket. Essa propriedade não se aplica para tabelas do Iceberg.',
+            ),
+            (
+                'bucket_count',
+                '[ int ]',
+                'O número de buckets para armazenar seus dados em um bucket. Se omitido, o Athena não armazenará os dados em bucket. Essa propriedade não se aplica para tabelas do Iceberg.',
+            ),
+            (
+                'partitioned_by',
+                'ARRAY[ col_name[,…] ]',
+                'Opcional. Uma lista matriz de colunas pela qual a tabela CTAS será particionada. Essa propriedade não se aplica para tabelas do Iceberg.',
+            ),
+            (
+                'partitioning',
+                'ARRAY[ partition_transform, ... ]',
+                'Opcional. Especifica o particionamento da tabela do Iceberg que será criada.',
+            ),
+            (
+                'optimize_rewrite_min_data_file_size_bytes',
+                '[ long ]',
+                'Opcional. Arquivos menores que o valor especificado são incluídos para otimização. Essa propriedade se aplica apenas a tabelas do Iceberg.',
+            ),
+            (
+                'optimize_rewrite_max_data_file_size_bytes',
+                '[ long ]',
+                'Arquivos maiores que o valor especificado são incluídos para otimização. Essa propriedade se aplica apenas a tabelas do Iceberg.',
+            ),
+            (
+                'optimize_rewrite_data_file_threshold',
+                '5',
+                'Ignora reescrita se poucos arquivos de dados precisarem de otimização, reduzindo custo computacional.',
+            ),
+            (
+                'optimize_rewrite_delete_file_threshold',
+                '2',
+                'Ignora reescrita se poucos arquivos de exclusão estiverem associados, acumulando mais antes de otimizar.',
+            ),
+            (
+                'vacuum_min_snapshots_to_keep',
+                '1',
+                'Número mínimo de snapshots a serem retidos na ramificação principal de uma tabela.',
+            ),
+            (
+                'vacuum_max_snapshot_age_seconds',
+                '432 mil segundos',
+                'Período máximo para reter os snapshots na ramificação principal.',
+            ),
+        ]
+
+        tbl = create_table_rich(
+            'Propriedades de tabela [b green]CREATE TABLE AS[/b green] cláusula [b red]WITH[/b red]:',
+            rows,
+        )
+        terminal.print(tbl)
 
 
 @app.command(
@@ -231,4 +333,46 @@ WITH (
 )
 """
 
+    terminal.print(Markdown(mark))
+
+
+@app.command(
+    help='Consultar metadados de tabelas do Iceberg',
+    short_help='Consultar metadados tabelas Iceberg',
+    name='iceberg-metadados',
+)
+def iceberg_metadados():
+    mark = """
+# ICEBERG - METADADOS
+
+Em uma consulta `SELECT`, é possível usar as seguintes propriedades após **table_name** para consultar metadados de tabela do Iceberg:
+
+- **$files**: mostra os arquivos de dados atuais de uma tabela.
+- **$manifests**: mostra os manifestos do arquivo atual de uma tabela.
+- **$history**: mostra o histórico de uma tabela.
+- **$partitions**: mostra as partições atuais de uma tabela.
+- **$snapshots**: mostra os snapshots de uma tabela.
+- **$refs**: mostra as referências de uma tabela.
+
+**Exemplo básico:**
+
+A instrução a seguir lista os arquivos de uma tabela do Iceberg.
+
+```sql
+SELECT * FROM "dbname"."tablename$files"
+```
+
+A instrução a seguir lista os manifestos de uma tabela do Iceberg.
+
+```sql
+SELECT * FROM "dbname"."tablename$manifests" 
+```
+
+A instrução a seguir mostra o histórico de uma tabela do Iceberg.
+
+```sql
+SELECT * FROM "dbname"."tablename$history"
+```
+
+"""
     terminal.print(Markdown(mark))

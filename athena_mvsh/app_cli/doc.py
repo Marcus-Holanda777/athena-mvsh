@@ -303,7 +303,11 @@ VACUUM iceberg_table
     short_help='Grava os resultados da consulta de uma SELECT instrução',
     name='unload',
 )
-def unload():
+def unload(
+    property: bool = typer.Option(
+        False, '--property', '-p', help='Propriedades UNLOAD'
+    ),
+):
     mark = """
 # UNLOAD
 
@@ -330,9 +334,44 @@ WITH (
   compression = 'ZSTD', 
   compression_level = 4
 )
+```
 """
 
     terminal.print(Markdown(mark))
+    if property:
+        rows = [
+            (
+                'field_delimiter',
+                r'\001',
+                r'Opcional. Delimitador de campo para arquivos de texto (como CSV) deve ser um único caractere; se não for especificado, o padrão é \001. Delimitadores com vários caracteres não são permitidos.',
+            ),
+            (
+                'format',
+                '[ file_format ]',
+                'Obrigatório. Especifica o formato de arquivo da saída. Os valores possíveis são ORC, PARQUET, AVRO, JSON ou TEXTFILE',
+            ),
+            (
+                'compression',
+                '[ zlib, gzip ]',
+                'Opcional. Essa opção é específica aos formatos ORC e Parquet. Para ORC, o padrão é zlib, e para Parquet, o padrão é gzip.',
+            ),
+            (
+                'compression_level',
+                '3',
+                'O nível de compressão a ser usado. Essa propriedade se aplica apenas à compressão ZSTD. Os valores possíveis são de 1 a 22. O valor padrão é 3.',
+            ),
+            (
+                'partitioned_by',
+                'ARRAY[ col_name[,…] ]',
+                'Opcional. Uma lista matriz de colunas pela qual a saída é particionada.',
+            ),
+        ]
+
+        tbl = create_table_rich(
+            'Propriedades [b green]UNLOAD[/b green] cláusula [b red]WITH[/b red]:',
+            rows,
+        )
+        terminal.print(tbl)
 
 
 @app.command(

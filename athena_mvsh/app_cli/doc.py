@@ -2,9 +2,29 @@ import typer
 from rich.markdown import Markdown
 from rich.console import Console
 from rich.table import Table
+import os
 
 app = typer.Typer()
 terminal = Console()
+
+
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def mostrar_paginas(markdown: str, linhas_por_pagina: int = 20):
+    """
+    Mostra o conteúdo do Markdown em páginas, com um número específico de linhas por página.
+    """
+    linhas = markdown.splitlines()
+    total_linhas = len(linhas)
+
+    for i in range(0, total_linhas, linhas_por_pagina):
+        pagina = '\n'.join(linhas[0:i + linhas_por_pagina])
+        terminal.print(Markdown(pagina))
+        if i + linhas_por_pagina < total_linhas:
+            input("\nPressione Enter para continuar...")
+            clear()
 
 
 def create_table_rich(title: str, rows: list[tuple]) -> Table:
@@ -414,3 +434,64 @@ SELECT * FROM "dbname"."tablename$history"
 
 """
     terminal.print(Markdown(mark))
+
+
+@app.command(
+    help='Comando para mesclar dados em uma tabela do Iceberg',
+    short_help='Mesclar dados em uma tabela do Iceberg',
+    name='merge-into',
+)
+def merge_into():
+    mark = """
+# MERGE INTO
+
+Atualiza, exclui ou insere linhas de forma condicional em uma tabela do Apache Iceberg. 
+Uma única instrução pode combinar ações de atualização, exclusão e inserção.
+
+**Sinopse:**
+
+```sql
+MERGE INTO target_table [ [ AS ]  target_alias ]
+USING { source_table | query } [ [ AS ] source_alias ]
+ON search_condition
+when_clause [...]
+```
+
+A `when_clause` corresponde a uma das seguintes:
+
+- **WHEN MATCHED**: A linha correspondente foi encontrada na tabela de destino.
+- **WHEN NOT MATCHED**: A linha correspondente não foi encontrada na tabela de destino.
+
+```sql
+WHEN MATCHED [ AND condition ]
+    THEN DELETE
+```
+
+```sql
+WHEN MATCHED [ AND condition ]
+    THEN UPDATE SET ( column = expression [, ...] )
+```
+
+```sql
+WHEN NOT MATCHED [ AND condition ]
+    THEN INSERT (column_name[, column_name ...]) VALUES (expression, ...)
+```
+
+**Exemplo básico:**
+
+O exemplo a seguir atualiza a tabela de destino `t` com as informações do cliente presentes na tabela de origem `s`. 
+Para linhas de clientes na tabela `t` que têm linhas de clientes correspondentes na tabela `s`, o exemplo incrementa as aquisições na tabela `t`. 
+Se a tabela `t` não corresponder a uma linha de cliente na tabela `s`, o exemplo irá inserir a linha de cliente da tabela `s` na tabela `t` .
+
+```sql
+MERGE INTO accounts t USING monthly_accounts_update s
+ON (t.customer = s.customer)
+WHEN MATCHED
+    THEN UPDATE SET purchases = s.purchases + t.purchases
+WHEN NOT MATCHED
+    THEN INSERT (customer, purchases, address)
+        VALUES(s.customer, s.purchases, s.address)
+```
+"""
+
+    mostrar_paginas(mark, linhas_por_pagina=30)

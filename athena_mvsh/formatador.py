@@ -1,5 +1,6 @@
 from datetime import datetime, date
 from decimal import Decimal
+import copy
 
 
 def escape_presto(val: str) -> str:
@@ -59,7 +60,7 @@ def cast_sequence_format(arg) -> str:
 
 def cast_format(consulta: str, *args, **kwargs) -> str:
     if args:
-        args = list(args)
+        args = list(copy.deepcopy(args))
         for p, arg in enumerate(args):
             if isinstance(arg, (list, set, tuple)):
                 args[p] = cast_sequence_format(arg)
@@ -67,6 +68,7 @@ def cast_format(consulta: str, *args, **kwargs) -> str:
                 args[p] = get_value_format(arg)
 
     if kwargs:
+        kwargs = copy.deepcopy(kwargs)
         for k, v in kwargs.items():
             if isinstance(v, (list, set, tuple)):
                 kwargs[k] = cast_sequence_format(v)

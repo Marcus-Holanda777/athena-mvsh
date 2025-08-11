@@ -443,13 +443,13 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         stmt_insert = f"""
         INSERT INTO "{schema}"."{table_name}"
-        SELECT * FROM "{schema}"."temp_{table_name}"
+        SELECT * FROM "{schema}"."temp__{table_name}"
         """
 
         __ = self.__pre_execute(stmt_insert, unload=False)
 
         # TODO: Deletar tabela temporaria
-        self.__delete_table(catalog_name, schema, f'temp_{table_name}')
+        self.__delete_table(catalog_name, schema, f'temp__{table_name}')
 
     def write_dataframe(
         self,
@@ -546,7 +546,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         else:
             location = self.s3_staging_dir
 
-        temp_table_name = f'temp_{table_name}'
+        temp_table_name = f'temp__{table_name}'
 
         self.__delete_table(catalog_name, schema, temp_table_name)
 
@@ -582,7 +582,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         else:
             location = self.s3_staging_dir
 
-        temp_table_name = f'temp_{target_table}'
+        temp_table_name = f'temp__{target_table}'
 
         self.__delete_table(catalog_name, schema, temp_table_name)
 

@@ -132,3 +132,32 @@ def test_list():
     )
 
     assert rst == esperado
+
+
+def test_return_cast():
+    entrada = [1, 2, 3, 4, 5]
+    entrada_dict = {'num': [1, 2, 3, 4, 5]}
+
+    __ = cast_format(
+        textwrap.dedent(
+            """
+            SELECT *
+            FROM "teste"."teste"
+            WHERE num in({})
+            """
+        ).strip(),
+        entrada,
+    )
+
+    __ = cast_format(
+        textwrap.dedent(
+            """
+            SELECT *
+            FROM "teste"."teste"
+            WHERE teste in({num})
+            """
+        ).strip(),
+        **entrada_dict,
+    )
+
+    assert all([[1, 2, 3, 4, 5] == entrada, {'num': [1, 2, 3, 4, 5]} == entrada_dict])

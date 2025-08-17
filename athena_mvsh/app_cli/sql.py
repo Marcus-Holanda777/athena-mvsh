@@ -292,9 +292,9 @@ class MarkdownExampleApp(App):
 
 
 @app.command(
-    name="doc",
-    help="Exibe a documentação de comandos SQL do Athena em um terminal interativo.",
-    short_help="Documentação de comandos SQL do Athena"
+    name='doc',
+    help='Exibe a documentação de comandos SQL do Athena em um terminal interativo.',
+    short_help='Documentação de comandos SQL do Athena',
 )
 def doc():
     app = MarkdownExampleApp()

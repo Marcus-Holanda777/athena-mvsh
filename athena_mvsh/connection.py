@@ -868,6 +868,7 @@ class Athena(CursorIterator):
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
         if_exists: Literal['replace', 'append'] = 'replace',
+        sync_schema: bool = False,
     ) -> None:
         """
         Cria ou insere dados em uma tabela Iceberg no Athena a partir de um DataFrame pandas, Table Arrow ou arquivos Parquet.
@@ -943,6 +944,7 @@ class Athena(CursorIterator):
             catalog_name,
             compression,
             if_exists,
+            sync_schema,
         )
 
     def merge_table_iceberg(
@@ -955,6 +957,7 @@ class Athena(CursorIterator):
         update_condition: str = None,
         insert_condition: str = None,
         alias: tuple = ('t', 's'),
+        sync_schema: bool = False,
         location: str = None,
         catalog_name: str = 'awsdatacatalog',
     ) -> None:
@@ -1035,6 +1038,7 @@ class Athena(CursorIterator):
             update_condition,
             insert_condition,
             alias,
+            sync_schema,
             location,
             catalog_name,
         )

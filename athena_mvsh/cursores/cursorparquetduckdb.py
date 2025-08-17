@@ -289,6 +289,33 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         return response_meta
 
+    def __sync_table_schema(
+        self, cols_map: list[tuple], catalog_name: str, schema: str, table_name: str
+    ) -> list[tuple] | None:
+        key_type = dict(cols_map)
+        cols_temp = set(col for col, __ in cols_map)
+
+        cols_target = set(
+            row['Name']
+            for row in self.__get_table_exists(catalog_name, schema, table_name)[
+                'Columns'
+            ]
+        )
+
+        if diff_cols := cols_temp - cols_target:
+            add_cols = [(col, key_type[col]) for col in diff_cols]
+
+            stmt = f"""
+            ALTER TABLE `{schema}`.`{table_name}`
+            ADD COLUMNS (
+                {', '.join([f'`{col}` {tipo}' for col, tipo in add_cols])}
+            )
+            """
+
+            __ = self.__pre_execute(stmt, unload=False)
+
+            return add_cols
+
     def __delete_table(self, catalog_name: str, schema: str, table_name: str) -> None:
         response_meta = self.__get_table_exists(catalog_name, schema, table_name)
 
@@ -404,6 +431,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
         if_exists: Literal['replace', 'append'] = 'replace',
+        sync_schema: bool = False,
     ) -> None:
         if if_exists == 'replace':
             # NOTE: DELETAR SE EXISTIR
@@ -441,9 +469,15 @@ class CursorParquetDuckdb(CursorBaseParquet):
             # TODO: Criar a tabela
             __ = self.__pre_execute(stmt, unload=False)
 
+        if sync_schema and if_exists == 'append':
+            # NOTE: Sincronizar esquema com a tabela temporaria
+            self.__sync_table_schema(cols_map, catalog_name, schema, table_name)
+
+        cols_insert = ', '.join(f'"{col}"' for col, __ in cols_map)
+
         stmt_insert = f"""
-        INSERT INTO "{schema}"."{table_name}"
-        SELECT * FROM "{schema}"."temp__{table_name}"
+        INSERT INTO "{schema}"."{table_name}" ({cols_insert})
+        SELECT {cols_insert} FROM "{schema}"."temp__{table_name}"
         """
 
         __ = self.__pre_execute(stmt_insert, unload=False)
@@ -539,6 +573,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
         if_exists: Literal['replace', 'append'] = 'replace',
+        sync_schema: bool = False,
     ) -> None:
         # TODO: TABELA EXTERNA
         if location:
@@ -562,6 +597,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
             catalog_name,
             compression,
             if_exists,
+            sync_schema,
         )
 
     def merge_table_iceberg(
@@ -574,6 +610,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         update_condition: str = None,
         insert_condition: str = None,
         alias: tuple = ('t', 's'),
+        sync_schema: bool = False,
         location: str = None,
         catalog_name: str = 'awsdatacatalog',
     ) -> None:
@@ -589,6 +626,9 @@ class CursorParquetDuckdb(CursorBaseParquet):
         cols_map = self.__create_table_external(
             schema, temp_table_name, location, source_data
         )
+
+        if sync_schema:
+            self.__sync_table_schema(cols_map, catalog_name, schema, target_table)
 
         # TODO: Criar a consulta do tipo MERGE
         cols = list(map(lambda col: f'"{col[0]}"', cols_map))

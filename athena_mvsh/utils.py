@@ -46,6 +46,7 @@ def query_is_ddl(stmt) -> bool:
         ('VACUUM', r'^VACUUM\b'),
         ('MSCK', r'^MSCK\b'),
         ('OPTIMIZE', r'^OPTIMIZE\b'),
+        ('UNLOAD', r'^UNLOAD\b'),
     ]
 
     tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specification)

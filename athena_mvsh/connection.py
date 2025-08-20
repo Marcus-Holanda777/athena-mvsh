@@ -888,6 +888,8 @@ class Athena(CursorIterator):
             compression (Literal['ZSTD', 'SNAPPY', 'GZIP'], optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
             if_exists (Literal['replace', 'append'], optional): Define se os dados devem substituir a tabela existente
                 (`'replace'`) ou ser adicionados (`'append'`). O valor padrão é `'replace'`.
+            sync_schema (bool, optional): Indica se o esquema da tabela de destino deve ser sincronizado com os dados de origem. O valor padrão é `False`.
+            
 
         Exceções:
             ProgrammingError: Se a função for chamada com um cursor incompatível.
@@ -981,6 +983,7 @@ class Athena(CursorIterator):
             insert_condition (str, opcional): Condição para inserir novos registros na tabela de destino. Se `None`, todos os registros correspondentes serão inseridos.
             alias (tuple, optional): Alias para as tabelas de origem e destino no merge. O valor padrão é `('t', 's')`,
                 onde `'t'` é o alias da tabela de destino e `'s'` é o alias da tabela de origem.
+            sync_schema (bool, optional): Indica se o esquema da tabela de destino deve ser sincronizado com os dados de origem. O valor padrão é `False`.
             location (str, optional): O local no S3 onde os dados serão armazenados, se aplicável.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
 

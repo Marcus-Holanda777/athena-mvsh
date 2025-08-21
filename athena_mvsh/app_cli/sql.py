@@ -278,6 +278,46 @@ SELECT * FROM "dbname"."tablename$history"
 
 ---
 
+# CREATE EXTERNAL TABLE
+
+O comando `CREATE EXTERNAL TABLE` é usado para criar tabelas externas no Amazon Athena.
+Essas tabelas permitem que você consulte dados armazenados em formatos como CSV, JSON, Parquet, etc.,
+sem precisar carregar os dados no Athena.
+
+## Sinopse
+
+```sql
+CREATE EXTERNAL TABLE [IF NOT EXISTS]
+ [db_name.]table_name [(col_name data_type [COMMENT col_comment] [, ...] )]
+ [COMMENT table_comment]
+ [PARTITIONED BY (col_name data_type [COMMENT col_comment], ...)]
+ [CLUSTERED BY (col_name, col_name, ...) INTO num_buckets BUCKETS]
+ [ROW FORMAT row_format]
+ [STORED AS file_format] 
+ [WITH SERDEPROPERTIES (...)]
+ [LOCATION 's3://amzn-s3-demo-bucket/[folder]/']
+ [TBLPROPERTIES ( ['has_encrypted_data'='true | false',] ['classification'='aws_glue_classification',] property_name=property_value [, ...] ) ]
+```
+
+## Exemplo
+
+```sql
+CREATE EXTERNAL TABLE planet_data (
+  planet_name string,
+  order_from_sun int,
+  au_to_sun float,
+  mass float,
+  gravity_earth float,
+  orbit_years float,
+  day_length float
+)
+STORED AS PARQUET
+LOCATION 's3://amzn-s3-demo-bucket/parquet/'
+TBLPROPERTIES ('parquet.compress'='ZSTD')
+```
+
+---
+
 """
 
 

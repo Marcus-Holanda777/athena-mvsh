@@ -43,7 +43,7 @@ from athena_mvsh.utils import query_is_ddl
         ),
         (
             'UNLOAD (SELECT name FROM table) TO "s3://b/m/" WITH ( prop = "expr")',
-            False,
+            True,
         ),
     ],
 )

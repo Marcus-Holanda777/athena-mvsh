@@ -889,7 +889,7 @@ class Athena(CursorIterator):
             if_exists (Literal['replace', 'append'], optional): Define se os dados devem substituir a tabela existente
                 (`'replace'`) ou ser adicionados (`'append'`). O valor padrão é `'replace'`.
             sync_schema (bool, optional): Indica se o esquema da tabela de destino deve ser sincronizado com os dados de origem. O valor padrão é `False`.
-            
+
 
         Exceções:
             ProgrammingError: Se a função for chamada com um cursor incompatível.
@@ -1108,6 +1108,8 @@ class Athena(CursorIterator):
             return self.cursor.to_pandas(*args, **kwargs)
 
     def close(self):
+        self.cursor.datascannedinbytes = 0
+        self.cursor.get_query_execution = None
         if self.row_cursor:
             self.row_cursor = None
 

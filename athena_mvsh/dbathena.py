@@ -45,6 +45,7 @@ class DBAthena(ABC):
         self.metadata = None
         self.getrowcount = -1
         self.get_query_execution = None
+        self.datascannedinbytes = 0
         self.statement_type = None
         self.substatement_type = None
         self.__kwargs = {**kwargs}
@@ -64,6 +65,13 @@ class DBAthena(ABC):
             data['region_name'] = config.region_name
 
         return data
+
+    def __set_datascannedinbytes(self, response: dict) -> None:
+        match response:
+            case {'QueryExecution': {'Statistics': {'DataScannedInBytes': bytes}}}:
+                self.datascannedinbytes += bytes
+            case _:
+                self.datascannedinbytes += 0
 
     def pool(self, id_executation) -> str:
         """Espera a requisicao até o status 'SUCCEEDED'
@@ -98,6 +106,9 @@ class DBAthena(ABC):
         query_temp = response['QueryExecution']
         self.statement_type = query_temp.get('StatementType')
         self.substatement_type = query_temp.get('SubstatementType')
+
+        # NOTE: SETAR O TAMANHO DOS DADOS LIDOS
+        self.__set_datascannedinbytes(response)
 
         # NOTE: Print LOGS
         logs_print(query_temp, logger)

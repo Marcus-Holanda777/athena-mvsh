@@ -36,7 +36,7 @@ class DBAthena(ABC):
         **kwargs,
     ) -> None:
         super().__init__()
-        self.s3_staging_dir = s3_staging_dir
+        self.s3_staging_dir = s3_staging_dir if s3_staging_dir.endswith('/') else s3_staging_dir + '/'
         self.schema_name = schema_name
         self.catalog_name = catalog_name
         self.poll_interval = poll_interval

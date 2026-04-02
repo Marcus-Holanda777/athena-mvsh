@@ -647,6 +647,7 @@ class Athena(CursorIterator):
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['GZIP', 'SNAPPY', 'ZSTD'] = 'ZSTD',
+        is_uuid_complete_path: bool = False
     ) -> None:
         """
         Escreve um DataFrame pandas em uma tabela externa no Athena usando o DuckDB.
@@ -663,6 +664,7 @@ class Athena(CursorIterator):
             partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
             compression (Literal['ZSTD', 'SNAPPY', 'GZIP'], optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
+            is_uuid_complete_path (bool, optional): Indica se o caminho do bucket deve ser concatenado com um UUID, para evitar conflitos de nomes. O valor padrão é `False`.
 
         Exceções:
             ProgrammingError: Se a função for chamada com um cursor incompatível.
@@ -709,7 +711,7 @@ class Athena(CursorIterator):
             raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.write_dataframe(
-            df, table_name, schema, location, partitions, catalog_name, compression
+            df, table_name, schema, location, partitions, catalog_name, compression, is_uuid_complete_path
         )
 
     def write_arrow(
@@ -721,6 +723,7 @@ class Athena(CursorIterator):
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['GZIP', 'SNAPPY', 'ZSTD'] = 'ZSTD',
+        is_uuid_complete_path: bool = False
     ) -> None:
         """
         Escreve um Table Arrow em uma tabela externa no Athena usando o DuckDB.
@@ -737,6 +740,7 @@ class Athena(CursorIterator):
             partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
             compression (Literal['ZSTD', 'SNAPPY', 'GZIP'], optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
+            is_uuid_complete_path (bool, optional): Indica se o caminho do bucket deve ser concatenado com um UUID, para evitar conflitos de nomes. O valor padrão é `False`.
 
         Exceções:
             ProgrammingError: Se a função for chamada com um cursor incompatível.
@@ -783,7 +787,7 @@ class Athena(CursorIterator):
             raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.write_arrow(
-            tbl, table_name, schema, location, partitions, catalog_name, compression
+            tbl, table_name, schema, location, partitions, catalog_name, compression, is_uuid_complete_path
         )
 
     def write_parquet(
@@ -795,6 +799,7 @@ class Athena(CursorIterator):
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['GZIP', 'SNAPPY', 'ZSTD'] = 'ZSTD',
+        is_uuid_complete_path: bool = False
     ) -> None:
         """
         Cria uma tabela externa no Athena a partir de um ou vários arquivos Parquet.
@@ -812,6 +817,7 @@ class Athena(CursorIterator):
             partitions (list[str], optional): Lista de colunas para particionamento dos dados na tabela.
             catalog_name (str, optional): O nome do catálogo de dados a ser utilizado. O valor padrão é `'awsdatacatalog'`.
             compression (Literal['ZSTD', 'SNAPPY', 'GZIP'], optional): O algoritmo de compressão a ser utilizado nos dados. O valor padrão é `'ZSTD'`.
+            is_uuid_complete_path (bool, optional): Indica se o caminho do bucket deve ser concatenado com um UUID, para evitar conflitos de nomes. O valor padrão é `False`.
 
         Exceções:
             ProgrammingError: Se a função for chamada com um cursor incompatível.
@@ -855,7 +861,7 @@ class Athena(CursorIterator):
             raise ProgrammingError('Function not implemented for cursor !')
 
         self.cursor.write_parquet(
-            file, table_name, schema, location, partitions, catalog_name, compression
+            file, table_name, schema, location, partitions, catalog_name, compression, is_uuid_complete_path
         )
 
     def write_table_iceberg(
@@ -869,6 +875,7 @@ class Athena(CursorIterator):
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
         if_exists: Literal['replace', 'append'] = 'replace',
         sync_schema: bool = False,
+        is_uuid_complete_path: bool = False
     ) -> None:
         """
         Cria ou insere dados em uma tabela Iceberg no Athena a partir de um DataFrame pandas, Table Arrow ou arquivos Parquet.
@@ -889,6 +896,7 @@ class Athena(CursorIterator):
             if_exists (Literal['replace', 'append'], optional): Define se os dados devem substituir a tabela existente
                 (`'replace'`) ou ser adicionados (`'append'`). O valor padrão é `'replace'`.
             sync_schema (bool, optional): Indica se o esquema da tabela de destino deve ser sincronizado com os dados de origem. O valor padrão é `False`.
+            is_uuid_complete_path (bool, optional): Indica se o caminho do bucket deve ser concatenado com um UUID, para evitar conflitos de nomes. O valor padrão é `False`.
 
 
         Exceções:
@@ -947,6 +955,7 @@ class Athena(CursorIterator):
             compression,
             if_exists,
             sync_schema,
+            is_uuid_complete_path
         )
 
     def merge_table_iceberg(

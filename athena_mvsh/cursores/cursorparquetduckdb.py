@@ -347,10 +347,14 @@ class CursorParquetDuckdb(CursorBaseParquet):
         output: pd.DataFrame | list[str | Path] | str | Path | pa.Table,
         partitions: list[str] = None,
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
+        is_uuid_complete_path: bool = False,
     ):
         # NOTE: LER DATAFRAME DUCKDB ou PARQUET
         with self.__connect_duckdb() as db:
-            s3_dir = f'{location}{uuid.uuid4()}/'
+            s3_dir = f'{location}'
+            if is_uuid_complete_path:
+                s3_dir = f'{location}{uuid.uuid4()}/'
+
             s3_dir_file = f'{s3_dir}{uuid.uuid4()}.parquet'
 
             if isinstance(output, pd.DataFrame):
@@ -360,8 +364,9 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             else:
                 # NOTE: Normaliza o caminho para o duckdb
+                # correcao para o windows, onde o separador de caminho é diferente do s3
                 def normaliza_path(f):
-                    return str(f).replace(os.sep, os.altsep)
+                    return str(f).replace(os.sep, os.altsep or os.sep)
 
                 if isinstance(output, list):
                     output = list(map(normaliza_path, output))
@@ -432,12 +437,16 @@ class CursorParquetDuckdb(CursorBaseParquet):
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
         if_exists: Literal['replace', 'append'] = 'replace',
         sync_schema: bool = False,
+        is_uuid_complete_path: bool = False,
     ) -> None:
         if if_exists == 'replace':
             # NOTE: DELETAR SE EXISTIR
             self.__delete_table(catalog_name, schema, table_name)
 
-            s3_dir = f'{location}{uuid.uuid4()}/'
+            s3_dir = f'{location}'
+            if is_uuid_complete_path:
+                s3_dir = f'{location}{uuid.uuid4()}/'
+
             parts_athena = ''
 
             if partitions:
@@ -494,6 +503,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
+        is_uuid_complete_path: bool = False,
     ) -> None:
         if not isinstance(df, pd.DataFrame):
             raise ProgrammingError("Parameter 'df' is not a dataframe |")
@@ -510,7 +520,13 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         # TODO: Criar tabela com o tipo correto
         self.__create_table_external(
-            schema, table_name, location, df, partitions, compression
+            schema,
+            table_name,
+            location,
+            df,
+            partitions,
+            compression,
+            is_uuid_complete_path,
         )
 
     def write_arrow(
@@ -522,6 +538,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
+        is_uuid_complete_path: bool = False,
     ) -> None:
         if not isinstance(tbl, pa.Table):
             raise ProgrammingError("Parameter 'tbl' is not a Table Arrow |")
@@ -537,7 +554,13 @@ class CursorParquetDuckdb(CursorBaseParquet):
         self.__delete_table(catalog_name, schema, table_name)
 
         self.__create_table_external(
-            schema, table_name, location, tbl, partitions, compression
+            schema,
+            table_name,
+            location,
+            tbl,
+            partitions,
+            compression,
+            is_uuid_complete_path,
         )
 
     def write_parquet(
@@ -549,6 +572,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         partitions: list[str] = None,
         catalog_name: str = 'awsdatacatalog',
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
+        is_uuid_complete_path: bool = False,
     ) -> None:
         if location:
             location = location if location.endswith('/') else location + '/'
@@ -560,7 +584,13 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         # TODO: Criar tabela com o tipo correto
         self.__create_table_external(
-            schema, table_name, location, file, partitions, compression
+            schema,
+            table_name,
+            location,
+            file,
+            partitions,
+            compression,
+            is_uuid_complete_path,
         )
 
     def write_table_iceberg(
@@ -574,6 +604,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         compression: Literal['ZSTD', 'SNAPPY', 'GZIP'] = 'ZSTD',
         if_exists: Literal['replace', 'append'] = 'replace',
         sync_schema: bool = False,
+        is_uuid_complete_path: bool = False,
     ) -> None:
         # TODO: TABELA EXTERNA
         if location:
@@ -585,7 +616,10 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
         self.__delete_table(catalog_name, schema, temp_table_name)
 
-        cols_map = self.__create_table_external(schema, temp_table_name, location, data)
+        # TODO: Criar tabela externa para staging dos dados e retornar o mapeamento de colunas
+        cols_map = self.__create_table_external(
+            schema, temp_table_name, location, data, is_uuid_complete_path=True
+        )
 
         # TODO: Tabela ICEBERG
         self.__create_table_iceberg(
@@ -598,6 +632,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
             compression,
             if_exists,
             sync_schema,
+            is_uuid_complete_path,
         )
 
     def merge_table_iceberg(
@@ -624,7 +659,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
         self.__delete_table(catalog_name, schema, temp_table_name)
 
         cols_map = self.__create_table_external(
-            schema, temp_table_name, location, source_data
+            schema, temp_table_name, location, source_data, is_uuid_complete_path=True
         )
 
         if sync_schema:

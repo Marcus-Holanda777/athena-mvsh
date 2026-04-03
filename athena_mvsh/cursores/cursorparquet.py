@@ -1,3 +1,4 @@
+from __future__ import annotations
 from athena_mvsh.cursores.cursores import CursorBaseParquet
 import pyarrow.fs as fs
 import pyarrow as pa

@@ -72,7 +72,7 @@ Exemplo de uso:
         )
     ```
 """
-
+from __future__ import annotations
 from athena_mvsh.dbathena import DBAthena
 from athena_mvsh.cursores import (
     CursorIterator,

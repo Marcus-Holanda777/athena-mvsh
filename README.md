@@ -11,28 +11,10 @@ Algumas regras da [DB API 2.0 (PEP 249)](https://www.python.org/dev/peps/pep-024
 
 ## Instalação
 
-Para instalar o pacote base:
+Para instalar o pacote:
 
 ```bash
 pip install athena-mvsh
-```
-
-Para instalar com suporte a `pyarrow`:
-
-```bash
-pip install "athena-mvsh[arrow]"
-```
-
-Para instalar com suporte a `DuckDB`:
-
-```bash
-pip install "athena-mvsh[duckdb]"
-```
-
-Para instalar com suporte a `pyarrow` e `DuckDB`:
-
-```bash
-pip install "athena-mvsh[arrow,duckdb]"
 ```
 
 ## Credenciais

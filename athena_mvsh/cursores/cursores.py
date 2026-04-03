@@ -1,3 +1,4 @@
+from __future__ import annotations
 from athena_mvsh.dbathena import DBAthena
 from abc import ABC, abstractmethod
 import boto3
@@ -74,11 +75,16 @@ class CursorBaseParquet(DBAthena):
         return quey, location
 
     def get_manifest_local(self):
-        match self.get_query_execution:
-            case {'QueryExecution': {'Statistics': {'DataManifestLocation': location}}}:
+        if isinstance(self.get_query_execution, dict):
+            location = (
+                self.get_query_execution.get('QueryExecution', {})
+                .get('Statistics', {})
+                .get('DataManifestLocation')
+            )
+            if location:
                 return location
-            case __:
-                raise ProgrammingError('Data location does not exist')
+
+        raise ProgrammingError('Data location does not exist')
 
     def get_bucket_s3(self):
         cliente_s3 = boto3.client(

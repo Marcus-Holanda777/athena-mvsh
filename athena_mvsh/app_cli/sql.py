@@ -1,3 +1,4 @@
+from __future__ import annotations
 import typer
 from textual.app import App, ComposeResult
 from textual.widgets import MarkdownViewer, Footer

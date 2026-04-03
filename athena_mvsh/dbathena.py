@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 import boto3
 from enum import Enum
@@ -36,7 +37,9 @@ class DBAthena(ABC):
         **kwargs,
     ) -> None:
         super().__init__()
-        self.s3_staging_dir = s3_staging_dir if s3_staging_dir.endswith('/') else s3_staging_dir + '/'
+        self.s3_staging_dir = (
+            s3_staging_dir if s3_staging_dir.endswith('/') else s3_staging_dir + '/'
+        )
         self.schema_name = schema_name
         self.catalog_name = catalog_name
         self.poll_interval = poll_interval
@@ -67,11 +70,16 @@ class DBAthena(ABC):
         return data
 
     def __set_datascannedinbytes(self, response: dict) -> None:
-        match response:
-            case {'QueryExecution': {'Statistics': {'DataScannedInBytes': bytes}}}:
-                self.datascannedinbytes += bytes
-            case _:
-                self.datascannedinbytes += 0
+        bytes_scanned = (
+            response.get('QueryExecution', {})
+            .get('Statistics', {})
+            .get('DataScannedInBytes')
+        )
+
+        if bytes_scanned is not None:
+            self.datascannedinbytes += bytes_scanned
+        else:
+            self.datascannedinbytes += 0
 
     def pool(self, id_executation) -> str:
         """Espera a requisicao até o status 'SUCCEEDED'
@@ -81,19 +89,21 @@ class DBAthena(ABC):
         while True:
             response = self.cliente.get_query_execution(QueryExecutionId=id_executation)
 
-            match response:
-                case {'QueryExecution': {'Status': {'State': status}}}:
+            # Extração segura da variável de status no Python 3.9
+            status = response.get('QueryExecution', {}).get('Status', {}).get('State')
+
+            if status:
+                if status in [
+                    AthenaStatus.STATE_SUCCEEDED,
+                    AthenaStatus.STATE_FAILED,
+                    AthenaStatus.STATE_CANCELLED,
+                ]:
                     if status in [
-                        AthenaStatus.STATE_SUCCEEDED,
                         AthenaStatus.STATE_FAILED,
                         AthenaStatus.STATE_CANCELLED,
                     ]:
-                        if status in [
-                            AthenaStatus.STATE_FAILED,
-                            AthenaStatus.STATE_CANCELLED,
-                        ]:
-                            raise DatabaseError(response)
-                        break
+                        raise DatabaseError(response)
+                    break
 
             sleep(self.poll_interval)
 
@@ -103,7 +113,7 @@ class DBAthena(ABC):
         self.get_query_execution = response
 
         # NOTE: STATEMENT and KIND da consulta
-        query_temp = response['QueryExecution']
+        query_temp = response.get('QueryExecution', {})
         self.statement_type = query_temp.get('StatementType')
         self.substatement_type = query_temp.get('SubstatementType')
 

@@ -1,3 +1,4 @@
+from __future__ import annotations
 import typer
 from athena_mvsh import __appname__
 from athena_mvsh.app_cli.sql import app as app_sql

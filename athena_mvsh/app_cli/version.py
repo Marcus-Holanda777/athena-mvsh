@@ -1,3 +1,4 @@
+from __future__ import annotations
 import typer
 from rich.console import Console
 from athena_mvsh import __version__, __author__, __appname__

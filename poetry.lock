@@ -275,10 +275,10 @@ markers = {main = "extra == \"cli\" and platform_system == \"Windows\"", dev = "
 name = "duckdb"
 version = "1.4.4"
 description = "DuckDB in-process database"
-optional = true
+optional = false
 python-versions = ">=3.9.0"
 groups = ["main"]
-markers = "python_version < \"3.10\" and extra == \"duckdb\""
+markers = "python_version < \"3.10\""
 files = [
     {file = "duckdb-1.4.4-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:e870a441cb1c41d556205deb665749f26347ed13b3a247b53714f5d589596977"},
     {file = "duckdb-1.4.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:49123b579e4a6323e65139210cd72dddc593a72d840211556b60f9703bda8526"},
@@ -330,10 +330,10 @@ all = ["adbc-driver-manager", "fsspec", "ipython", "numpy", "pandas", "pyarrow"]
 name = "duckdb"
 version = "1.5.1"
 description = "DuckDB in-process database"
-optional = true
+optional = false
 python-versions = ">=3.10.0"
 groups = ["main"]
-markers = "python_version >= \"3.10\" and extra == \"duckdb\""
+markers = "python_version >= \"3.10\""
 files = [
     {file = "duckdb-1.5.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:46f92ada9023e59f27edc048167b31ac9a03911978b1296c845a34462a27f096"},
     {file = "duckdb-1.5.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:caa65e1f5bf007430bf657c37cab7ab81a4ddf8d337e3062bcc5085d17ef038b"},
@@ -1474,10 +1474,10 @@ testing = ["coverage", "pytest", "pytest-benchmark"]
 name = "pyarrow"
 version = "21.0.0"
 description = "Python library for Apache Arrow"
-optional = true
+optional = false
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "python_version < \"3.10\" and extra == \"arrow\""
+markers = "python_version < \"3.10\""
 files = [
     {file = "pyarrow-21.0.0-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:e563271e2c5ff4d4a4cbeb2c83d5cf0d4938b891518e676025f7268c6fe5fe26"},
     {file = "pyarrow-21.0.0-cp310-cp310-macosx_12_0_x86_64.whl", hash = "sha256:fee33b0ca46f4c85443d6c450357101e47d53e6c3f008d658c27a2d020d44c79"},
@@ -1531,10 +1531,10 @@ test = ["cffi", "hypothesis", "pandas", "pytest", "pytz"]
 name = "pyarrow"
 version = "22.0.0"
 description = "Python library for Apache Arrow"
-optional = true
+optional = false
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "python_version >= \"3.10\" and extra == \"arrow\""
+markers = "python_version >= \"3.10\""
 files = [
     {file = "pyarrow-22.0.0-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:77718810bd3066158db1e95a63c160ad7ce08c6b0710bc656055033e39cdad88"},
     {file = "pyarrow-22.0.0-cp310-cp310-macosx_12_0_x86_64.whl", hash = "sha256:44d2d26cda26d18f7af7db71453b7b783788322d756e81730acb98f24eb90ace"},
@@ -2239,11 +2239,9 @@ test = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more_it
 type = ["pytest-mypy"]
 
 [extras]
-arrow = ["pyarrow"]
 cli = ["click", "rich", "textual", "typer"]
-duckdb = ["duckdb"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9, <4.0"
-content-hash = "113ae81003b5eea0dd67d5579ddec346e87e4f5a449c682df2024524ea8c8ad9"
+content-hash = "6c2c43c44e9d012f9ee45866d1d36c7bb836f3f0bb536800776c04d270111d6a"

@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class Error(Exception): ...
 
 
@@ -10,11 +13,14 @@ class DatabaseError(Error):
         if not isinstance(self.response, dict):
             self.args = (self.response,)
         else:
-            match self.response:
-                case {'QueryExecution': {'Status': {'AthenaError': dict_error}}}:
-                    self.args = (*dict_error.items(),)
-                case __:
-                    self.args = ('Failed to connect to database !',)
+            query_execution = self.response.get('QueryExecution', {})
+            status = query_execution.get('Status', {})
+            dict_error = status.get('AthenaError')
+
+            if dict_error and isinstance(dict_error, dict):
+                self.args = (*dict_error.items(),)
+            else:
+                self.args = ('Failed to connect to database !',)
 
 
 class OperationalError(DatabaseError): ...

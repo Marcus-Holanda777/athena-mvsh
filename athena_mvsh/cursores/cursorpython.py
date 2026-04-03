@@ -1,3 +1,4 @@
+from __future__ import annotations
 from athena_mvsh.dbathena import DBAthena
 from typing import Generator, Any
 from athena_mvsh.converter import MAP_CONVERT

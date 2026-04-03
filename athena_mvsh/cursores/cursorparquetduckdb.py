@@ -1,3 +1,4 @@
+from __future__ import annotations
 from athena_mvsh.cursores.cursores import CursorBaseParquet
 import duckdb
 import pyarrow as pa
@@ -380,7 +381,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             if partitions:
                 parts_duck = f"""
-                , PARTITION_BY ({','.join(partitions)})'
+                , PARTITION_BY ({','.join(partitions)})
                 """
 
                 parts_athena = f"""
@@ -611,14 +612,15 @@ class CursorParquetDuckdb(CursorBaseParquet):
             location = location if location.endswith('/') else location + '/'
         else:
             location = self.s3_staging_dir
-
+        
         temp_table_name = f'temp__{table_name}'
+        location_temp = f'{self.s3_staging_dir}temp/{temp_table_name}/'
 
         self.__delete_table(catalog_name, schema, temp_table_name)
 
         # TODO: Criar tabela externa para staging dos dados e retornar o mapeamento de colunas
         cols_map = self.__create_table_external(
-            schema, temp_table_name, location, data, is_uuid_complete_path=True
+            schema, temp_table_name, location_temp, data, is_uuid_complete_path=True
         )
 
         # TODO: Tabela ICEBERG
@@ -655,11 +657,12 @@ class CursorParquetDuckdb(CursorBaseParquet):
             location = self.s3_staging_dir
 
         temp_table_name = f'temp__{target_table}'
+        location_temp = f'{self.s3_staging_dir}temp/{temp_table_name}/'
 
         self.__delete_table(catalog_name, schema, temp_table_name)
 
         cols_map = self.__create_table_external(
-            schema, temp_table_name, location, source_data, is_uuid_complete_path=True
+            schema, temp_table_name, location_temp, source_data, is_uuid_complete_path=True
         )
 
         if sync_schema:

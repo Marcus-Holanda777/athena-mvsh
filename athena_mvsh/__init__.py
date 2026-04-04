@@ -1,7 +1,7 @@
 from athena_mvsh.connection import Athena
 from athena_mvsh.cursores import CursorParquet, CursorParquetDuckdb, CursorPython
 
-__version__ = '0.0.26'
+__version__ = '0.0.27'
 __author__ = 'Marcus Holanda'
 __appname__ = 'athena'
 

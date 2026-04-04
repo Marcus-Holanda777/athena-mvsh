@@ -333,6 +333,13 @@ class CursorParquetDuckdb(CursorBaseParquet):
             location_table = response_meta['Parameters']['location']
             bucket_name, keys = parse_output_location(location_table)
 
+            if keys and not keys.endswith('/'):
+                keys += '/'
+
+            if not keys or keys == '/':
+                logger.warning(f'Location {location_table} is not valid to delete files in S3 !')
+                return
+
             # TODO: Localizar e deletar o bucket associado a tabela
             bucket = self.get_bucket_resource(bucket_name)
             objects = bucket.objects.filter(Prefix=keys)

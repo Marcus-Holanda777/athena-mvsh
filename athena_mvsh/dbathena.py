@@ -29,6 +29,7 @@ class DBAthena(ABC):
     def __init__(
         self,
         s3_staging_dir: str,
+        work_group: str = None,
         schema_name: str = None,
         catalog_name: str = None,
         poll_interval: float = 1.0,
@@ -40,6 +41,7 @@ class DBAthena(ABC):
         self.s3_staging_dir = (
             s3_staging_dir if s3_staging_dir.endswith('/') else s3_staging_dir + '/'
         )
+        self.work_group = work_group
         self.schema_name = schema_name
         self.catalog_name = catalog_name
         self.poll_interval = poll_interval
@@ -141,6 +143,9 @@ class DBAthena(ABC):
             'ResultConfiguration': {'OutputLocation': self.s3_staging_dir},
         }
 
+        if self.work_group:
+            data_response['WorkGroup'] = self.work_group
+
         if self.schema_name or self.catalog_name:
             data_response |= {'QueryExecutionContext': {}}
 
@@ -176,6 +181,7 @@ class DBAthena(ABC):
         work_group: str = None,
     ) -> dict:
         try:
+            work_group = work_group or self.work_group
             data_response = dict(
                 CatalogName=catalog_name,
                 DatabaseName=database_name,
@@ -191,12 +197,19 @@ class DBAthena(ABC):
         else:
             return response['TableMetadata']
 
-    def list_table_metadata(self, catalog_name: str, database_name: str):
+    def list_table_metadata(
+        self, catalog_name: str, database_name: str, work_group: str = None
+    ):
+        work_group = work_group or self.work_group
+
         data_response = dict(
             CatalogName=catalog_name,
             DatabaseName=database_name,
             MaxResults=self.MAX_RESULTS_TABLES,
         )
+
+        if work_group:
+            data_response['WorkGroup'] = work_group
 
         while True:
             response = self.cliente.list_table_metadata(**data_response)

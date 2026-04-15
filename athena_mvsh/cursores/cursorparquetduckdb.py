@@ -31,6 +31,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
     def __init__(
         self,
         s3_staging_dir: str,
+        work_group: str = None,
         schema_name: str = None,
         catalog_name: str = None,
         poll_interval: float = 1,
@@ -40,6 +41,7 @@ class CursorParquetDuckdb(CursorBaseParquet):
     ) -> None:
         super().__init__(
             s3_staging_dir,
+            work_group,
             schema_name,
             catalog_name,
             poll_interval,
@@ -283,22 +285,22 @@ class CursorParquetDuckdb(CursorBaseParquet):
         except Exception:
             ...
 
-    def __get_table_exists(self, catalog_name: str, schema: str, table_name: str):
+    def __get_table_exists(self, catalog_name: str, schema: str, table_name: str, work_group: str = None):
         response_meta = self.get_table_metadata(
-            catalog_name=catalog_name, database_name=schema, table_name=table_name
+            catalog_name=catalog_name, database_name=schema, table_name=table_name, work_group=work_group
         )
 
         return response_meta
 
     def __sync_table_schema(
-        self, cols_map: list[tuple], catalog_name: str, schema: str, table_name: str
+        self, cols_map: list[tuple], catalog_name: str, schema: str, table_name: str, work_group: str = None
     ) -> list[tuple] | None:
         key_type = dict(cols_map)
         cols_temp = set(col for col, __ in cols_map)
 
         cols_target = set(
             row['Name']
-            for row in self.__get_table_exists(catalog_name, schema, table_name)[
+            for row in self.__get_table_exists(catalog_name, schema, table_name, work_group)[
                 'Columns'
             ]
         )
@@ -317,8 +319,8 @@ class CursorParquetDuckdb(CursorBaseParquet):
 
             return add_cols
 
-    def __delete_table(self, catalog_name: str, schema: str, table_name: str) -> None:
-        response_meta = self.__get_table_exists(catalog_name, schema, table_name)
+    def __delete_table(self, catalog_name: str, schema: str, table_name: str, work_group: str = None) -> None:
+        response_meta = self.__get_table_exists(catalog_name, schema, table_name, work_group)
 
         if response_meta:
             # TODO: Deletar a tabela

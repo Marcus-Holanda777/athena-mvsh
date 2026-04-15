@@ -15,6 +15,7 @@ class CursorParquet(CursorBaseParquet):
     def __init__(
         self,
         s3_staging_dir: str,
+        work_group: str = None,
         schema_name: str = None,
         catalog_name: str = None,
         poll_interval: float = 1,
@@ -24,6 +25,7 @@ class CursorParquet(CursorBaseParquet):
     ) -> None:
         super().__init__(
             s3_staging_dir,
+            work_group,
             schema_name,
             catalog_name,
             poll_interval,

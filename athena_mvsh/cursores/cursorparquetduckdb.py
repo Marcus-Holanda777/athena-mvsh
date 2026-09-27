@@ -15,6 +15,7 @@ from athena_mvsh.converter import (
     map_convert_duckdb_athena,
     partition_func_iceberg,
     map_convert_duckdb_athena_pandas_arrow,
+    select_timestamp_micros,
 )
 import logging
 from pathlib import Path
@@ -400,17 +401,23 @@ class CursorParquetDuckdb(CursorBaseParquet):
                 """
 
             if isinstance(output, (pd.DataFrame, pa.Table)):
-                db.sql(f"""
-                COPY output 
-                TO '{s3_dir if partitions else s3_dir_file}'
-                (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
-                """)
+                relation = 'output'
             else:
-                db.sql(f"""
-                COPY (from read_parquet({output!r})) 
-                TO '{s3_dir if partitions else s3_dir_file}'
-                (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
-                """)
+                relation = f'(from read_parquet({output!r}))'
+
+            # NOTE: TIMESTAMP_NS vira TIMESTAMP (microssegundos): o Spark nao le
+            # Parquet com TIMESTAMP(NANOS). O DESCRIBE fica aqui porque o DuckDB
+            # encontra o DataFrame/Arrow pelo nome da variavel local `output`.
+            columns = db.sql(f'DESCRIBE SELECT * FROM {relation}').fetchall()
+            select = select_timestamp_micros(
+                [(name, col_type) for name, col_type, *_ in columns]
+            )
+
+            db.sql(f"""
+            COPY (SELECT {select} FROM {relation})
+            TO '{s3_dir if partitions else s3_dir_file}'
+            (FORMAT PARQUET, COMPRESSION {compression}{parts_duck})
+            """)
 
             if partitions is None:
                 partitions = list()

@@ -216,6 +216,32 @@ def map_convert_duckdb_athena_pandas_arrow(
     return [(col, convert_tp_duckdb(tep)) for col, tep in rst]
 
 
+def select_timestamp_micros(columns: list[tuple[str, str]]) -> str:
+    """Lista de colunas do SELECT com TIMESTAMP_NS convertido para TIMESTAMP.
+
+    O DuckDB grava no Parquet o mesmo tipo que recebe. Um `datetime2` do SQL Server
+    (ou `datetime64[ns]` do pandas) chega como TIMESTAMP_NS e sai como
+    TIMESTAMP(NANOS), que o Athena le, mas o Spark (Databricks, EMR, Glue) nao.
+    O TIMESTAMP do DuckDB e' em microssegundos, precisao que Athena e Spark leem.
+
+    Args:
+        columns: pares (nome da coluna, tipo no DuckDB), como no `DESCRIBE`.
+
+    Returns:
+        Colunas separadas por virgula, com as TIMESTAMP_NS convertidas.
+    """
+
+    def quote(name: str) -> str:
+        return '"' + name.replace('"', '""') + '"'
+
+    return ', '.join(
+        f'CAST({quote(name)} AS TIMESTAMP) AS {quote(name)}'
+        if col_type.upper() == 'TIMESTAMP_NS'
+        else quote(name)
+        for name, col_type in columns
+    )
+
+
 def strtobool(val):
     val = val.lower()
     if val in ('y', 'yes', 't', 'true', 'on', '1'):
